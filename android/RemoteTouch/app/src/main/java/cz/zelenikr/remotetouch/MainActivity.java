@@ -104,23 +104,29 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  public void onCallsBtClick(View view){
+  public void onCallsBtClick(View view) {
 
   }
 
-  public void onSmsBtClick(View view){
-    if(!checkSmsPermission()) return;
+  public void onSmsBtClick(View view) {
+    if (!checkSmsPermission()) return;
 
     ListView list = (ListView) findViewById(R.id.listView);
     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-    Cursor cursor = getContentResolver().query(SMS_INBOX, new String[] {"body", "address"},
-        null, null, "date desc limit 3");
+    String[] cols = new String[]{"date", "person", "address", "read", "body"};
+
+    // returns last 3 received sms ordered by date (and unread)
+    Cursor cursor = getContentResolver().query(SMS_INBOX, cols,
+        "read=0", null, "read, date desc limit 3");
+
     String message = "";
 
-    while (cursor.moveToNext()){
+    while (cursor.moveToNext()) {
       message = "";
-      message+="tel.:"+cursor.getString(1)+"\n";
-      message+="content:"+cursor.getString(0)+"\n";
+
+      for (int i = 0; i < cols.length; i++)
+        message += cols[i].toUpperCase() + ": " + cursor.getString(i) + "\n";
+
       adapter.add(message);
     }
     list.setAdapter(adapter);
@@ -140,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         // this thread waiting for the user's response! After the user
         // sees the explanation, try again to request the permission.
 
-        Log.i(getLocalClassName(), "chechSmsPermission(): shouldShowRequestPermissionRationale");
+        Log.i(getLocalClassName(), "checkSmsPermission(): shouldShowRequestPermissionRationale");
       } else {
 
         // No explanation needed, we can request the permission.
