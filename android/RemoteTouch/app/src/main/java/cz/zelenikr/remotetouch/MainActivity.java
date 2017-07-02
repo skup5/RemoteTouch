@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -21,10 +22,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
+
 public class MainActivity extends AppCompatActivity {
 
   private static final Uri SMS_INBOX = Uri.parse("content://sms/inbox");
-  private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
+  private static final Uri CALLS = Uri.parse("content://call_log/calls");
+
+  private static final int MY_PERMISSIONS_REQUEST_CALL_LOG = 1;
   private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 2;
 
   @Override
@@ -70,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
   public void onRequestPermissionsResult(int requestCode,
                                          String permissions[], int[] grantResults) {
     switch (requestCode) {
-      case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+      case MY_PERMISSIONS_REQUEST_CALL_LOG: {
         // If request is cancelled, the result arrays are empty.
         if (grantResults.length > 0
             && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -105,7 +113,12 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void onCallsBtClick(View view) {
+    if (!checkCallLogPermission()) return;
+    //checkCallLogPermission();
 
+    ListView list = (ListView) findViewById(R.id.listView);
+    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getCallDetails());
+    list.setAdapter(adapter);
   }
 
   public void onSmsBtClick(View view) {
@@ -122,14 +135,62 @@ public class MainActivity extends AppCompatActivity {
     String message = "";
 
     while (cursor.moveToNext()) {
-      message = "";
+      message = cols[0].toUpperCase() + ": " + new Date(Long.valueOf(cursor.getString(0))) + "\n";
 
-      for (int i = 0; i < cols.length; i++)
+      for (int i = 1; i < cols.length; i++)
         message += cols[i].toUpperCase() + ": " + cursor.getString(i) + "\n";
 
       adapter.add(message);
     }
     list.setAdapter(adapter);
+  }
+
+  private List<String> getCallDetails() {
+    List<String> calls = new ArrayList<>();
+    String callDetail;
+
+    Cursor managedCursor = getContentResolver().query(CALLS, null, null, null, "date desc");
+    if (managedCursor == null) {
+      calls.add("-empty cursor-");
+      return calls;
+    }
+    int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
+    int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
+    int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
+    int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
+    int newCall = managedCursor.getColumnIndex(CallLog.Calls.NEW);
+
+    while (managedCursor.moveToNext()) {
+      String phNumber = managedCursor.getString(number);
+      String callType = managedCursor.getString(type);
+      String callDate = managedCursor.getString(date);
+      Date callDayTime = new Date(Long.valueOf(callDate));
+      String callDuration = managedCursor.getString(duration);
+      int callIsNew = managedCursor.getInt(newCall);
+      String dir = null;
+      int dircode = Integer.parseInt(callType);
+      switch (dircode) {
+        case CallLog.Calls.OUTGOING_TYPE:
+          dir = "OUTGOING";
+          break;
+
+        case CallLog.Calls.INCOMING_TYPE:
+          dir = "INCOMING";
+          break;
+
+        case CallLog.Calls.MISSED_TYPE:
+          dir = "MISSED";
+          break;
+      }
+      callDetail = "\nIs new:---" + (callIsNew == 1 ? "yes" : "no")
+          + "\nPhone Number:--- " + phNumber + " \nCall Type:--- "
+          + dir + " \nCall Date:--- " + callDayTime
+          + " \nCall duration in sec :--- " + callDuration;
+      calls.add(callDetail);
+    }
+    managedCursor.close();
+    return calls;
+
   }
 
   private boolean checkSmsPermission() {
@@ -166,32 +227,37 @@ public class MainActivity extends AppCompatActivity {
     return true;
   }
 
-  private void checkContactsPermission() {
+  private boolean checkCallLogPermission() {
     // Here, thisActivity is the current activity
     if (ContextCompat.checkSelfPermission(this,
-        Manifest.permission.READ_CONTACTS)
+        Manifest.permission.READ_CALL_LOG)
         != PackageManager.PERMISSION_GRANTED) {
 
       // Should we show an explanation?
       if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-          Manifest.permission.READ_CONTACTS)) {
+          Manifest.permission.READ_CALL_LOG)) {
 
         // Show an explanation to the user *asynchronously* -- don't block
         // this thread waiting for the user's response! After the user
         // sees the explanation, try again to request the permission.
 
+        Log.i(getLocalClassName(), "checkCallLogPermission(): shouldShowRequestPermissionRationale");
       } else {
 
         // No explanation needed, we can request the permission.
 
         ActivityCompat.requestPermissions(this,
-            new String[]{Manifest.permission.READ_CONTACTS},
-            MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            new String[]{Manifest.permission.READ_CALL_LOG},
+            MY_PERMISSIONS_REQUEST_CALL_LOG);
 
         // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
         // app-defined int constant. The callback method gets the
         // result of the request.
+        Log.i(getLocalClassName(), "checkCallLogPermission: request permission");
       }
+      return false;
     }
+    Log.i(getLocalClassName(), "checkCallLogPermission: permission granted");
+    return true;
   }
 }
