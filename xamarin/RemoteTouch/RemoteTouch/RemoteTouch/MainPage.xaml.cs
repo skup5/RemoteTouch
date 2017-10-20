@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Plugin;
+using CrossLibrary;
 
 namespace RemoteTouch
 {
 	public partial class MainPage : ContentPage
 	{
-        private int count = 0;
+		private MyCounter _counter;
 
 		public MainPage()
 		{
@@ -18,8 +20,13 @@ namespace RemoteTouch
 
         private  void OnButtonClicked(object sender, EventArgs args)
         {
-            count++;
-            label.Text = count + "x clicked";
+            _counter.inc();
+            label.Text = _counter.getCounter() + "x clicked";
+        }
+
+        private void Test()
+        {
+            
         }
 	}
 }
