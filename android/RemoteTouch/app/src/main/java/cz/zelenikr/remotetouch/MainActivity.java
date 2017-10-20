@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CallLog;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
   private static final int MY_PERMISSIONS_REQUEST_CALL_LOG = 1;
   private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 2;
 
+  PersistentService persistentService;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -50,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
             .setAction("Action", null).show();
       }
     });
+
+  }
+
+  @Override
+  protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+    super.onPostCreate(savedInstanceState);
+    persistentService = new PersistentService(this);
+    persistentService.showNotification();
   }
 
   @Override
