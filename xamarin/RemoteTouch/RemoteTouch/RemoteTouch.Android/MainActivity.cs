@@ -5,11 +5,12 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Android.Util;
 using CrossLibrary;
 
 namespace RemoteTouch.Droid
 {
-    [Activity(Label = "RemoteTouch", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true,
+    [Activity(Label = "@string/AppName", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
@@ -19,9 +20,11 @@ namespace RemoteTouch.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(bundle);
-            new MyCounter();
             global::Xamarin.Forms.Forms.Init(this, bundle);
             LoadApplication(new RemoteTouch.App());
+
+            Log.Info("Msg", "Start MainActivity");
+            System.Console.WriteLine("Start MainActivity");
         }
     }
 }

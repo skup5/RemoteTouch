@@ -9,24 +9,32 @@ using CrossLibrary;
 
 namespace RemoteTouch
 {
-	public partial class MainPage : ContentPage
-	{
-		private MyCounter _counter;
+    public partial class MainPage : ContentPage
+    {
+        private MyCounter _counter;
 
-		public MainPage()
-		{
-			InitializeComponent();
-		}
+        public MainPage()
+        {
+            _counter= new MyCounter();
+            InitializeComponent();
+        }
 
-        private  void OnButtonClicked(object sender, EventArgs args)
+        private void OnButtonClicked(object sender, EventArgs args)
         {
             _counter.inc();
             label.Text = _counter.getCounter() + "x clicked";
+            Console.WriteLine("[*] Counter clicked");
+        }
+
+        private void OnCreateNotification(object sender, EventArgs args)
+        {
+            Plugin.LocalNotifications.CrossLocalNotifications.Current.Show("RemoteTouch", label.Text, (int)_counter.getCounter());
+            Console.WriteLine("[*] Create notification");
         }
 
         private void Test()
         {
-            
+
         }
-	}
+    }
 }
