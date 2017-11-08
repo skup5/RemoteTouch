@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">RemoteTouch</string>
     <string name="action_settings">Settings</string>
+    <string name="check_nl_permission">Zkontrolovat povolení pro odchyt notifikací</string>
+    <string name="yes">Ano</string>
+    <string name="no">Ne</string>
+    <string name="permission">Oprávnění</string>
 </resources>

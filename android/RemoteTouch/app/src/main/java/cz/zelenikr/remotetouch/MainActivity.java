@@ -1,33 +1,33 @@
 package cz.zelenikr.remotetouch;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.StringTokenizer;
 
+/**
+ * @author Roman Zelenik
+ */
 public class MainActivity extends AppCompatActivity {
 
   private static final Uri SMS_INBOX = Uri.parse("content://sms/inbox");
@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
   private static final int MY_PERMISSIONS_REQUEST_CALL_LOG = 1;
   private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 2;
 
-  PersistentService persistentService;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -49,18 +48,19 @@ public class MainActivity extends AppCompatActivity {
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show();
+        Log.i(getLocalClassName(), "Add notification");
+        NotificationHelper.test(getApplicationContext(), (int) System.currentTimeMillis());
       }
     });
 
   }
 
+
   @Override
   protected void onPostCreate(@Nullable Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
-    persistentService = new PersistentService(this);
-    persistentService.showNotification();
+    NotificationHelper.persistent(getApplicationContext(), getResources().getString(R.string.app_name), "Persistent notification", 1);
+    enableNotificationHandler();
   }
 
   @Override
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
       case MY_PERMISSIONS_REQUEST_CALL_LOG: {
         // If request is cancelled, the result arrays are empty.
         if (grantResults.length > 0
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
           // permission was granted, yay! Do the
           // contacts-related task you need to do.
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
       case MY_PERMISSIONS_REQUEST_READ_SMS: {
         // If request is cancelled, the result arrays are empty.
         if (grantResults.length > 0
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
           onSmsBtClick(findViewById(R.id.smsBt));
         } else {
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
     // returns last 3 received sms ordered by date (and unread)
     Cursor cursor = getContentResolver().query(SMS_INBOX, cols,
-        "read=0", null, "read, date desc limit 3");
+            "read=0", null, "read, date desc limit 3");
 
     String message = "";
 
@@ -194,9 +194,9 @@ public class MainActivity extends AppCompatActivity {
           break;
       }
       callDetail = "\nIs new:---" + (callIsNew == 1 ? "yes" : "no")
-          + "\nPhone Number:--- " + phNumber + " \nCall Type:--- "
-          + dir + " \nCall Date:--- " + callDayTime
-          + " \nCall duration in sec :--- " + callDuration;
+              + "\nPhone Number:--- " + phNumber + " \nCall Type:--- "
+              + dir + " \nCall Date:--- " + callDayTime
+              + " \nCall duration in sec :--- " + callDuration;
       calls.add(callDetail);
     }
     managedCursor.close();
@@ -207,12 +207,12 @@ public class MainActivity extends AppCompatActivity {
   private boolean checkSmsPermission() {
     // Here, thisActivity is the current activity
     if (ContextCompat.checkSelfPermission(this,
-        Manifest.permission.READ_SMS)
-        != PackageManager.PERMISSION_GRANTED) {
+            Manifest.permission.READ_SMS)
+            != PackageManager.PERMISSION_GRANTED) {
 
       // Should we show an explanation?
       if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-          Manifest.permission.READ_SMS)) {
+              Manifest.permission.READ_SMS)) {
 
         // Show an explanation to the user *asynchronously* -- don't block
         // this thread waiting for the user's response! After the user
@@ -224,8 +224,8 @@ public class MainActivity extends AppCompatActivity {
         // No explanation needed, we can request the permission.
 
         ActivityCompat.requestPermissions(this,
-            new String[]{Manifest.permission.READ_SMS},
-            MY_PERMISSIONS_REQUEST_READ_SMS);
+                new String[]{Manifest.permission.READ_SMS},
+                MY_PERMISSIONS_REQUEST_READ_SMS);
 
         // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
         // app-defined int constant. The callback method gets the
@@ -241,12 +241,12 @@ public class MainActivity extends AppCompatActivity {
   private boolean checkCallLogPermission() {
     // Here, thisActivity is the current activity
     if (ContextCompat.checkSelfPermission(this,
-        Manifest.permission.READ_CALL_LOG)
-        != PackageManager.PERMISSION_GRANTED) {
+            Manifest.permission.READ_CALL_LOG)
+            != PackageManager.PERMISSION_GRANTED) {
 
       // Should we show an explanation?
       if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-          Manifest.permission.READ_CALL_LOG)) {
+              Manifest.permission.READ_CALL_LOG)) {
 
         // Show an explanation to the user *asynchronously* -- don't block
         // this thread waiting for the user's response! After the user
@@ -258,8 +258,8 @@ public class MainActivity extends AppCompatActivity {
         // No explanation needed, we can request the permission.
 
         ActivityCompat.requestPermissions(this,
-            new String[]{Manifest.permission.READ_CALL_LOG},
-            MY_PERMISSIONS_REQUEST_CALL_LOG);
+                new String[]{Manifest.permission.READ_CALL_LOG},
+                MY_PERMISSIONS_REQUEST_CALL_LOG);
 
         // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
         // app-defined int constant. The callback method gets the
@@ -270,5 +270,18 @@ public class MainActivity extends AppCompatActivity {
     }
     Log.i(getLocalClassName(), "checkCallLogPermission: permission granted");
     return true;
+  }
+
+  private void enableNotificationHandler() {
+    new AlertDialog.Builder(this)
+            .setIcon(R.mipmap.ic_launcher)
+            .setTitle(R.string.app_name)
+            .setMessage(R.string.check_nl_permission)
+            .setPositiveButton(
+                    R.string.yes,
+                    (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+            )
+            .setNegativeButton(R.string.no, (dialog, which) -> {})
+            .show();
   }
 }
