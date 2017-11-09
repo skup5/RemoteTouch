@@ -1,12 +1,14 @@
 package cz.zelenikr.remotetouch;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CallLog;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
   private static final int MY_PERMISSIONS_REQUEST_CALL_LOG = 1;
   private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 2;
+
+  private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
 
   @Override
@@ -273,15 +278,39 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void enableNotificationHandler() {
-    new AlertDialog.Builder(this)
-            .setIcon(R.mipmap.ic_launcher)
-            .setTitle(R.string.app_name)
-            .setMessage(R.string.check_nl_permission)
-            .setPositiveButton(
-                    R.string.yes,
-                    (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-            )
-            .setNegativeButton(R.string.no, (dialog, which) -> {})
-            .show();
+    if (!isNotificationServiceEnabled()) {
+      new AlertDialog.Builder(this)
+              .setIcon(R.mipmap.ic_launcher)
+              .setTitle(R.string.app_name)
+              .setMessage(R.string.check_nl_permission)
+              .setPositiveButton(
+                      R.string.yes,
+                      (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+              )
+              .setNegativeButton(R.string.no, (dialog, which) -> {
+              })
+              .show();
+    }
+  }
+
+  /**
+   * @return true if enabled, false otherwise
+   */
+  private boolean isNotificationServiceEnabled() {
+    String pkgName = getPackageName();
+    final String flat = Settings.Secure.getString(getContentResolver(),
+            ENABLED_NOTIFICATION_LISTENERS);
+    if (!TextUtils.isEmpty(flat)) {
+      final String[] names = flat.split(":");
+      for (int i = 0; i < names.length; i++) {
+        final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+        if (cn != null) {
+          if (TextUtils.equals(pkgName, cn.getPackageName())) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 }
