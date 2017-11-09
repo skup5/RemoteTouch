@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto">
-  <uses-sdk android:minSdkVersion="14" />
-  <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
-  <application android:label="RemoteTouch.Android">
-    <service android:name=".NotificationHandler"
-                 android:label="@string/AppName"
-                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-      <intent-filter>
-        <action android:name="android.service.notification.NotificationListenerService" />
-      </intent-filter>
-    </service>
-  </application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="cz.zelenikr.remotetouch" android:versionCode="1" android:versionName="1">
+	<uses-sdk android:minSdkVersion="18" />
+	<uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
+	<application android:label="RemoteTouch.Android" android:icon="@drawable/Icon"></application>
 </manifest>
