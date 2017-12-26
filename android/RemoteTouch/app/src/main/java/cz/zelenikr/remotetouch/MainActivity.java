@@ -1,33 +1,36 @@
 package cz.zelenikr.remotetouch;
 
 import android.Manifest;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CallLog;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.StringTokenizer;
 
+/**
+ * @author Roman Zelenik
+ */
 public class MainActivity extends AppCompatActivity {
 
   private static final Uri SMS_INBOX = Uri.parse("content://sms/inbox");
@@ -36,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
   private static final int MY_PERMISSIONS_REQUEST_CALL_LOG = 1;
   private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 2;
 
-  PersistentService persistentService;
+  private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show();
+        Log.i(getLocalClassName(), "Add notification");
+        NotificationHelper.test(getApplicationContext(), (int) System.currentTimeMillis());
       }
     });
 
@@ -59,8 +63,10 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onPostCreate(@Nullable Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
-    persistentService = new PersistentService(this);
-    persistentService.showNotification();
+
+    if (enableNotificationHandler()) {
+      startService(new Intent(this, NotificationHandler.class));
+    }
   }
 
   @Override
@@ -270,5 +276,49 @@ public class MainActivity extends AppCompatActivity {
     }
     Log.i(getLocalClassName(), "checkCallLogPermission: permission granted");
     return true;
+  }
+
+  /**
+   * If isn't enabled, shows dialog to user. User can open system settings and enable NotificationHandler.
+   *
+   * @return true if enabled, false otherwise
+   */
+  private boolean enableNotificationHandler() {
+    if (!isNotificationServiceEnabled()) {
+      new AlertDialog.Builder(this)
+              .setIcon(R.mipmap.ic_launcher)
+              .setTitle(R.string.Application_Name)
+              .setMessage(R.string.check_nl_permission)
+              .setPositiveButton(
+                      R.string.Actions_OK,
+                      (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+              )
+              .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
+              })
+              .show();
+      return isNotificationServiceEnabled();
+    }
+    return true;
+  }
+
+  /**
+   * @return true if enabled, false otherwise
+   */
+  private boolean isNotificationServiceEnabled() {
+    final String pkgName = getPackageName();
+    final String flat = Settings.Secure.getString(getContentResolver(),
+            ENABLED_NOTIFICATION_LISTENERS);
+    if (!TextUtils.isEmpty(flat)) {
+      final String[] names = flat.split(":");
+      for (int i = 0; i < names.length; i++) {
+        final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+        if (cn != null) {
+          if (TextUtils.equals(pkgName, cn.getPackageName())) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 }
