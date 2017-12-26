@@ -1,6 +1,5 @@
 package cz.zelenikr.remotetouch;
 
-import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,8 +10,6 @@ import android.provider.CallLog;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +25,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cz.zelenikr.remotetouch.helper.NotificationHelper;
+import cz.zelenikr.remotetouch.helper.PermissionHelper;
+
+import static cz.zelenikr.remotetouch.helper.PermissionHelper.MY_PERMISSIONS_REQUEST_CALL_LOG;
+import static cz.zelenikr.remotetouch.helper.PermissionHelper.MY_PERMISSIONS_REQUEST_READ_SMS;
+
 /**
  * @author Roman Zelenik
  */
@@ -35,9 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
   private static final Uri SMS_INBOX = Uri.parse("content://sms/inbox");
   private static final Uri CALLS = Uri.parse("content://call_log/calls");
-
-  private static final int MY_PERMISSIONS_REQUEST_CALL_LOG = 1;
-  private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 2;
 
   private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void onCallsBtClick(View view) {
-    if (!checkCallLogPermission()) return;
+    if (!PermissionHelper.checkCallLogPermission(this)) return;
     //checkCallLogPermission();
 
     ListView list = (ListView) findViewById(R.id.listView);
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void onSmsBtClick(View view) {
-    if (!checkSmsPermission()) return;
+    if (!PermissionHelper.checkSmsPermission(this)) return;
 
     ListView list = (ListView) findViewById(R.id.listView);
     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
@@ -208,74 +208,6 @@ public class MainActivity extends AppCompatActivity {
     managedCursor.close();
     return calls;
 
-  }
-
-  private boolean checkSmsPermission() {
-    // Here, thisActivity is the current activity
-    if (ContextCompat.checkSelfPermission(this,
-        Manifest.permission.READ_SMS)
-        != PackageManager.PERMISSION_GRANTED) {
-
-      // Should we show an explanation?
-      if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-          Manifest.permission.READ_SMS)) {
-
-        // Show an explanation to the user *asynchronously* -- don't block
-        // this thread waiting for the user's response! After the user
-        // sees the explanation, try again to request the permission.
-
-        Log.i(getLocalClassName(), "checkSmsPermission(): shouldShowRequestPermissionRationale");
-      } else {
-
-        // No explanation needed, we can request the permission.
-
-        ActivityCompat.requestPermissions(this,
-            new String[]{Manifest.permission.READ_SMS},
-            MY_PERMISSIONS_REQUEST_READ_SMS);
-
-        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-        // app-defined int constant. The callback method gets the
-        // result of the request.
-        Log.i(getLocalClassName(), "checkSmsPermission: request permission");
-      }
-      return false;
-    }
-    Log.i(getLocalClassName(), "checkSmsPermission: permission granted");
-    return true;
-  }
-
-  private boolean checkCallLogPermission() {
-    // Here, thisActivity is the current activity
-    if (ContextCompat.checkSelfPermission(this,
-        Manifest.permission.READ_CALL_LOG)
-        != PackageManager.PERMISSION_GRANTED) {
-
-      // Should we show an explanation?
-      if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-          Manifest.permission.READ_CALL_LOG)) {
-
-        // Show an explanation to the user *asynchronously* -- don't block
-        // this thread waiting for the user's response! After the user
-        // sees the explanation, try again to request the permission.
-
-        Log.i(getLocalClassName(), "checkCallLogPermission(): shouldShowRequestPermissionRationale");
-      } else {
-
-        // No explanation needed, we can request the permission.
-
-        ActivityCompat.requestPermissions(this,
-            new String[]{Manifest.permission.READ_CALL_LOG},
-            MY_PERMISSIONS_REQUEST_CALL_LOG);
-
-        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-        // app-defined int constant. The callback method gets the
-        // result of the request.
-        Log.i(getLocalClassName(), "checkCallLogPermission: request permission");
-      }
-      return false;
-    }
-    Log.i(getLocalClassName(), "checkCallLogPermission: permission granted");
-    return true;
   }
 
   /**

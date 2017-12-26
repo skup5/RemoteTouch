@@ -1,4 +1,4 @@
-package cz.zelenikr.remotetouch;
+package cz.zelenikr.remotetouch.helper;
 
 import android.app.Notification;
 import android.app.NotificationManager;

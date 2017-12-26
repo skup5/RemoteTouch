@@ -13,6 +13,8 @@ import android.widget.Toast;
 import java.util.Date;
 import java.util.Set;
 
+import cz.zelenikr.remotetouch.helper.NotificationHelper;
+
 /**
  * This service is handling notifications of other applications.
  *
