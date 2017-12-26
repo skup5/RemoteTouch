@@ -3,7 +3,6 @@ package cz.zelenikr.remotetouch;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.support.v4.app.NotificationCompat;
 
 /**
  * @author Roman Zelenik
@@ -21,7 +20,7 @@ public class NotificationHelper {
    * @param id
    */
   public static void notify(Context context, String title, String text, int id) {
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+    Notification.Builder builder = new Notification.Builder(context);
     builder.setContentTitle(title)
             .setContentText(text)
             .setSmallIcon(APP_ICON_ID)
@@ -31,13 +30,14 @@ public class NotificationHelper {
 
   /**
    * Shows immediately persistent notification on status bar
+   *
    * @param context
    * @param title
    * @param text
    * @param id
    */
-  public static void persistent(Context context, String title, String text, int id){
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+  public static void persistent(Context context, String title, String text, int id) {
+    Notification.Builder builder = new Notification.Builder(context);
     builder.setContentTitle(title)
             .setContentText(text)
             .setSmallIcon(APP_ICON_ID)
@@ -53,15 +53,15 @@ public class NotificationHelper {
    * @param id
    */
   public static void test(Context context, int id) {
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+    Notification.Builder builder = new Notification.Builder(context);
     builder.setContentTitle("Content title")
             .setContentText("Content text")
-            .setCategory(Notification.CATEGORY_SERVICE)
+//            .setCategory(Notification.CATEGORY_SERVICE)             // Require api level 21
             .setContentInfo("Content info")
             .setDefaults(Notification.DEFAULT_ALL)
             .setSubText("Sub text")
             .setTicker("Ticker")
-            .setVisibility(Notification.VISIBILITY_SECRET)
+//            .setVisibility(Notification.VISIBILITY_SECRET)              // Require api level 21
             .setSmallIcon(APP_ICON_ID)
             .setAutoCancel(true);
     getManager(context).notify(id, builder.build());

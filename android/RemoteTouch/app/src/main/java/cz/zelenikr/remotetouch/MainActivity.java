@@ -60,12 +60,13 @@ public class MainActivity extends AppCompatActivity {
 
   }
 
-
   @Override
   protected void onPostCreate(@Nullable Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
-    NotificationHelper.persistent(getApplicationContext(), getResources().getString(R.string.app_name), "Persistent notification", 1);
-    enableNotificationHandler();
+
+    if (enableNotificationHandler()) {
+      startService(new Intent(this, NotificationHandler.class));
+    }
   }
 
   @Override
@@ -277,27 +278,34 @@ public class MainActivity extends AppCompatActivity {
     return true;
   }
 
-  private void enableNotificationHandler() {
+  /**
+   * If isn't enabled, shows dialog to user. User can open system settings and enable NotificationHandler.
+   *
+   * @return true if enabled, false otherwise
+   */
+  private boolean enableNotificationHandler() {
     if (!isNotificationServiceEnabled()) {
       new AlertDialog.Builder(this)
               .setIcon(R.mipmap.ic_launcher)
-              .setTitle(R.string.app_name)
+              .setTitle(R.string.Application_Name)
               .setMessage(R.string.check_nl_permission)
               .setPositiveButton(
-                      R.string.yes,
+                      R.string.Actions_OK,
                       (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
               )
-              .setNegativeButton(R.string.no, (dialog, which) -> {
+              .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
               })
               .show();
+      return isNotificationServiceEnabled();
     }
+    return true;
   }
 
   /**
    * @return true if enabled, false otherwise
    */
   private boolean isNotificationServiceEnabled() {
-    String pkgName = getPackageName();
+    final String pkgName = getPackageName();
     final String flat = Settings.Secure.getString(getContentResolver(),
             ENABLED_NOTIFICATION_LISTENERS);
     if (!TextUtils.isEmpty(flat)) {
