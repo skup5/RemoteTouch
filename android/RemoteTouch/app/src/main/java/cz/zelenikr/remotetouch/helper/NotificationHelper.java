@@ -2,6 +2,7 @@ package cz.zelenikr.remotetouch.helper;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 
 /**
@@ -9,7 +10,7 @@ import android.content.Context;
  */
 public class NotificationHelper {
 
-  private static final int APP_ICON_ID = android.R.drawable.sym_def_app_icon;
+  public static final int APP_ICON_ID = android.R.drawable.sym_def_app_icon;
 
   /**
    * Shows immediately notification on status bar
@@ -22,9 +23,10 @@ public class NotificationHelper {
   public static void notify(Context context, String title, String text, int id) {
     Notification.Builder builder = new Notification.Builder(context);
     builder.setContentTitle(title)
-            .setContentText(text)
-            .setSmallIcon(APP_ICON_ID)
-            .setAutoCancel(true);
+        .setContentText(text)
+        .setSmallIcon(APP_ICON_ID)
+        .setShowWhen(true)
+        .setAutoCancel(true);
     getManager(context).notify(id, builder.build());
   }
 
@@ -39,31 +41,32 @@ public class NotificationHelper {
   public static void persistent(Context context, String title, String text, int id) {
     Notification.Builder builder = new Notification.Builder(context);
     builder.setContentTitle(title)
-            .setContentText(text)
-            .setSmallIcon(APP_ICON_ID)
-            .setOngoing(true)
-            .setAutoCancel(false);
+        .setContentText(text)
+        .setSmallIcon(APP_ICON_ID)
+        .setOngoing(true)
+        .setShowWhen(true)
+        .setAutoCancel(false);
     getManager(context).notify(id, builder.build());
   }
 
-  /**
-   * Shows immediately test notification with mostly texts
-   *
-   * @param context
-   * @param id
-   */
+    /**
+     * Shows immediately test notification with mostly texts
+     *
+     * @param context
+     * @param id
+     */
   public static void test(Context context, int id) {
     Notification.Builder builder = new Notification.Builder(context);
     builder.setContentTitle("Content title")
-            .setContentText("Content text")
+        .setContentText("Content text")
+        .setDefaults(Notification.DEFAULT_ALL)
+        .setSubText("Sub text")
+        .setTicker("Ticker")
 //            .setCategory(Notification.CATEGORY_SERVICE)             // Require api level 21
-            .setContentInfo("Content info")
-            .setDefaults(Notification.DEFAULT_ALL)
-            .setSubText("Sub text")
-            .setTicker("Ticker")
-//            .setVisibility(Notification.VISIBILITY_SECRET)              // Require api level 21
-            .setSmallIcon(APP_ICON_ID)
-            .setAutoCancel(true);
+//            .setVisibility(Notification.VISIBILITY_SECRET)          // Require api level 21
+        .setSmallIcon(APP_ICON_ID)
+        .setShowWhen(true)
+        .setAutoCancel(true);
     getManager(context).notify(id, builder.build());
   }
 
