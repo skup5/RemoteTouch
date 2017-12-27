@@ -44,7 +44,18 @@ public class NotificationHandler extends NotificationListenerService {
   }
 
   @Override
+  public void onDestroy() {
+    super.onDestroy();
+
+    Log.i(TAG, "Handler was destroyed");
+
+    onDestroyed();
+  }
+
+  @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
+    super.onStartCommand(intent, flags, startId);
+
     Log.i(TAG, "Handler is running");
 
     onStarted();
@@ -60,7 +71,7 @@ public class NotificationHandler extends NotificationListenerService {
 
     // We don't care about apps in filter
     if (appsFilterSet.contains(sbn.getPackageName())) {
-      return;
+     // return;
     }
 
     // Log to console
@@ -84,6 +95,10 @@ public class NotificationHandler extends NotificationListenerService {
     showPersistentNotification();
 
     this.appsFilterSet = loadFilterSet();
+  }
+
+  private void onDestroyed(){
+    removePersistentNotification();
   }
 
   private Set<String> loadFilterSet() {
@@ -172,5 +187,10 @@ public class NotificationHandler extends NotificationListenerService {
 
     // Get manager and show notification
     ((NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE)).notify(PERSISTENT_NOTIFICATION_ID, builder.build());
+  }
+
+  private void removePersistentNotification(){
+    // Get manager and remove notification
+    ((NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE)).cancel(PERSISTENT_NOTIFICATION_ID);
   }
 }
