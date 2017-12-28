@@ -9,16 +9,24 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.CallLog;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v17.leanback.widget.ArrayObjectAdapter;
+import android.support.v17.leanback.widget.ObjectAdapter;
+import android.support.v17.leanback.widget.Presenter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v17.leanback.widget.ItemBridgeAdapter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -147,37 +155,38 @@ public class MainActivity extends AppCompatActivity {
     if (!PermissionHelper.checkCallLogPermission(this)) return;
     //checkCallLogPermission();
 
-    ListView list = findViewById(R.id.listView);
-    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getCallDetails());
-    list.setAdapter(adapter);
+    fillListView(getCallDetails());
   }
 
   public void onSmsBtClick(View view) {
     if (!PermissionHelper.checkSmsPermission(this)) return;
 
-    ListView list = findViewById(R.id.listView);
-    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+    List<String> messageList = new ArrayList<>();
     String[] cols = new String[]{"date", "person", "address", "read", "body"};
 
     // returns last 3 received sms ordered by date (and unread)
     Cursor cursor = getContentResolver().query(SMS_INBOX, cols,
         "read=0", null, "read, date desc limit 3");
 
-    String message = "";
+    if (cursor == null) {
+      messageList.add(getResourceString(R.string.empty));
+    } else {
+      String message = "";
 
-    while (cursor.moveToNext()) {
-      message = cols[0].toUpperCase() + ": " + new Date(Long.valueOf(cursor.getString(0))) + "\n";
+      while (cursor.moveToNext()) {
+        message = cols[0].toUpperCase() + ": " + new Date(Long.valueOf(cursor.getString(0))) + "\n";
 
-      for (int i = 1; i < cols.length; i++)
-        message += cols[i].toUpperCase() + ": " + cursor.getString(i) + "\n";
+        for (int i = 1; i < cols.length; i++)
+          message += cols[i].toUpperCase() + ": " + cursor.getString(i) + "\n";
 
-      adapter.add(message);
+        messageList.add(message);
+      }
     }
-    list.setAdapter(adapter);
+
+    fillListView(messageList);
   }
 
   public void onNotificationsBtClick(View view) {
-    ListView list = findViewById(R.id.listView);
     List<String> notificationList;
 
     // Load from shared preferences
@@ -187,10 +196,9 @@ public class MainActivity extends AppCompatActivity {
     notificationList = loadStoredNotifications();
 
     if (notificationList.isEmpty())
-      notificationList.add("Prázdný");
+      notificationList.add(getResourceString(R.string.empty));
 
-    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, notificationList);
-    list.setAdapter(adapter);
+    fillListView(notificationList);
   }
 
   private List<String> getCallDetails() {
@@ -199,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
     Cursor managedCursor = getContentResolver().query(CALLS, null, null, null, "date desc");
     if (managedCursor == null) {
-      calls.add("-empty cursor-");
+      calls.add(getResourceString(R.string.empty));
       return calls;
     }
     int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
@@ -258,6 +266,21 @@ public class MainActivity extends AppCompatActivity {
     return notificationList;
   }
 
+  private void fillListView(List<String> items) {
+    /*
+    // Optimized list for large data set
+    RecyclerView list = findViewById(R.id.recyclerView);
+    list.setLayoutManager(new LinearLayoutManager(this));
+    // Init data source
+    RecyclerView.Adapter recyclerAdapter = new ArrayRecyclerAdapter(items);
+    // Set data source
+    list.setAdapter(recyclerAdapter);
+    */
+
+    ListView list = findViewById(R.id.listView);
+    list.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items));
+  }
+
   /**
    * If isn't enabled, shows dialog to user. User can open system settings and enable NotificationHandler.
    *
@@ -301,4 +324,10 @@ public class MainActivity extends AppCompatActivity {
     }
     return false;
   }
+
+  @NonNull
+  private String getResourceString(int id) {
+    return getResources().getString(id);
+  }
+
 }

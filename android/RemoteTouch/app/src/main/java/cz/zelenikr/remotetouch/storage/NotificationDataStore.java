@@ -21,9 +21,9 @@ public class NotificationDataStore implements DataStore<NotificationWrapper> {
   private SQLiteDatabase database;
   private final NotificationDbHelper dbHelper;
   private final String[] allColumns = {
-          NotificationEntry._ID,
-          NotificationEntry.COLUMN_NAME_APP,
-          NotificationEntry.COLUMN_NAME_TIMESTAMP
+      NotificationEntry._ID,
+      NotificationEntry.COLUMN_NAME_APP,
+      NotificationEntry.COLUMN_NAME_TIMESTAMP
   };
 
   public NotificationDataStore(Context context) {
@@ -68,10 +68,9 @@ public class NotificationDataStore implements DataStore<NotificationWrapper> {
   public List<NotificationWrapper> getAll() {
     List<NotificationWrapper> notificationWrappers = new ArrayList<>();
     Cursor cursor = database.query(
-            NotificationEntry.TABLE_NAME,
-            allColumns,
-            null, null, null, null,
-            NotificationEntry.COLUMN_NAME_TIMESTAMP
+        NotificationEntry.TABLE_NAME,
+        allColumns,
+        null, null, null, null, null
     );
     cursor.moveToFirst();
     while (!cursor.isAfterLast()) {

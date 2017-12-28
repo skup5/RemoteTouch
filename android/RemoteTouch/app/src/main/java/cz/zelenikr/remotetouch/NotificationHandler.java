@@ -37,6 +37,7 @@ public class NotificationHandler extends NotificationListenerService {
 
   private Set<String> appsFilterSet = new ArraySet<>();
   private NotificationDataStore dataStore = new NotificationDataStore(this);
+  private final boolean makeTousts = false;
 
   public static String getLocalClassName() {
     return NotificationHandler.class.getSimpleName();
@@ -69,20 +70,18 @@ public class NotificationHandler extends NotificationListenerService {
 
     // Restart service if is killed
     return START_REDELIVER_INTENT;
-//    return START_STICKY;
   }
 
   @Override
   public void onNotificationPosted(StatusBarNotification sbn) {
     // Current API level is greater then min API level (18)
-    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2)
-    {
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
       super.onNotificationPosted(sbn);
     }
 
     // We don't care about apps in filter
     if (appsFilterSet.contains(sbn.getPackageName())) {
-     // return;
+      // return;
     }
 
     // Log to console
@@ -91,18 +90,21 @@ public class NotificationHandler extends NotificationListenerService {
     // Increment notification counter for statistics
     incrementNotificationCounter(sbn);
 
-    Toast.makeText(this, "Notification posted (" + sbn.getPackageName() + ")", Toast.LENGTH_SHORT).show();
+    if (makeTousts)
+      Toast.makeText(this, "Notification posted (" + sbn.getPackageName() + ")", Toast.LENGTH_SHORT).show();
   }
 
   @Override
   public void onNotificationRemoved(StatusBarNotification sbn) {
     // Current API level is greater then min API level (18)
-    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2)
-    {
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
       super.onNotificationRemoved(sbn);
     }
+
     Log.i(TAG, "Notification (" + sbn.getPackageName() + ") removed");
-    Toast.makeText(this, "Notification removed (" + sbn.getPackageName() + ")", Toast.LENGTH_SHORT).show();
+
+    if (makeTousts)
+      Toast.makeText(this, "Notification removed (" + sbn.getPackageName() + ")", Toast.LENGTH_SHORT).show();
   }
 
   private void onStarted() {
@@ -113,7 +115,7 @@ public class NotificationHandler extends NotificationListenerService {
     this.dataStore.open();
   }
 
-  private void onDestroyed(){
+  private void onDestroyed() {
     removePersistentNotification();
     this.dataStore.close();
   }
@@ -169,7 +171,7 @@ public class NotificationHandler extends NotificationListenerService {
 //    count++;
 //    sharedPreferences.edit().putInt(sbn.getPackageName(), count).apply();
 
-    NotificationWrapper wrapper = new NotificationWrapper(sbn.getPackageName(), sbn.getNotification().when);
+    NotificationWrapper wrapper = new NotificationWrapper(sbn.getPackageName(), sbn.getPostTime());
     dataStore.add(wrapper);
   }
 
@@ -205,7 +207,7 @@ public class NotificationHandler extends NotificationListenerService {
     ((NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE)).notify(PERSISTENT_NOTIFICATION_ID, builder.build());
   }
 
-  private void removePersistentNotification(){
+  private void removePersistentNotification() {
     // Get manager and remove notification
     ((NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE)).cancel(PERSISTENT_NOTIFICATION_ID);
   }

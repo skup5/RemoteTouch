@@ -10,4 +10,5 @@
 
     <string name="check_nl_permission">Zkontrolujte povolení pro odchyt notifikací.</string>
     <string name="permission">Oprávnění</string>
+    <string name="empty">Prázdný</string>
 </resources>
