@@ -16,7 +16,7 @@ import cz.zelenikr.remotetouch.storage.NotificationContract.NotificationEntry;
 /**
  * @author Roman Zelenik
  */
-public class NotificationDataStore implements DataStore<NotificationWrapper>, Closeable {
+public class NotificationDataStore implements DataStore<NotificationWrapper> {
 
   private SQLiteDatabase database;
   private final NotificationDbHelper dbHelper;
@@ -34,8 +34,7 @@ public class NotificationDataStore implements DataStore<NotificationWrapper>, Cl
     database = dbHelper.getWritableDatabase();
   }
 
-  @Override
-  public void close() throws IOException {
+  public void close() {
     dbHelper.close();
   }
 
@@ -72,7 +71,7 @@ public class NotificationDataStore implements DataStore<NotificationWrapper>, Cl
             NotificationEntry.TABLE_NAME,
             allColumns,
             null, null, null, null,
-            NotificationEntry.COLUMN_NAME_APP
+            NotificationEntry.COLUMN_NAME_TIMESTAMP
     );
     cursor.moveToFirst();
     while (!cursor.isAfterLast()) {
@@ -84,10 +83,8 @@ public class NotificationDataStore implements DataStore<NotificationWrapper>, Cl
   }
 
   private NotificationWrapper cursorToNotificationWrapper(Cursor cursor) {
-    NotificationWrapper notificationWrapper = new NotificationWrapper();
+    NotificationWrapper notificationWrapper = new NotificationWrapper(cursor.getString(1), cursor.getLong(2));
     notificationWrapper.setId(cursor.getLong(0));
-    notificationWrapper.setApplication(cursor.getString(1));
-    notificationWrapper.setTimestamp(cursor.getLong(2));
     return notificationWrapper;
   }
 }

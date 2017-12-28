@@ -19,6 +19,14 @@ public class NotificationWrapper {
    */
   private long timestamp;
 
+  public NotificationWrapper() {
+  }
+
+  public NotificationWrapper(String application, long timestamp) {
+    this.application = application;
+    this.timestamp = timestamp;
+  }
+
   public long getId() {
     return id;
   }

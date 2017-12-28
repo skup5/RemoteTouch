@@ -29,8 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
+import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 import static cz.zelenikr.remotetouch.helper.PermissionHelper.MY_PERMISSIONS_REQUEST_CALL_LOG;
 import static cz.zelenikr.remotetouch.helper.PermissionHelper.MY_PERMISSIONS_REQUEST_READ_SMS;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
   private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
+  private final NotificationDataStore notificationDataStore = new NotificationDataStore(this);
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
+    notificationDataStore.open();
+  }
+
+  @Override
+  protected void onDestroy() {
+    notificationDataStore.close();
+    super.onDestroy();
   }
 
   @Override
@@ -166,20 +176,20 @@ public class MainActivity extends AppCompatActivity {
     list.setAdapter(adapter);
   }
 
-  public void onNotificationsBtClick(View view){
+  public void onNotificationsBtClick(View view) {
     ListView list = findViewById(R.id.listView);
-    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+    List<String> notificationList;
 
-    // Load preferences
-    Map<String, ?> prefs = getSharedPreferences(NotificationHandler.class.getSimpleName(), MODE_PRIVATE).getAll();
-    if(prefs.isEmpty()) adapter.add("Prázdný");
-    for (String key : prefs.keySet()) {
-      Object pref = prefs.get(key);
-      String printVal =  key + " : " + pref;
+    // Load from shared preferences
+//    notificationList = loadPreferences(NotificationHandler.getLocalClassName());
 
-      adapter.add(printVal);
-    }
+    // Load from sqlite db
+    notificationList = loadStoredNotifications();
 
+    if (notificationList.isEmpty())
+      notificationList.add("Prázdný");
+
+    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, notificationList);
     list.setAdapter(adapter);
   }
 
@@ -231,6 +241,23 @@ public class MainActivity extends AppCompatActivity {
 
   }
 
+  private List<String> loadPreferences(String className) {
+    List<String> preferences = new ArrayList<>();
+    Map<String, ?> prefs = getSharedPreferences(className, MODE_PRIVATE).getAll();
+    for (Map.Entry entry : prefs.entrySet()) {
+      preferences.add(entry.getKey() + " : " + entry.getValue());
+    }
+    return preferences;
+  }
+
+  private List<String> loadStoredNotifications() {
+    List<String> notificationList = new ArrayList<>();
+    for (NotificationWrapper wrapper : notificationDataStore.getAll()) {
+      notificationList.add(new Date(wrapper.getTimestamp()).toString() + " " + wrapper.getApplication());
+    }
+    return notificationList;
+  }
+
   /**
    * If isn't enabled, shows dialog to user. User can open system settings and enable NotificationHandler.
    *
@@ -239,16 +266,16 @@ public class MainActivity extends AppCompatActivity {
   private boolean enableNotificationHandler() {
     if (!isNotificationServiceEnabled()) {
       new AlertDialog.Builder(this)
-              .setIcon(R.mipmap.ic_launcher)
-              .setTitle(R.string.Application_Name)
-              .setMessage(R.string.check_nl_permission)
-              .setPositiveButton(
-                      R.string.Actions_OK,
-                      (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-              )
-              .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
-              })
-              .show();
+          .setIcon(R.mipmap.ic_launcher)
+          .setTitle(R.string.Application_Name)
+          .setMessage(R.string.check_nl_permission)
+          .setPositiveButton(
+              R.string.Actions_OK,
+              (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+          )
+          .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
+          })
+          .show();
       return isNotificationServiceEnabled();
     }
     return true;
@@ -260,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
   private boolean isNotificationServiceEnabled() {
     final String pkgName = getPackageName();
     final String flat = Settings.Secure.getString(getContentResolver(),
-            ENABLED_NOTIFICATION_LISTENERS);
+        ENABLED_NOTIFICATION_LISTENERS);
     if (!TextUtils.isEmpty(flat)) {
       final String[] names = flat.split(":");
       for (int i = 0; i < names.length; i++) {

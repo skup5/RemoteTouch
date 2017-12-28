@@ -19,7 +19,9 @@ import android.widget.Toast;
 import java.util.Date;
 import java.util.Set;
 
+import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
+import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
 
@@ -30,10 +32,15 @@ import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
  */
 public class NotificationHandler extends NotificationListenerService {
 
-  private static final String TAG = NotificationHandler.class.getSimpleName();
+  private static final String TAG = getLocalClassName();
   private static final int PERSISTENT_NOTIFICATION_ID = 1;
 
   private Set<String> appsFilterSet = new ArraySet<>();
+  private NotificationDataStore dataStore = new NotificationDataStore(this);
+
+  public static String getLocalClassName() {
+    return NotificationHandler.class.getSimpleName();
+  }
 
   @Override
   public void onCreate() {
@@ -61,13 +68,17 @@ public class NotificationHandler extends NotificationListenerService {
     onStarted();
 
     // Restart service if is killed
-//    return START_REDELIVER_INTENT;
-    return START_STICKY;
+    return START_REDELIVER_INTENT;
+//    return START_STICKY;
   }
 
   @Override
   public void onNotificationPosted(StatusBarNotification sbn) {
-    super.onNotificationPosted(sbn);
+    // Current API level is greater then min API level (18)
+    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2)
+    {
+      super.onNotificationPosted(sbn);
+    }
 
     // We don't care about apps in filter
     if (appsFilterSet.contains(sbn.getPackageName())) {
@@ -80,14 +91,18 @@ public class NotificationHandler extends NotificationListenerService {
     // Increment notification counter for statistics
     incrementNotificationCounter(sbn);
 
-    Toast.makeText(this, "Notification posted (" + sbn.getPackageName() + ")", Toast.LENGTH_LONG).show();
+    Toast.makeText(this, "Notification posted (" + sbn.getPackageName() + ")", Toast.LENGTH_SHORT).show();
   }
 
   @Override
   public void onNotificationRemoved(StatusBarNotification sbn) {
-    super.onNotificationRemoved(sbn);
+    // Current API level is greater then min API level (18)
+    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2)
+    {
+      super.onNotificationRemoved(sbn);
+    }
     Log.i(TAG, "Notification (" + sbn.getPackageName() + ") removed");
-    Toast.makeText(this, "Notification removed (" + sbn.getPackageName() + ")", Toast.LENGTH_LONG).show();
+    Toast.makeText(this, "Notification removed (" + sbn.getPackageName() + ")", Toast.LENGTH_SHORT).show();
   }
 
   private void onStarted() {
@@ -95,10 +110,12 @@ public class NotificationHandler extends NotificationListenerService {
     showPersistentNotification();
 
     this.appsFilterSet = loadFilterSet();
+    this.dataStore.open();
   }
 
   private void onDestroyed(){
     removePersistentNotification();
+    this.dataStore.close();
   }
 
   private Set<String> loadFilterSet() {
@@ -112,10 +129,6 @@ public class NotificationHandler extends NotificationListenerService {
   @NonNull
   private String getResourceString(int id) {
     return getResources().getString(id);
-  }
-
-  private String getLocalClassName() {
-    return getClass().getSimpleName();
   }
 
   private void logNotification(StatusBarNotification sbn) {
@@ -151,10 +164,13 @@ public class NotificationHandler extends NotificationListenerService {
   }
 
   private void incrementNotificationCounter(StatusBarNotification sbn) {
-    SharedPreferences sharedPreferences = getSharedPreferences(getLocalClassName(), MODE_PRIVATE);
-    int count = sharedPreferences.getInt(sbn.getPackageName(), 0);
-    count++;
-    sharedPreferences.edit().putInt(sbn.getPackageName(), count).apply();
+//    SharedPreferences sharedPreferences = getSharedPreferences(getLocalClassName(), MODE_PRIVATE);
+//    int count = sharedPreferences.getInt(sbn.getPackageName(), 0);
+//    count++;
+//    sharedPreferences.edit().putInt(sbn.getPackageName(), count).apply();
+
+    NotificationWrapper wrapper = new NotificationWrapper(sbn.getPackageName(), sbn.getNotification().when);
+    dataStore.add(wrapper);
   }
 
   private void showPersistentNotification() {
