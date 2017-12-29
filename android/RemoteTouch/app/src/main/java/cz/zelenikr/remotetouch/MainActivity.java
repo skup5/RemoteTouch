@@ -6,36 +6,27 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.CallLog;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v17.leanback.widget.ArrayObjectAdapter;
-import android.support.v17.leanback.widget.ObjectAdapter;
-import android.support.v17.leanback.widget.Presenter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v17.leanback.widget.ItemBridgeAdapter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
@@ -260,9 +251,14 @@ public class MainActivity extends AppCompatActivity {
 
   private List<String> loadStoredNotifications() {
     List<String> notificationList = new ArrayList<>();
-    for (NotificationWrapper wrapper : notificationDataStore.getAll()) {
+    List<NotificationWrapper> notifications = notificationDataStore.getAll();
+    // Sort descending by ID
+    Collections.sort(notifications, (o1, o2) -> Long.compare(o2.getId(),o1.getId()));
+    // Map to strings
+    for (NotificationWrapper wrapper : notifications) {
       notificationList.add(new Date(wrapper.getTimestamp()).toString() + " " + wrapper.getApplication());
     }
+
     return notificationList;
   }
 
