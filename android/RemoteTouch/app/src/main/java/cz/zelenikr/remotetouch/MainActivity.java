@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     super.onPostCreate(savedInstanceState);
 
     if (enableNotificationHandler()) {
-      startService(new Intent(this, NotificationHandler.class));
+      startService(new Intent(this, NotificationAccessService.class));
     }
   }
 
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> notificationList;
 
     // Load from shared preferences
-//    notificationList = loadPreferences(NotificationHandler.getLocalClassName());
+//    notificationList = loadPreferences(NotificationAccessService.getLocalClassName());
 
     // Load from sqlite db
     notificationList = loadStoredNotifications();
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   /**
-   * If isn't enabled, shows dialog to user. User can open system settings and enable NotificationHandler.
+   * If isn't enabled, shows dialog to user. User can open system settings and enable NotificationAccessService.
    *
    * @return true if enabled, false otherwise
    */

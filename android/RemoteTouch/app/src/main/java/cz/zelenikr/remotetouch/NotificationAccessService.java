@@ -5,8 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
@@ -20,7 +18,7 @@ import java.util.Date;
 import java.util.Set;
 
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
-import cz.zelenikr.remotetouch.helper.NotificationHelper;
+import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
@@ -30,7 +28,7 @@ import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
  *
  * @author Roman Zelenik
  */
-public class NotificationHandler extends NotificationListenerService {
+public class NotificationAccessService extends NotificationListenerService {
 
   private static final String TAG = getLocalClassName();
   private static final int PERSISTENT_NOTIFICATION_ID = 1;
@@ -40,7 +38,7 @@ public class NotificationHandler extends NotificationListenerService {
   private final boolean makeTousts = false;
 
   public static String getLocalClassName() {
-    return NotificationHandler.class.getSimpleName();
+    return NotificationAccessService.class.getSimpleName();
   }
 
   @Override
@@ -74,8 +72,8 @@ public class NotificationHandler extends NotificationListenerService {
 
   @Override
   public void onNotificationPosted(StatusBarNotification sbn) {
-    // Current API level is greater then min API level (18)
-    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+    // Current API level has to be greater then min API level (18)
+    if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.JELLY_BEAN_MR2 + 1)) {
       super.onNotificationPosted(sbn);
     }
 
@@ -96,8 +94,8 @@ public class NotificationHandler extends NotificationListenerService {
 
   @Override
   public void onNotificationRemoved(StatusBarNotification sbn) {
-    // Current API level is greater then min API level (18)
-    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
+    // Current API level has to be greater then min API level (18)
+    if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.JELLY_BEAN_MR2 + 1)) {
       super.onNotificationRemoved(sbn);
     }
 
@@ -147,7 +145,7 @@ public class NotificationHandler extends NotificationListenerService {
     Log.i(TAG, "TICKER:" + tickerText);
 
     // Require API >= 21
-    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.LOLLIPOP)) {
       String category = notification.category != null ? notification.category : "null";
       String visibility = notification.visibility == Notification.VISIBILITY_PRIVATE ? "PRIVATE" : notification.visibility == Notification.VISIBILITY_PUBLIC ? "PUBLIC" : "SECRET";
       Log.i(TAG, "CATEGORY: " + category);
@@ -155,7 +153,7 @@ public class NotificationHandler extends NotificationListenerService {
     }
 
     // Require API >= 19
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+    if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.KITKAT)) {
       Bundle extras = sbn.getNotification().extras;
 
       Log.i(TAG, "EXTRAS:");
@@ -184,24 +182,24 @@ public class NotificationHandler extends NotificationListenerService {
 
     // Creates the PendingIntent
     PendingIntent notifyPendingIntent =
-        PendingIntent.getActivity(
-            this,
-            0,
-            notifyIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        );
+            PendingIntent.getActivity(
+                    this,
+                    0,
+                    notifyIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
 
     Notification.Builder builder = new Notification.Builder(getApplicationContext());
 
     // Prepare notification
     builder.setContentTitle(getResourceString(R.string.Application_Name))
-        .setContentText(getResourceString(R.string.NotificationHandler_PersistentNotification_Text))
-        .setSmallIcon(APP_ICON_ID)
-        .setShowWhen(true)
-        .setAutoCancel(false)
-        // Set persistent
-        .setOngoing(true)
-        .setContentIntent(notifyPendingIntent);
+            .setContentText(getResourceString(R.string.NotificationAccessService_PersistentNotification_Text))
+            .setSmallIcon(APP_ICON_ID)
+            .setShowWhen(true)
+            .setAutoCancel(false)
+            // Set persistent
+            .setOngoing(true)
+            .setContentIntent(notifyPendingIntent);
 
     // Get manager and show notification
     ((NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE)).notify(PERSISTENT_NOTIFICATION_ID, builder.build());

@@ -6,7 +6,8 @@
     <string name="Actions.Yes">Ano</string>
     <string name="Actions.No">Ne</string>
 
-    <string name="NotificationHandler.PersistentNotification.Text">Běží...</string>
+    <string name="NotificationAccessService.PersistentNotification.Text">Běží...</string>
+    <string name="NotificationAccessService.Label">NotificationAccessService</string>
 
     <string name="check_nl_permission">Zkontrolujte povolení pro odchyt notifikací.</string>
     <string name="permission">Oprávnění</string>
