@@ -253,7 +253,9 @@ public class MainActivity extends AppCompatActivity {
     List<String> notificationList = new ArrayList<>();
     List<NotificationWrapper> notifications = notificationDataStore.getAll();
     // Sort descending by ID
-    Collections.sort(notifications, (o1, o2) -> Long.compare(o2.getId(),o1.getId()));
+    Collections.sort(notifications, (o1, o2) -> {
+      return (int) (o2.getId() - o1.getId());
+    });
     // Map to strings
     for (NotificationWrapper wrapper : notifications) {
       notificationList.add(new Date(wrapper.getTimestamp()).toString() + " " + wrapper.getApplication());
