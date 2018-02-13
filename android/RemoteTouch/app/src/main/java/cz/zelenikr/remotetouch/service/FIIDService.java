@@ -40,5 +40,6 @@ public class FIIDService extends FirebaseInstanceIdService {
    */
   private void sendRegistrationToServer(String token) {
     // TODO: Implement this method to send token to your app server.
+    Log.w(TAG, "sendRegistrationToServer(token) is not implemented yet");
   }
 }
