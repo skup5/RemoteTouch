@@ -8,6 +8,8 @@
         android:minSdkVersion="18"
         android:targetSdkVersion="26"/>
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_SMS"/>
     <uses-permission android:name="android.permission.READ_CALL_LOG"/>
 
@@ -31,6 +33,15 @@
             </intent-filter>
 
         </activity>
+
+        <!--<receiver-->
+            <!--android:name=".receiver.EventReceiver">-->
+
+            <!--<intent-filter>-->
+                <!--<action android:name="cz.zelenikr.remotetouch.action.NEW_EVENT"/>-->
+            <!--</intent-filter>-->
+
+        <!--</receiver>-->
 
         <service
             android:name=".NotificationAccessService"

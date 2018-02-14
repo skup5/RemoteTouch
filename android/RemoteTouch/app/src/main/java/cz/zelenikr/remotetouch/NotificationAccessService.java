@@ -5,20 +5,27 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.ArraySet;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.Set;
 
+import cz.zelenikr.remotetouch.data.EEventType;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
+import cz.zelenikr.remotetouch.network.SimpleRestClient;
+import cz.zelenikr.remotetouch.receiver.EventReceiver;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
@@ -32,9 +39,11 @@ public class NotificationAccessService extends NotificationListenerService {
 
   private static final String TAG = getLocalClassName();
   private static final int PERSISTENT_NOTIFICATION_ID = 1;
+  private static final EEventType EVENT_TYPE = EEventType.NOTIFICATION;
 
   private Set<String> appsFilterSet = new ArraySet<>();
   private NotificationDataStore dataStore = new NotificationDataStore(this);
+  private EventReceiver eventReceiver =new EventReceiver();
   private final boolean makeTousts = false;
 
   public static String getLocalClassName() {
@@ -44,18 +53,23 @@ public class NotificationAccessService extends NotificationListenerService {
   @Override
   public void onCreate() {
     super.onCreate();
-    Log.i(TAG, "Handler was created");
 
     onStarted();
+
+    LocalBroadcastManager.getInstance(this).registerReceiver(eventReceiver, new IntentFilter(getString(R.string.Intent_Action_NewEvent)));
+
+    Log.i(TAG, "Handler was created");
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
 
-    Log.i(TAG, "Handler was destroyed");
-
     onDestroyed();
+
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(eventReceiver);
+
+    Log.i(TAG, "Handler was destroyed");
   }
 
   @Override
@@ -77,13 +91,16 @@ public class NotificationAccessService extends NotificationListenerService {
       super.onNotificationPosted(sbn);
     }
 
-    // We don't care about apps in filter
-    if (appsFilterSet.contains(sbn.getPackageName())) {
+    // We care only about apps in filter
+    if (!appsFilterSet.contains(sbn.getPackageName())) {
       // return;
     }
 
     // Log to console
     logNotification(sbn);
+
+    // Send to REST server
+    sendEvent(sbn);
 
     // Increment notification counter for statistics
     incrementNotificationCounter(sbn);
@@ -124,11 +141,6 @@ public class NotificationAccessService extends NotificationListenerService {
     ArraySet<String> filterSet = new ArraySet<>(1);
     filterSet.add(getPackageName());
     return filterSet;
-  }
-
-  @NonNull
-  private String getResourceString(int id) {
-    return getResources().getString(id);
   }
 
   private void logNotification(StatusBarNotification sbn) {
@@ -192,8 +204,8 @@ public class NotificationAccessService extends NotificationListenerService {
     Notification.Builder builder = new Notification.Builder(getApplicationContext());
 
     // Prepare notification
-    builder.setContentTitle(getResourceString(R.string.Application_Name))
-            .setContentText(getResourceString(R.string.NotificationAccessService_PersistentNotification_Text))
+    builder.setContentTitle(getString(R.string.Application_Name))
+            .setContentText(getString(R.string.NotificationAccessService_PersistentNotification_Text))
             .setSmallIcon(APP_ICON_ID)
             .setShowWhen(true)
             .setAutoCancel(false)
@@ -208,5 +220,13 @@ public class NotificationAccessService extends NotificationListenerService {
   private void removePersistentNotification() {
     // Get manager and remove notification
     ((NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE)).cancel(PERSISTENT_NOTIFICATION_ID);
+  }
+
+  private void sendEvent(StatusBarNotification sbn) {
+    Intent intent = new Intent(getString(R.string.Intent_Action_NewEvent));
+    intent.putExtra("packageName", sbn.getPackageName());
+    intent.putExtra("event", EVENT_TYPE.name());
+
+    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
   }
 }

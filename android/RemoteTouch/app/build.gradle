@@ -27,5 +27,10 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:support-core-utils:26.1.0'
+    // https://mvnrepository.com/artifact/com.google.http-client/google-http-client-android
+    compile ('com.google.http-client:google-http-client-android:1.23.0') {exclude group: 'com.google.code.findbugs'}
+    // https://mvnrepository.com/artifact/com.google.http-client/google-http-client-gson
+    compile ('com.google.http-client:google-http-client-gson:1.23.0') {exclude group: 'com.google.code.findbugs'}
     testCompile 'junit:junit:4.12'
 }
