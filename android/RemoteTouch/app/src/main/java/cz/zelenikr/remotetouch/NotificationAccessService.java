@@ -5,27 +5,22 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.ArraySet;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 import java.util.Set;
 
 import cz.zelenikr.remotetouch.data.EEventType;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
-import cz.zelenikr.remotetouch.network.SimpleRestClient;
 import cz.zelenikr.remotetouch.receiver.EventReceiver;
+import cz.zelenikr.remotetouch.service.EventService;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
@@ -56,7 +51,7 @@ public class NotificationAccessService extends NotificationListenerService {
 
     onStarted();
 
-    LocalBroadcastManager.getInstance(this).registerReceiver(eventReceiver, new IntentFilter(getString(R.string.Intent_Action_NewEvent)));
+//    LocalBroadcastManager.getInstance(this).registerReceiver(eventReceiver, new IntentFilter(getString(R.string.Intent_Action_NewEvent)));
 
     Log.i(TAG, "Handler was created");
   }
@@ -67,7 +62,7 @@ public class NotificationAccessService extends NotificationListenerService {
 
     onDestroyed();
 
-    LocalBroadcastManager.getInstance(this).unregisterReceiver(eventReceiver);
+//    LocalBroadcastManager.getInstance(this).unregisterReceiver(eventReceiver);
 
     Log.i(TAG, "Handler was destroyed");
   }
@@ -124,14 +119,14 @@ public class NotificationAccessService extends NotificationListenerService {
 
   private void onStarted() {
     // Show persistent notification
-    showPersistentNotification();
+    //showPersistentNotification();
 
     this.appsFilterSet = loadFilterSet();
     this.dataStore.open();
   }
 
   private void onDestroyed() {
-    removePersistentNotification();
+    //removePersistentNotification();
     this.dataStore.close();
   }
 
@@ -223,10 +218,14 @@ public class NotificationAccessService extends NotificationListenerService {
   }
 
   private void sendEvent(StatusBarNotification sbn) {
-    Intent intent = new Intent(getString(R.string.Intent_Action_NewEvent));
+//    Intent intent = new Intent(getString(R.string.Intent_Action_NewEvent));
+//    Intent intent = new Intent(this, EventReceiver.class);
+    Intent intent = new Intent(this, EventService.class);
     intent.putExtra("packageName", sbn.getPackageName());
     intent.putExtra("event", EVENT_TYPE.name());
 
-    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    //LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    startService(intent);
+
   }
 }

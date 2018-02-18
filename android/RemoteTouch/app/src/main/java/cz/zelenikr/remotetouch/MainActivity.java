@@ -31,6 +31,7 @@ import java.util.Map;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
+import cz.zelenikr.remotetouch.service.EventService;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 import static cz.zelenikr.remotetouch.helper.PermissionHelper.MY_PERMISSIONS_REQUEST_CALL_LOG;
@@ -77,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
   protected void onPostCreate(@Nullable Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
 
+    startService(new Intent(this, EventService.class));
+
     if (enableNotificationHandler()) {
       startService(new Intent(this, NotificationAccessService.class));
     }
@@ -111,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
       case MY_PERMISSIONS_REQUEST_CALL_LOG: {
         // If request is cancelled, the result arrays are empty.
         if (grantResults.length > 0
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
           // permission was granted, yay! Do the
           // contacts-related task you need to do.
@@ -126,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
       case MY_PERMISSIONS_REQUEST_READ_SMS: {
         // If request is cancelled, the result arrays are empty.
         if (grantResults.length > 0
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
           onSmsBtClick(findViewById(R.id.smsBt));
         } else {
@@ -157,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
     // returns last 3 received sms ordered by date (and unread)
     Cursor cursor = getContentResolver().query(SMS_INBOX, cols,
-        "read=0", null, "read, date desc limit 3");
+            "read=0", null, "read, date desc limit 3");
 
     if (cursor == null) {
       messageList.add(getResourceString(R.string.empty));
@@ -230,9 +233,9 @@ public class MainActivity extends AppCompatActivity {
           break;
       }
       callDetail = "\nIs new:---" + (callIsNew == 1 ? "yes" : "no")
-          + "\nPhone Number:--- " + phNumber + " \nCall Type:--- "
-          + dir + " \nCall Date:--- " + callDayTime
-          + " \nCall duration in sec :--- " + callDuration;
+              + "\nPhone Number:--- " + phNumber + " \nCall Type:--- "
+              + dir + " \nCall Date:--- " + callDayTime
+              + " \nCall duration in sec :--- " + callDuration;
       calls.add(callDetail);
     }
     managedCursor.close();
@@ -287,16 +290,16 @@ public class MainActivity extends AppCompatActivity {
   private boolean enableNotificationHandler() {
     if (!isNotificationServiceEnabled()) {
       new AlertDialog.Builder(this)
-          .setIcon(R.mipmap.ic_launcher)
-          .setTitle(R.string.Application_Name)
-          .setMessage(R.string.check_nl_permission)
-          .setPositiveButton(
-              R.string.Actions_OK,
-              (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-          )
-          .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
-          })
-          .show();
+              .setIcon(R.mipmap.ic_launcher)
+              .setTitle(R.string.Application_Name)
+              .setMessage(R.string.check_nl_permission)
+              .setPositiveButton(
+                      R.string.Actions_OK,
+                      (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+              )
+              .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
+              })
+              .show();
       return isNotificationServiceEnabled();
     }
     return true;
@@ -308,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
   private boolean isNotificationServiceEnabled() {
     final String pkgName = getPackageName();
     final String flat = Settings.Secure.getString(getContentResolver(),
-        ENABLED_NOTIFICATION_LISTENERS);
+            ENABLED_NOTIFICATION_LISTENERS);
     if (!TextUtils.isEmpty(flat)) {
       final String[] names = flat.split(":");
       for (int i = 0; i < names.length; i++) {

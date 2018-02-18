@@ -34,14 +34,17 @@
 
         </activity>
 
-        <!--<receiver-->
-            <!--android:name=".receiver.EventReceiver">-->
+        <!--<receiver android:name=".receiver.EventReceiver">-->
 
-            <!--<intent-filter>-->
-                <!--<action android:name="cz.zelenikr.remotetouch.action.NEW_EVENT"/>-->
-            <!--</intent-filter>-->
+        <!--<intent-filter>-->
+        <!--<action android:name="cz.zelenikr.remotetouch.action.NEW_EVENT"/>-->
+        <!--</intent-filter>-->
 
         <!--</receiver>-->
+
+        <service android:name=".service.EventService"
+                 android:label="@string/EventService.Label"
+                 android:exported="false"/>
 
         <service
             android:name=".NotificationAccessService"
