@@ -3,6 +3,7 @@ package cz.zelenikr.remotetouch.service;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -39,6 +40,9 @@ public class NotificationAccessService extends NotificationListenerService {
   private Set<String> appsFilterSet = new ArraySet<>();
   private NotificationDataStore dataStore = new NotificationDataStore(this);
   private final boolean makeTousts = false;
+  private static final ComponentName COMPONENT_NAME =
+          new ComponentName("cz.zelenikr.remotetouch", getLocalClassName());
+  private boolean isConnected = false;
 
   public static String getLocalClassName() {
     return NotificationAccessService.class.getSimpleName();
@@ -48,27 +52,33 @@ public class NotificationAccessService extends NotificationListenerService {
   public void onCreate() {
     super.onCreate();
 
-    onStarted();
+    handleStart();
 
-    Log.i(TAG, "Handler was created");
+    Log.i(TAG, "Was created");
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
 
-    onDestroyed();
+    handleDestroy();
 
-    Log.i(TAG, "Handler was destroyed");
+    Log.i(TAG, "Was destroyed");
   }
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     super.onStartCommand(intent, flags, startId);
 
-    Log.i(TAG, "Handler is running");
+    Log.i(TAG, "Is running");
 
-    onStarted();
+    /*if (!isConnected
+            && NotificationHelper.isNotificationListenerEnabled(this)
+            && ApiHelper.checkCurrentApiLevel(24)) {
+      requestRebind(COMPONENT_NAME);
+    }*/
+
+    handleStart();
 
     // Restart service if is killed
     return START_REDELIVER_INTENT;
@@ -76,11 +86,6 @@ public class NotificationAccessService extends NotificationListenerService {
 
   @Override
   public void onNotificationPosted(StatusBarNotification sbn) {
-    // Current API level has to be greater then min API level (18)
-    if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.JELLY_BEAN_MR2 + 1)) {
-      super.onNotificationPosted(sbn);
-    }
-
     // We care only about apps in filter
     if (!appsFilterSet.contains(sbn.getPackageName())) {
       // return;
@@ -101,18 +106,25 @@ public class NotificationAccessService extends NotificationListenerService {
 
   @Override
   public void onNotificationRemoved(StatusBarNotification sbn) {
-    // Current API level has to be greater then min API level (18)
-    if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.JELLY_BEAN_MR2 + 1)) {
-      super.onNotificationRemoved(sbn);
-    }
-
     Log.i(TAG, "Notification (" + sbn.getPackageName() + ") removed");
 
     if (makeTousts)
       Toast.makeText(this, "Notification removed (" + sbn.getPackageName() + ")", Toast.LENGTH_SHORT).show();
   }
 
-  private void onStarted() {
+  @Override
+  public void onListenerConnected() {
+    Log.i(TAG, "Is connected");
+    isConnected = true;
+  }
+
+  @Override
+  public void onListenerDisconnected() {
+    Log.i(TAG, "Is disconnected");
+    isConnected = false;
+  }
+
+  private void handleStart() {
     // Show persistent notification
     //showPersistentNotification();
 
@@ -120,7 +132,7 @@ public class NotificationAccessService extends NotificationListenerService {
     this.dataStore.open();
   }
 
-  private void onDestroyed() {
+  private void handleDestroy() {
     //removePersistentNotification();
     this.dataStore.close();
   }

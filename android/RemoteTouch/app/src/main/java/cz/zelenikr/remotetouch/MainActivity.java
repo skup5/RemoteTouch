@@ -1,20 +1,16 @@
 package cz.zelenikr.remotetouch;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CallLog;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,12 +53,9 @@ public class MainActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
 
     FloatingActionButton fab = findViewById(R.id.fab);
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Log.i(getLocalClassName(), "Add notification");
-        NotificationHelper.test(getApplicationContext(), (int) System.currentTimeMillis());
-      }
+    fab.setOnClickListener(view -> {
+      Log.i(getLocalClassName(), "Add notification");
+      NotificationHelper.test(getApplicationContext(), (int) System.currentTimeMillis());
     });
 
     notificationDataStore.open();
@@ -80,9 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
     startService(new Intent(this, EventService.class));
 
-    if (enableNotificationHandler()) {
-      startService(new Intent(this, NotificationAccessService.class));
-    }
+    enableNotificationHandler();
+    //startService(new Intent(this, NotificationAccessService.class));
   }
 
   @Override
@@ -163,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             "read=0", null, "read, date desc limit 3");
 
     if (cursor == null) {
-      messageList.add(getResourceString(R.string.empty));
+      messageList.add(getString(R.string.empty));
     } else {
       String message = "";
 
@@ -190,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
     notificationList = loadStoredNotifications();
 
     if (notificationList.isEmpty())
-      notificationList.add(getResourceString(R.string.empty));
+      notificationList.add(getString(R.string.empty));
 
     fillListView(notificationList);
   }
@@ -201,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
     Cursor managedCursor = getContentResolver().query(CALLS, null, null, null, "date desc");
     if (managedCursor == null) {
-      calls.add(getResourceString(R.string.empty));
+      calls.add(getString(R.string.empty));
       return calls;
     }
     int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
@@ -283,7 +275,8 @@ public class MainActivity extends AppCompatActivity {
   }
 
   /**
-   * If isn't enabled, shows dialog to user. User can open system settings and enable NotificationAccessService.
+   * If isn't enabled, shows dialog to user. User can open system settings
+   * and enable NotificationAccessService.
    *
    * @return true if enabled, false otherwise
    */
@@ -300,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
               .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
               })
               .show();
-      return isNotificationServiceEnabled();
+      return false;
     }
     return true;
   }
@@ -309,26 +302,7 @@ public class MainActivity extends AppCompatActivity {
    * @return true if enabled, false otherwise
    */
   private boolean isNotificationServiceEnabled() {
-    final String pkgName = getPackageName();
-    final String flat = Settings.Secure.getString(getContentResolver(),
-            ENABLED_NOTIFICATION_LISTENERS);
-    if (!TextUtils.isEmpty(flat)) {
-      final String[] names = flat.split(":");
-      for (int i = 0; i < names.length; i++) {
-        final ComponentName cn = ComponentName.unflattenFromString(names[i]);
-        if (cn != null) {
-          if (TextUtils.equals(pkgName, cn.getPackageName())) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  @NonNull
-  private String getResourceString(int id) {
-    return getResources().getString(id);
+    return NotificationHelper.isNotificationListenerEnabled(this);
   }
 
 }
