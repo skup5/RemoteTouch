@@ -47,8 +47,8 @@
                  android:exported="false"/>
 
         <service
-            android:name=".NotificationAccessService"
-            android:label="@string/Application.Name"
+            android:name=".service.NotificationAccessService"
+            android:label="@string/NotificationAccessService.Label"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
 
             <intent-filter>

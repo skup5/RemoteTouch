@@ -4,14 +4,17 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Process;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 import cz.zelenikr.remotetouch.MainActivity;
 import cz.zelenikr.remotetouch.R;
@@ -28,54 +31,48 @@ public class EventService extends Service {
 
   private static final int ONGOING_NOTIFICATION_ID = 1;
   private static final String TAG = EventService.class.getSimpleName();
+  private Looper serviceLooper;
+  private EventHandler eventHandler;
   private SimpleRestClient restClient;
 
 
   @Override
   public void onCreate() {
     super.onCreate();
+
+    // Try initialize rest client
     try {
       this.restClient = new SimpleRestClient(loadClientToken(), new URL(loadRestUrl()));
     } catch (MalformedURLException e) {
       Log.e(TAG, e.getLocalizedMessage());
       throw new RuntimeException(e);
     }
+
+    // Initialize HandlerThread and Looper and use it for EventHandler
+    HandlerThread handlerThread = new HandlerThread("EventServiceHandlerThread",
+            Process.THREAD_PRIORITY_BACKGROUND);
+    handlerThread.start();
+    serviceLooper = handlerThread.getLooper();
+    eventHandler = new EventHandler(serviceLooper);
+
+    // Start this service in the foreground and show persistent notification
     showNotification();
   }
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     if (intent != null && intent.getStringExtra("event") != null) {
-      handleEvent(intent);
+      eventHandler.obtainMessage(0, intent).sendToTarget();
     }
-    return START_NOT_STICKY;
+
+    // Restart after kill
+    return START_STICKY;
   }
 
   @Nullable
   @Override
   public IBinder onBind(Intent intent) {
     return null;
-  }
-
-  public void handleEvent(Intent intent) {
-    final String packageName = intent.getStringExtra("packageName");
-    final String eventName = intent.getStringExtra("event");
-    EEventType eventType = EEventType.valueOf(eventName);
-    Log.i(TAG, "received event " + eventName + " from " + packageName);
-    if (ConnectionHelper.isConnected(this)) {
-      try {
-        boolean result = new AsyncTask<Void, Void, Boolean>() {
-          @Override
-          protected Boolean doInBackground(Void... voids) {
-            return restClient.send(packageName, eventType);
-          }
-        }.execute().get();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      } catch (ExecutionException e) {
-        e.printStackTrace();
-      }
-    }
   }
 
   private String loadClientToken() {
@@ -106,5 +103,36 @@ public class EventService extends Service {
                     .build();
 
     startForeground(ONGOING_NOTIFICATION_ID, notification);
+  }
+
+  private boolean isConnected(){
+    return ConnectionHelper.isConnected(this);
+  }
+
+  private final class EventHandler extends Handler {
+
+    public EventHandler(Looper looper) {
+      super(looper);
+    }
+
+    @Override
+    public void handleMessage(Message msg) {
+      if (msg.obj instanceof Intent) handleEvent((Intent) msg.obj);
+
+      // Stop the service using the startId, so that we don't stop
+      // the service in the middle of handling another job
+      //stopSelf(msg.arg1);
+    }
+
+    private void handleEvent(Intent intent) {
+      final String packageName = intent.getStringExtra("packageName");
+      final String eventName = intent.getStringExtra("event");
+      EEventType eventType = EEventType.valueOf(eventName);
+      Log.i(TAG, "received event " + eventName + " from " + packageName);
+      if (isConnected()) {
+        boolean result = restClient.send(packageName, eventType);
+      }
+    }
+
   }
 }

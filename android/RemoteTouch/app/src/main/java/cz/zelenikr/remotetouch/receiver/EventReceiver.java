@@ -13,10 +13,14 @@ import java.util.concurrent.ExecutionException;
 import cz.zelenikr.remotetouch.data.EEventType;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
 import cz.zelenikr.remotetouch.network.SimpleRestClient;
+import cz.zelenikr.remotetouch.service.EventService;
 
 /**
+ * You should use {@link EventService} instead of this class.
+ *
  * @author Roman Zelenik
  */
+@Deprecated
 public class EventReceiver extends BroadcastReceiver {
 
   private static final String TAG = EventReceiver.class.getSimpleName();

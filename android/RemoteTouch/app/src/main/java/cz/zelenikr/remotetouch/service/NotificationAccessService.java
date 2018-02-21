@@ -1,4 +1,4 @@
-package cz.zelenikr.remotetouch;
+package cz.zelenikr.remotetouch.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -16,11 +16,11 @@ import android.widget.Toast;
 import java.util.Date;
 import java.util.Set;
 
+import cz.zelenikr.remotetouch.MainActivity;
+import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.EEventType;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
-import cz.zelenikr.remotetouch.receiver.EventReceiver;
-import cz.zelenikr.remotetouch.service.EventService;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
@@ -38,7 +38,6 @@ public class NotificationAccessService extends NotificationListenerService {
 
   private Set<String> appsFilterSet = new ArraySet<>();
   private NotificationDataStore dataStore = new NotificationDataStore(this);
-  private EventReceiver eventReceiver =new EventReceiver();
   private final boolean makeTousts = false;
 
   public static String getLocalClassName() {
@@ -51,8 +50,6 @@ public class NotificationAccessService extends NotificationListenerService {
 
     onStarted();
 
-//    LocalBroadcastManager.getInstance(this).registerReceiver(eventReceiver, new IntentFilter(getString(R.string.Intent_Action_NewEvent)));
-
     Log.i(TAG, "Handler was created");
   }
 
@@ -61,8 +58,6 @@ public class NotificationAccessService extends NotificationListenerService {
     super.onDestroy();
 
     onDestroyed();
-
-//    LocalBroadcastManager.getInstance(this).unregisterReceiver(eventReceiver);
 
     Log.i(TAG, "Handler was destroyed");
   }
@@ -218,14 +213,10 @@ public class NotificationAccessService extends NotificationListenerService {
   }
 
   private void sendEvent(StatusBarNotification sbn) {
-//    Intent intent = new Intent(getString(R.string.Intent_Action_NewEvent));
-//    Intent intent = new Intent(this, EventReceiver.class);
     Intent intent = new Intent(this, EventService.class);
     intent.putExtra("packageName", sbn.getPackageName());
     intent.putExtra("event", EVENT_TYPE.name());
 
-    //LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     startService(intent);
-
   }
 }
