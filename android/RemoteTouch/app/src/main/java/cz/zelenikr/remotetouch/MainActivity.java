@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.annotation.Nullable;
@@ -25,13 +26,12 @@ import java.util.List;
 import java.util.Map;
 
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
+import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
 import cz.zelenikr.remotetouch.service.EventService;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
-import static cz.zelenikr.remotetouch.helper.PermissionHelper.MY_PERMISSIONS_REQUEST_CALL_LOG;
-import static cz.zelenikr.remotetouch.helper.PermissionHelper.MY_PERMISSIONS_REQUEST_READ_SMS;
 
 /**
  * @author Roman Zelenik
@@ -71,10 +71,17 @@ public class MainActivity extends AppCompatActivity {
   protected void onPostCreate(@Nullable Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
 
-    startService(new Intent(this, EventService.class));
+    if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.O)) {
+      startForegroundService(new Intent(this, EventService.class));
+    } else {
+      startService(new Intent(this, EventService.class));
+    }
 
     enableNotificationHandler();
     //startService(new Intent(this, NotificationAccessService.class));
+
+    enableSmsHandler();
+
   }
 
   @Override
@@ -103,10 +110,10 @@ public class MainActivity extends AppCompatActivity {
   public void onRequestPermissionsResult(int requestCode,
                                          String permissions[], int[] grantResults) {
     switch (requestCode) {
-      case MY_PERMISSIONS_REQUEST_CALL_LOG: {
+      case PermissionHelper.MY_PERMISSIONS_REQUEST_CALL_LOG: {
         // If request is cancelled, the result arrays are empty.
         if (grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
           // permission was granted, yay! Do the
           // contacts-related task you need to do.
@@ -118,12 +125,11 @@ public class MainActivity extends AppCompatActivity {
         }
         return;
       }
-      case MY_PERMISSIONS_REQUEST_READ_SMS: {
+      case PermissionHelper.MY_PERMISSIONS_REQUEST_SMS: {
         // If request is cancelled, the result arrays are empty.
         if (grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-          onSmsBtClick(findViewById(R.id.smsBt));
         } else {
 
           // permission denied, boo! Disable the
@@ -145,14 +151,14 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void onSmsBtClick(View view) {
-    if (!PermissionHelper.checkSmsPermission(this)) return;
+    if (!PermissionHelper.checkSmsPermissions(this)) return;
 
     List<String> messageList = new ArrayList<>();
     String[] cols = new String[]{"date", "person", "address", "read", "body"};
 
     // returns last 3 received sms ordered by date (and unread)
     Cursor cursor = getContentResolver().query(SMS_INBOX, cols,
-            "read=0", null, "read, date desc limit 3");
+        "read=0", null, "read, date desc limit 3");
 
     if (cursor == null) {
       messageList.add(getString(R.string.empty));
@@ -225,9 +231,9 @@ public class MainActivity extends AppCompatActivity {
           break;
       }
       callDetail = "\nIs new:---" + (callIsNew == 1 ? "yes" : "no")
-              + "\nPhone Number:--- " + phNumber + " \nCall Type:--- "
-              + dir + " \nCall Date:--- " + callDayTime
-              + " \nCall duration in sec :--- " + callDuration;
+          + "\nPhone Number:--- " + phNumber + " \nCall Type:--- "
+          + dir + " \nCall Date:--- " + callDayTime
+          + " \nCall duration in sec :--- " + callDuration;
       calls.add(callDetail);
     }
     managedCursor.close();
@@ -283,16 +289,16 @@ public class MainActivity extends AppCompatActivity {
   private boolean enableNotificationHandler() {
     if (!isNotificationServiceEnabled()) {
       new AlertDialog.Builder(this)
-              .setIcon(R.mipmap.ic_launcher)
-              .setTitle(R.string.Application_Name)
-              .setMessage(R.string.check_nl_permission)
-              .setPositiveButton(
-                      R.string.Actions_OK,
-                      (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-              )
-              .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
-              })
-              .show();
+          .setIcon(R.mipmap.ic_launcher)
+          .setTitle(R.string.Application_Name)
+          .setMessage(R.string.check_nl_permission)
+          .setPositiveButton(
+              R.string.Actions_OK,
+              (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+          )
+          .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
+          })
+          .show();
       return false;
     }
     return true;
@@ -305,4 +311,21 @@ public class MainActivity extends AppCompatActivity {
     return NotificationHelper.isNotificationListenerEnabled(this);
   }
 
+  private boolean enableSmsHandler(){
+    if (!PermissionHelper.areSmsPermissionsGranted(this)) {
+      new AlertDialog.Builder(this)
+          .setIcon(R.mipmap.ic_launcher)
+          .setTitle(R.string.Application_Name)
+          .setMessage(R.string.check_sms_permissions)
+          .setPositiveButton(
+              R.string.Actions_OK,
+              (dialog, which) -> PermissionHelper.requestSmsPermissions(this)
+          )
+          .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
+          })
+          .show();
+      return false;
+    }
+    return true;
+  }
 }

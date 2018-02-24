@@ -4,12 +4,14 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.provider.Telephony;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -20,7 +22,9 @@ import cz.zelenikr.remotetouch.MainActivity;
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.EEventType;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
+import cz.zelenikr.remotetouch.helper.PermissionHelper;
 import cz.zelenikr.remotetouch.network.SimpleRestClient;
+import cz.zelenikr.remotetouch.receiver.SmsReceiver;
 
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
 
@@ -34,11 +38,15 @@ public class EventService extends Service {
   private Looper serviceLooper;
   private EventHandler eventHandler;
   private SimpleRestClient restClient;
+  // private SmsReceiver smsReceiver = new SmsReceiver();
 
 
   @Override
   public void onCreate() {
     super.onCreate();
+
+    // Start this service in the foreground and show persistent notification
+    showNotification();
 
     // Try initialize rest client
     try {
@@ -50,13 +58,17 @@ public class EventService extends Service {
 
     // Initialize HandlerThread and Looper and use it for EventHandler
     HandlerThread handlerThread = new HandlerThread("EventServiceHandlerThread",
-            Process.THREAD_PRIORITY_BACKGROUND);
+        Process.THREAD_PRIORITY_BACKGROUND);
     handlerThread.start();
     serviceLooper = handlerThread.getLooper();
     eventHandler = new EventHandler(serviceLooper);
 
-    // Start this service in the foreground and show persistent notification
-    showNotification();
+    // Register SmsReceiver
+//    IntentFilter intentFilter = new IntentFilter(SmsReceiver.ACTION);
+//    intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+    //  registerReceiver(smsReceiver, intentFilter);
+
+    Log.i(TAG, "Was created");
   }
 
   @Override
@@ -75,6 +87,15 @@ public class EventService extends Service {
     return null;
   }
 
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+
+    //unregisterReceiver(smsReceiver);
+
+    Log.i(TAG, "Was destroyed");
+  }
+
   private String loadClientToken() {
     // TODO: get from authentication
     return "1";
@@ -83,29 +104,29 @@ public class EventService extends Service {
   private String loadRestUrl() {
     // TODO: load from Preferences
 //    return "http://10.0.0.46:4000";
-    return "http://remote-touch.azurewebsites.net";
+    return "http://remote-touch.azurewebsites.net/event";
   }
 
   private void showNotification() {
     Intent notificationIntent = new Intent(this, MainActivity.class);
     PendingIntent pendingIntent =
-            PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     Notification notification =
-            new Notification.Builder(this)
-                    .setContentTitle(getString(R.string.Application_Name) + " (EventService)")
-                    .setContentText(getString(R.string.EventService_PersistentNotification_Text))
-                    .setSmallIcon(APP_ICON_ID)
-                    .setShowWhen(true)
-                    // .setAutoCancel(false)
-                    .setPriority(Notification.PRIORITY_HIGH)
-                    .setContentIntent(pendingIntent)
-                    .build();
+        new Notification.Builder(this)
+            .setContentTitle(getString(R.string.Application_Name) + " (EventService)")
+            .setContentText(getString(R.string.EventService_PersistentNotification_Text))
+            .setSmallIcon(APP_ICON_ID)
+            .setShowWhen(true)
+            // .setAutoCancel(false)
+            .setPriority(Notification.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .build();
 
     startForeground(ONGOING_NOTIFICATION_ID, notification);
   }
 
-  private boolean isConnected(){
+  private boolean isConnected() {
     return ConnectionHelper.isConnected(this);
   }
 

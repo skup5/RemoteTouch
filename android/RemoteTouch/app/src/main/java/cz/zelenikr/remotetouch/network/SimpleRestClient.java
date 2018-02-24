@@ -21,7 +21,7 @@ import cz.zelenikr.remotetouch.data.MessageDTO;
  *
  * @author Roman Zelenik
  */
-public class SimpleRestClient implements RestClient { // TODO: make a Singleton
+public class SimpleRestClient implements RestClient { // TODO: make a Singleton ?
 
   private static final Gson GSON = new Gson();
   private static final String CLASS_NAME = SimpleRestClient.class.getSimpleName();
@@ -37,7 +37,7 @@ public class SimpleRestClient implements RestClient { // TODO: make a Singleton
 
   @Override
   public boolean send(String msg, EEventType event) {
-    return postRequest(event.toString(), makeJSONContent(new MessageDTO(clientToken, event, msg)));
+    return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, msg)));
   }
 
   private HttpContent makeJSONContent(Object pojo) {
@@ -52,15 +52,17 @@ public class SimpleRestClient implements RestClient { // TODO: make a Singleton
     try {
       Log.i(CLASS_NAME, "post request");
       GenericUrl restUrl = new GenericUrl(baseRestUrl);
-      if (!subUrl.startsWith("/")) {
-        subUrl = "/" + subUrl;
+      if (subUrl != null) {
+        if (!subUrl.startsWith("/")) {
+          subUrl = "/" + subUrl;
+        }
+        restUrl.appendRawPath(subUrl);
       }
-      restUrl.appendRawPath(subUrl);
       Log.i(CLASS_NAME, "send to " + restUrl);
       HttpResponse httpResponse = httpTransport.createRequestFactory()
-              .buildPostRequest(restUrl, httpContent)
-              .setThrowExceptionOnExecuteError(false)
-              .execute();
+          .buildPostRequest(restUrl, httpContent)
+          .setThrowExceptionOnExecuteError(false)
+          .execute();
       try {
         if (httpResponse.isSuccessStatusCode()) {
           success = true;

@@ -10,7 +10,12 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+
     <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <!--<uses-permission android:name="android.permission.RECEIVE_MMS"/>-->
+
     <uses-permission android:name="android.permission.READ_CALL_LOG"/>
 
     <application
@@ -34,23 +39,26 @@
 
         </activity>
 
-        <!--<receiver android:name=".receiver.EventReceiver">-->
+        <receiver
+            android:name=".receiver.SmsReceiver"
+            android:exported="true">
 
-        <!--<intent-filter>-->
-        <!--<action android:name="cz.zelenikr.remotetouch.action.NEW_EVENT"/>-->
-        <!--</intent-filter>-->
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+            </intent-filter>
 
-        <!--</receiver>-->
+        </receiver>
 
-        <service android:name=".service.EventService"
-                 android:label="@string/EventService.Label"
-                 android:exported="false"/>
+        <service
+            android:name=".service.EventService"
+            android:exported="false"
+            android:label="@string/EventService.Label"/>
 
         <service
             android:name=".service.NotificationAccessService"
+            android:exported="true"
             android:label="@string/NotificationAccessService.Label"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:exported="true">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
 
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService"/>
