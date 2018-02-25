@@ -21,6 +21,9 @@ import cz.zelenikr.remotetouch.MainActivity;
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.EEventType;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
+import cz.zelenikr.remotetouch.data.dto.EventDTO;
+import cz.zelenikr.remotetouch.data.dto.NotificationEventContent;
+import cz.zelenikr.remotetouch.data.dto.SmsEventContent;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
@@ -41,7 +44,7 @@ public class NotificationAccessService extends NotificationListenerService {
   private NotificationDataStore dataStore = new NotificationDataStore(this);
   private final boolean makeTousts = false;
   private static final ComponentName COMPONENT_NAME =
-          new ComponentName("cz.zelenikr.remotetouch", getLocalClassName());
+      new ComponentName("cz.zelenikr.remotetouch", getLocalClassName());
   private boolean isConnected = false;
 
   public static String getLocalClassName() {
@@ -196,24 +199,24 @@ public class NotificationAccessService extends NotificationListenerService {
 
     // Creates the PendingIntent
     PendingIntent notifyPendingIntent =
-            PendingIntent.getActivity(
-                    this,
-                    0,
-                    notifyIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            );
+        PendingIntent.getActivity(
+            this,
+            0,
+            notifyIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        );
 
     Notification.Builder builder = new Notification.Builder(getApplicationContext());
 
     // Prepare notification
     builder.setContentTitle(getString(R.string.Application_Name))
-            .setContentText(getString(R.string.NotificationAccessService_PersistentNotification_Text))
-            .setSmallIcon(APP_ICON_ID)
-            .setShowWhen(true)
-            .setAutoCancel(false)
-            // Set persistent
-            .setOngoing(true)
-            .setContentIntent(notifyPendingIntent);
+        .setContentText(getString(R.string.NotificationAccessService_PersistentNotification_Text))
+        .setSmallIcon(APP_ICON_ID)
+        .setShowWhen(true)
+        .setAutoCancel(false)
+        // Set persistent
+        .setOngoing(true)
+        .setContentIntent(notifyPendingIntent);
 
     // Get manager and show notification
     ((NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE)).notify(PERSISTENT_NOTIFICATION_ID, builder.build());
@@ -225,9 +228,26 @@ public class NotificationAccessService extends NotificationListenerService {
   }
 
   private void sendEvent(StatusBarNotification sbn) {
+    Notification notification = sbn.getNotification();
+    long when = notification.when;
+    String app = sbn.getPackageName();
+    String ticker = notification.tickerText != null ? notification.tickerText.toString() : "";
+    String title = "";
+    String text = "";
+
+    // Require API >= 19
+    if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.KITKAT)) {
+      Bundle extras = notification.extras;
+      title = extras.getString(Notification.EXTRA_TITLE, "");
+      text = extras.getString(Notification.EXTRA_TEXT, "");
+    }
+
     Intent intent = new Intent(this, EventService.class);
-    intent.putExtra("packageName", sbn.getPackageName());
-    intent.putExtra("event", EVENT_TYPE.name());
+    intent.putExtra(EventService.INTENT_EXTRA_EVENT, true);
+    intent.putExtra(
+        EventService.INTENT_EXTRA_NAME,
+        new EventDTO(EVENT_TYPE, new NotificationEventContent(app, ticker, title, text, when))
+    );
 
     startService(intent);
   }

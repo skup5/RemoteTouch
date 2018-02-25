@@ -8,13 +8,17 @@ import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.http.json.JsonHttpContent;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.net.URL;
 
 import cz.zelenikr.remotetouch.data.EEventType;
-import cz.zelenikr.remotetouch.data.MessageDTO;
+import cz.zelenikr.remotetouch.data.dto.EventContent;
+import cz.zelenikr.remotetouch.data.dto.MessageDTO;
 
 /**
  * Provides unsecured JSON message sending to the REST server.
@@ -40,8 +44,14 @@ public class SimpleRestClient implements RestClient { // TODO: make a Singleton 
     return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, msg)));
   }
 
+  @Override
+  public boolean send(EventContent content, EEventType event) {
+    return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, content)));
+  }
+
   private HttpContent makeJSONContent(Object pojo) {
     String json = toJson(pojo);
+    //System.out.println(json);
     HttpContent httpContent = new ByteArrayContent("application/json", json.getBytes());
     return httpContent;
 

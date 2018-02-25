@@ -15,14 +15,18 @@ import android.provider.Telephony;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import cz.zelenikr.remotetouch.MainActivity;
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.EEventType;
+import cz.zelenikr.remotetouch.data.dto.EventContent;
+import cz.zelenikr.remotetouch.data.dto.EventDTO;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
+import cz.zelenikr.remotetouch.network.RestClient;
 import cz.zelenikr.remotetouch.network.SimpleRestClient;
 import cz.zelenikr.remotetouch.receiver.SmsReceiver;
 
@@ -33,11 +37,16 @@ import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
  */
 public class EventService extends Service {
 
+  public static final String
+      INTENT_EXTRA_EVENT = "event",
+      INTENT_EXTRA_CONTENT = "content",
+      INTENT_EXTRA_NAME = "cz.zelenikr.remotetouch.Event";
+
   private static final int ONGOING_NOTIFICATION_ID = 1;
   private static final String TAG = EventService.class.getSimpleName();
   private Looper serviceLooper;
   private EventHandler eventHandler;
-  private SimpleRestClient restClient;
+  private RestClient restClient;
   // private SmsReceiver smsReceiver = new SmsReceiver();
 
 
@@ -73,7 +82,7 @@ public class EventService extends Service {
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    if (intent != null && intent.getStringExtra("event") != null) {
+    if (intent != null && intent.getBooleanExtra(INTENT_EXTRA_EVENT, false)) {
       eventHandler.obtainMessage(0, intent).sendToTarget();
     }
 
@@ -146,12 +155,19 @@ public class EventService extends Service {
     }
 
     private void handleEvent(Intent intent) {
-      final String packageName = intent.getStringExtra("packageName");
-      final String eventName = intent.getStringExtra("event");
-      EEventType eventType = EEventType.valueOf(eventName);
-      Log.i(TAG, "received event " + eventName + " from " + packageName);
-      if (isConnected()) {
-        boolean result = restClient.send(packageName, eventType);
+      final Serializable serializableExtra = intent.getSerializableExtra(INTENT_EXTRA_NAME);
+      if (serializableExtra == null) {
+        Log.w(TAG, "EventDTO is null");
+        return;
+      }
+      if (serializableExtra instanceof EventDTO) {
+        EventDTO event = (EventDTO) serializableExtra;
+        Log.i(TAG, "received event " + event.getType().name() + ": " + event.getContent().toString());
+        if (isConnected()) {
+          boolean result = restClient.send(event.getContent(), event.getType());
+        }
+      } else {
+        Log.w(TAG, serializableExtra.getClass().getSimpleName() + " isn't instance of " + EventDTO.class.getSimpleName());
       }
     }
 

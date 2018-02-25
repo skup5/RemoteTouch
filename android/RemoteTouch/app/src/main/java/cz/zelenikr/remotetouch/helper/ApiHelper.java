@@ -17,4 +17,7 @@ public final class ApiHelper {
     if (requiredApiLevel < 1) throw new IllegalArgumentException("Api level cannot be less then 1");
     return CURRENT_API_LEVEL >= requiredApiLevel;
   }
+
+  private ApiHelper() {
+  }
 }
