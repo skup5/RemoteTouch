@@ -16,4 +16,5 @@
     <string name="permission">Oprávnění</string>
     <string name="empty">Prázdný</string>
     <string name="check_sms_permissions">Aby Vás mohla aplikace upozornit na novou sms, potřebuje povolit přístup k Vašim SMS zprávam.</string>
+    <string name="check_calling_permissions">Aby Vás mohla aplikace upozornit na příchozí či zmeškané hovory, potřebuje povolit přístup k vašim hovorům.</string>
 </resources>

@@ -93,7 +93,7 @@ public class NotificationAccessService extends NotificationListenerService {
   public void onNotificationPosted(StatusBarNotification sbn) {
     // We care only about apps in filter
     if (!appsFilterSet.contains(sbn.getPackageName())) {
-      // return;
+       return;
     }
 
     // Log to console

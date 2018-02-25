@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
 
     enableSmsHandler();
 
+    enableCallHandler();
+
   }
 
   @Override
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
   public void onRequestPermissionsResult(int requestCode,
                                          String permissions[], int[] grantResults) {
     switch (requestCode) {
-      case PermissionHelper.MY_PERMISSIONS_REQUEST_CALL_LOG: {
+      case PermissionHelper.MY_PERMISSIONS_REQUEST_CALLING: {
         // If request is cancelled, the result arrays are empty.
         if (grantResults.length > 0
             && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -144,8 +146,8 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void onCallsBtClick(View view) {
-    if (!PermissionHelper.checkCallLogPermission(this)) return;
-    //checkCallLogPermission();
+    if (!PermissionHelper.checkCallingPermissions(this)) return;
+    //checkCallingPermissions();
 
     fillListView(getCallDetails());
   }
@@ -281,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   /**
-   * If isn't enabled, shows dialog to user. User can open system settings
+   * If isn't enabled, shows information dialog to user. User can open system settings
    * and enable NotificationAccessService.
    *
    * @return true if enabled, false otherwise
@@ -311,7 +313,12 @@ public class MainActivity extends AppCompatActivity {
     return NotificationHelper.isNotificationListenerEnabled(this);
   }
 
-  private boolean enableSmsHandler(){
+  /**
+   * If isn't enabled, shows information dialog to user.
+   *
+   * @return true if enabled, false otherwise
+   */
+  private boolean enableSmsHandler() {
     if (!PermissionHelper.areSmsPermissionsGranted(this)) {
       new AlertDialog.Builder(this)
           .setIcon(R.mipmap.ic_launcher)
@@ -320,6 +327,29 @@ public class MainActivity extends AppCompatActivity {
           .setPositiveButton(
               R.string.Actions_OK,
               (dialog, which) -> PermissionHelper.requestSmsPermissions(this)
+          )
+          .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
+          })
+          .show();
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * If isn't enabled, shows information dialog to user.
+   *
+   * @return true if enabled, false otherwise
+   */
+  private boolean enableCallHandler() {
+    if (!PermissionHelper.areCallingPermissionsGranted(this)) {
+      new AlertDialog.Builder(this)
+          .setIcon(R.mipmap.ic_launcher)
+          .setTitle(R.string.Application_Name)
+          .setMessage(R.string.check_calling_permissions)
+          .setPositiveButton(
+              R.string.Actions_OK,
+              (dialog, which) -> PermissionHelper.requestCallingPermissions(this)
           )
           .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
           })

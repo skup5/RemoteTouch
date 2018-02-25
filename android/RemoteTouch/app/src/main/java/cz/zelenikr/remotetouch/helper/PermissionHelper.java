@@ -14,45 +14,50 @@ import android.util.Log;
 public class PermissionHelper {
 
   public static final int
-      MY_PERMISSIONS_REQUEST_CALL_LOG = 1,
+      MY_PERMISSIONS_REQUEST_CALLING = 1,
       MY_PERMISSIONS_REQUEST_SMS = 2;
 
 
-  // READ CALL LOG ////////////////////////////////////////////////
+  // CALLING ////////////////////////////////////////////////
 
-  public static boolean checkCallLogPermission(Activity activity) {
-    if (!isReadCallLogPermissionGranted(activity)) {
-      requestReadCallLogPermission(activity);
+  public static boolean checkCallingPermissions(Activity activity) {
+    if (!areCallingPermissionsGranted(activity)) {
+      requestCallingPermissions(activity);
       return false;
     }
-    Log.i(getLocalClassName(), activity.getLocalClassName() + " checkCallLogPermission: permission granted");
+    Log.i(getLocalClassName(), activity.getLocalClassName() + " checkCallingPermissions: permission granted");
     return true;
   }
 
-  public static boolean isReadCallLogPermissionGranted(Context context) {
-    return isPermissionGranted(context, Manifest.permission.READ_CALL_LOG);
+  public static boolean areCallingPermissionsGranted(Context context) {
+    return arePermissionsGranted(context, Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE);
   }
 
-  public static void requestReadCallLogPermission(Activity activity) {
+  public static void requestCallingPermissions(Activity activity) {
     // Should we show an explanation?
-    if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_CALL_LOG)) {
+    if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_CALL_LOG) ||
+        ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_PHONE_STATE)) {
 
       // Show an explanation to the user *asynchronously* -- don't block
       // this thread waiting for the user's response! After the user
       // sees the explanation, try again to request the permission.
 
-      Log.i(getLocalClassName(), activity.getLocalClassName() + " checkCallLogPermission(): shouldShowRequestPermissionRationale");
+      Log.i(getLocalClassName(), activity.getLocalClassName() + " checkCallingPermissions(): shouldShowRequestPermissionRationale");
     } else {
 
       // No explanation needed, we can request the permission.
 
       ActivityCompat.requestPermissions(activity,
-          new String[]{Manifest.permission.READ_CALL_LOG}, MY_PERMISSIONS_REQUEST_CALL_LOG);
+          new String[]{
+              Manifest.permission.READ_CALL_LOG,
+              Manifest.permission.READ_PHONE_STATE
+          },
+          MY_PERMISSIONS_REQUEST_CALLING);
 
       // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
       // app-defined int constant. The callback method gets the
       // result of the request.
-      Log.i(getLocalClassName(), activity.getLocalClassName() + " checkCallLogPermission: request permission");
+      Log.i(getLocalClassName(), activity.getLocalClassName() + " checkCallingPermissions: request permission");
     }
   }
 
