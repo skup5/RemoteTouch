@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
@@ -177,6 +179,14 @@ public class NotificationAccessService extends NotificationListenerService {
       for (String extraKey : extras.keySet()) {
         Log.i(TAG, extraKey + ": " + extras.get(extraKey));
       }
+
+      Object appInfoObj = extras.get("android.appInfo");
+      if (appInfoObj != null && appInfoObj instanceof ApplicationInfo) {
+        ApplicationInfo appInfo = (ApplicationInfo) appInfoObj;
+        PackageManager packageManager = getApplicationContext().getPackageManager();
+        CharSequence appName = packageManager.getApplicationLabel(appInfo);
+        Log.i(TAG, "appInfo.label: " + appName);
+      }
     }
   }
 
@@ -234,19 +244,27 @@ public class NotificationAccessService extends NotificationListenerService {
     String ticker = notification.tickerText != null ? notification.tickerText.toString() : "";
     String title = "";
     String text = "";
+    String label = "";
 
     // Require API >= 19
     if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.KITKAT)) {
       Bundle extras = notification.extras;
       title = extras.getString(Notification.EXTRA_TITLE, "");
       text = extras.getString(Notification.EXTRA_TEXT, "");
+      Object appInfoObj = extras.get("android.appInfo");
+      if (appInfoObj != null && appInfoObj instanceof ApplicationInfo) {
+        ApplicationInfo appInfo = (ApplicationInfo) appInfoObj;
+        PackageManager packageManager = getApplicationContext().getPackageManager();
+        CharSequence appLabel = packageManager.getApplicationLabel(appInfo);
+        label = appLabel != null ? appLabel.toString() : "";
+      }
     }
 
     Intent intent = new Intent(this, EventService.class);
     intent.putExtra(EventService.INTENT_EXTRA_EVENT, true);
     intent.putExtra(
         EventService.INTENT_EXTRA_NAME,
-        new EventDTO(EVENT_TYPE, new NotificationEventContent(app, ticker, title, text, when))
+        new EventDTO(EVENT_TYPE, new NotificationEventContent(app, label, ticker, title, text, when))
     );
 
     startService(intent);
