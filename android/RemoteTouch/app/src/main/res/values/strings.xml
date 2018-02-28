@@ -1,6 +1,7 @@
 <resources>
     <string name="Application.Name">RemoteTouch</string>
 
+    <string name="Actions.Export_notification_log">Export logs</string>
     <string name="Actions.Settings">Settings</string>
     <string name="Actions.OK">OK</string>
     <string name="Actions.Yes">Ano</string>
@@ -13,8 +14,8 @@
     <string name="NotificationAccessService.Label">NotificationAccessService</string>
 
     <string name="check_nl_permission">Zkontrolujte povolení pro odchyt notifikací.</string>
-    <string name="permission">Oprávnění</string>
-    <string name="empty">Prázdný</string>
     <string name="check_sms_permissions">Aby Vás mohla aplikace upozornit na novou sms, potřebuje povolit přístup k Vašim SMS zprávam.</string>
     <string name="check_calling_permissions">Aby Vás mohla aplikace upozornit na příchozí či zmeškané hovory, potřebuje povolit přístup k vašim hovorům.</string>
+    <string name="permission">Oprávnění</string>
+    <string name="empty">Prázdný</string>
 </resources>

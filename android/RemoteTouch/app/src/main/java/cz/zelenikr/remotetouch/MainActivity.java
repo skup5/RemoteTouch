@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.CallLog;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,11 +19,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
@@ -30,7 +39,9 @@ import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
 import cz.zelenikr.remotetouch.service.EventService;
+import cz.zelenikr.remotetouch.storage.NotificationContract;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
+import cz.zelenikr.remotetouch.storage.NotificationDbHelper;
 
 
 /**
@@ -103,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
     //noinspection SimplifiableIfStatement
     if (id == R.id.action_settings) {
       return true;
+    } else if (id == R.id.action_export_notification_logs) {
+      onExportNotificationLogsBtClick();
+      return true;
     }
 
     return super.onOptionsItemSelected(item);
@@ -138,6 +152,11 @@ public class MainActivity extends AppCompatActivity {
           // functionality that depends on this permission.
         }
         return;
+      }
+      case PermissionHelper.MY_PERMISSIONS_REQUEST_SD_CARD_ACCESS: {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+          onExportNotificationLogsBtClick();
+        }
       }
 
       // other 'case' lines to check for other
@@ -357,5 +376,22 @@ public class MainActivity extends AppCompatActivity {
       return false;
     }
     return true;
+  }
+  private void onExportNotificationLogsBtClick() {
+    if (!PermissionHelper.checkSDCardPermissions(this)) {
+      return;
+    }
+
+    String backupDBPath =
+        new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date()) +
+            "_" + NotificationDbHelper.DATABASE_NAME;
+    File backupDB = new File(Environment.getExternalStorageDirectory(), backupDBPath);
+    String resultMessage = "DB " + backupDB.getAbsolutePath();
+    if (notificationDataStore.export(backupDB)) {
+      resultMessage += " Exported!";
+    } else {
+      resultMessage += " export FAILED!";
+    }
+    Toast.makeText(this, resultMessage, Toast.LENGTH_LONG).show();
   }
 }
