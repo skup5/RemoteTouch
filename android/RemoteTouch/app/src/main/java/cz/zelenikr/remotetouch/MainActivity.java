@@ -22,10 +22,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +35,6 @@ import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
 import cz.zelenikr.remotetouch.service.EventService;
-import cz.zelenikr.remotetouch.storage.NotificationContract;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 import cz.zelenikr.remotetouch.storage.NotificationDbHelper;
 
@@ -153,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return;
       }
-      case PermissionHelper.MY_PERMISSIONS_REQUEST_SD_CARD_ACCESS: {
+      case PermissionHelper.MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_ACCESS: {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
           onExportNotificationLogsBtClick();
         }
@@ -377,8 +372,9 @@ public class MainActivity extends AppCompatActivity {
     }
     return true;
   }
+
   private void onExportNotificationLogsBtClick() {
-    if (!PermissionHelper.checkSDCardPermissions(this)) {
+    if (!PermissionHelper.checkExternalStoragePermissions(this)) {
       return;
     }
 
