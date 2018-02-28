@@ -11,4 +11,5 @@
     <string name="check_nl_permission">Zkontrolujte povolení pro odchyt notifikací.</string>
     <string name="permission">Oprávnění</string>
     <string name="empty">Prázdný</string>
+    <string name="Actions.Export_notification_log">Export logs</string>
 </resources>
