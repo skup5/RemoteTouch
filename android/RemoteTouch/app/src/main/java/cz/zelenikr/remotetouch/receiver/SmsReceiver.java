@@ -6,16 +6,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Telephony;
-import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.Date;
 
-import cz.zelenikr.remotetouch.data.EEventType;
+import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.dto.EventDTO;
-import cz.zelenikr.remotetouch.data.dto.NotificationEventContent;
 import cz.zelenikr.remotetouch.data.dto.SmsEventContent;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.service.EventService;
@@ -28,7 +25,7 @@ public class SmsReceiver extends BroadcastReceiver {
   // public static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
 
   private static final String TAG = SmsReceiver.class.getSimpleName();
-  private static final EEventType EVENT_TYPE = EEventType.SMS;
+  private static final EventType EVENT_TYPE = EventType.SMS;
 
 
   public SmsReceiver() {

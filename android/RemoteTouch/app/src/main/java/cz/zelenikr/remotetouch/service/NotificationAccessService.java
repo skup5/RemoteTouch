@@ -21,11 +21,10 @@ import java.util.Set;
 
 import cz.zelenikr.remotetouch.MainActivity;
 import cz.zelenikr.remotetouch.R;
-import cz.zelenikr.remotetouch.data.EEventType;
+import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.data.dto.EventDTO;
 import cz.zelenikr.remotetouch.data.dto.NotificationEventContent;
-import cz.zelenikr.remotetouch.data.dto.SmsEventContent;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
@@ -40,7 +39,7 @@ public class NotificationAccessService extends NotificationListenerService {
 
   private static final String TAG = getLocalClassName();
   private static final int PERSISTENT_NOTIFICATION_ID = 1;
-  private static final EEventType EVENT_TYPE = EEventType.NOTIFICATION;
+  private static final EventType EVENT_TYPE = EventType.NOTIFICATION;
 
   private Set<String> appsFilterSet = new ArraySet<>();
   private NotificationDataStore dataStore = new NotificationDataStore(this);

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
-import cz.zelenikr.remotetouch.data.EEventType;
+import cz.zelenikr.remotetouch.data.EventType;
 
 /**
  * Represents message for REST server.
@@ -17,9 +17,9 @@ public class MessageDTO implements Serializable {
 
   private final Serializable content;
 
-  private final EEventType event;
+  private final EventType event;
 
-  public MessageDTO(@NonNull String id, @NonNull EEventType event) {
+  public MessageDTO(@NonNull String id, @NonNull EventType event) {
     this(id, event, "");
   }
 
@@ -28,7 +28,7 @@ public class MessageDTO implements Serializable {
    * @param event   Type of message.
    * @param content Content of message.
    */
-  public MessageDTO(@NonNull String id, @NonNull EEventType event, @NonNull Serializable content) {
+  public MessageDTO(@NonNull String id, @NonNull EventType event, @NonNull Serializable content) {
     this.content = content;
     this.event = event;
     this.id = id;
@@ -42,7 +42,7 @@ public class MessageDTO implements Serializable {
     return content;
   }
 
-  public EEventType getEvent() {
+  public EventType getEvent() {
     return event;
   }
 

@@ -8,15 +8,12 @@ import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.http.json.JsonHttpContent;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.net.URL;
 
-import cz.zelenikr.remotetouch.data.EEventType;
+import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.dto.EventContent;
 import cz.zelenikr.remotetouch.data.dto.MessageDTO;
 
@@ -40,12 +37,12 @@ public class SimpleRestClient implements RestClient { // TODO: make a Singleton 
   }
 
   @Override
-  public boolean send(String msg, EEventType event) {
+  public boolean send(String msg, EventType event) {
     return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, msg)));
   }
 
   @Override
-  public boolean send(EventContent content, EEventType event) {
+  public boolean send(EventContent content, EventType event) {
     return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, content)));
   }
 

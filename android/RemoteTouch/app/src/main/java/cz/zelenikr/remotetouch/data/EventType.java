@@ -3,7 +3,7 @@ package cz.zelenikr.remotetouch.data;
 /**
  * @author Roman Zelenik
  */
-public enum EEventType {
+public enum EventType {
   CALL, SMS, NOTIFICATION;
 
   @Override

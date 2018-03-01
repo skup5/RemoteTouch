@@ -4,23 +4,23 @@ import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
-import cz.zelenikr.remotetouch.data.EEventType;
+import cz.zelenikr.remotetouch.data.EventType;
 
 /**
  * @author Roman Zelenik
  */
 public class EventDTO implements Serializable {
 
-  private EEventType type;
+  private EventType type;
 
   private EventContent content;
 
-  public EventDTO(@NonNull EEventType type, @NonNull EventContent content) {
+  public EventDTO(@NonNull EventType type, @NonNull EventContent content) {
     this.type = type;
     this.content = content;
   }
 
-  public EEventType getType() {
+  public EventType getType() {
     return type;
   }
 

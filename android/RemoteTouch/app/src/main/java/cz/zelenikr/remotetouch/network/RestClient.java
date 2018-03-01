@@ -1,6 +1,6 @@
 package cz.zelenikr.remotetouch.network;
 
-import cz.zelenikr.remotetouch.data.EEventType;
+import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.dto.EventContent;
 
 /**
@@ -16,7 +16,7 @@ public interface RestClient {
    * @param event event type of message
    * @return true if message was successfully sent, false otherwise
    */
-  boolean send(String msg, EEventType event);
+  boolean send(String msg, EventType event);
 
   /**
    * Sends a specific event message to the server.
@@ -25,6 +25,6 @@ public interface RestClient {
    * @param event   event type of message
    * @return true if message was successfully sent, false otherwise
    */
-  boolean send(EventContent content, EEventType event);
+  boolean send(EventContent content, EventType event);
 
 }

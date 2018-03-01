@@ -4,14 +4,12 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import android.provider.Telephony;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -21,14 +19,10 @@ import java.net.URL;
 
 import cz.zelenikr.remotetouch.MainActivity;
 import cz.zelenikr.remotetouch.R;
-import cz.zelenikr.remotetouch.data.EEventType;
-import cz.zelenikr.remotetouch.data.dto.EventContent;
 import cz.zelenikr.remotetouch.data.dto.EventDTO;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
-import cz.zelenikr.remotetouch.helper.PermissionHelper;
 import cz.zelenikr.remotetouch.network.RestClient;
 import cz.zelenikr.remotetouch.network.SimpleRestClient;
-import cz.zelenikr.remotetouch.receiver.SmsReceiver;
 
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
 

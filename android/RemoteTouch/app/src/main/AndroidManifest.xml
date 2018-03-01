@@ -21,6 +21,7 @@
     <!--CALLING PERMISSIONS-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
 
     <!--EXTERNAL STORAGE PERMISSIONS-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -48,11 +49,12 @@
         </activity>
 
         <receiver
-            android:name=".receiver.PhoneStateReceiver"
+            android:name=".receiver.CallReceiver"
             android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
             </intent-filter>
         </receiver>
 

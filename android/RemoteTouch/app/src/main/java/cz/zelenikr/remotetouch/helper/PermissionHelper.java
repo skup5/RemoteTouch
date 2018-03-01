@@ -31,13 +31,17 @@ public class PermissionHelper {
   }
 
   public static boolean areCallingPermissionsGranted(Context context) {
-    return arePermissionsGranted(context, Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE);
+    return arePermissionsGranted(context,
+        Manifest.permission.READ_CALL_LOG,
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.PROCESS_OUTGOING_CALLS);
   }
 
   public static void requestCallingPermissions(Activity activity) {
     // Should we show an explanation?
     if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_CALL_LOG) ||
-        ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_PHONE_STATE)) {
+        ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_PHONE_STATE) ||
+        ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.PROCESS_OUTGOING_CALLS)) {
 
       // Show an explanation to the user *asynchronously* -- don't block
       // this thread waiting for the user's response! After the user
@@ -51,7 +55,8 @@ public class PermissionHelper {
     ActivityCompat.requestPermissions(activity,
         new String[]{
             Manifest.permission.READ_CALL_LOG,
-            Manifest.permission.READ_PHONE_STATE
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.PROCESS_OUTGOING_CALLS
         },
         MY_PERMISSIONS_REQUEST_CALLING);
 
