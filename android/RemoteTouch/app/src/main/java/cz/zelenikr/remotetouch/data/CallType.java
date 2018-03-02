@@ -4,5 +4,5 @@ package cz.zelenikr.remotetouch.data;
  * @author Roman Zelenik
  */
 public enum CallType {
-  INCOMING, OUTCOMING, ONCOMING, MISSED
+  INCOMING, OUTGOING, ONGOING, ENDED, MISSED
 }

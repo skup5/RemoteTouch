@@ -159,6 +159,8 @@ public class EventService extends Service {
         Log.i(TAG, "received event " + event.getType().name() + ": " + event.getContent().toString());
         if (isConnected()) {
           boolean result = restClient.send(event.getContent(), event.getType());
+        }else{
+          Log.i(TAG, "handleEvent: device is not connected to network");
         }
       } else {
         Log.w(TAG, serializableExtra.getClass().getSimpleName() + " isn't instance of " + EventDTO.class.getSimpleName());
