@@ -1,21 +1,23 @@
 <resources>
-    <string name="Application.Name">RemoteTouch</string>
+    <string name="Application.Name" translatable="false">RemoteTouch</string>
 
     <string name="Actions.Export_notification_log">Export logs</string>
     <string name="Actions.Settings">Settings</string>
     <string name="Actions.OK">OK</string>
-    <string name="Actions.Yes">Ano</string>
-    <string name="Actions.No">Ne</string>
+    <string name="Actions.No">No</string>
+    <string name="Actions.Yes">Yes</string>
 
-    <string name="EventService.Label">EventService</string>
-    <string name="EventService.PersistentNotification.Text">Běží...</string>
+    <string name="EventService.Label" translatable="false">EventService</string>
+    <string name="EventService.PersistentNotification.Text">Running...</string>
 
-    <string name="NotificationAccessService.PersistentNotification.Text">Běží...</string>
-    <string name="NotificationAccessService.Label">NotificationAccessService</string>
+    <string name="NotificationAccessService.PersistentNotification.Text">Running...</string>
+    <string name="NotificationAccessService.Label" translatable="false">NotificationAccessService</string>
 
     <string name="check_nl_permission">Zkontrolujte povolení pro odchyt notifikací.</string>
     <string name="check_sms_permissions">Aby Vás mohla aplikace upozornit na novou sms, potřebuje povolit přístup k Vašim SMS zprávam.</string>
     <string name="check_calling_permissions">Aby Vás mohla aplikace upozornit na příchozí či zmeškané hovory, potřebuje povolit přístup k vašim hovorům.</string>
-    <string name="permission">Oprávnění</string>
-    <string name="empty">Prázdný</string>
-</resources>
+    <string name="check_contacts_permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
+    <string name="permission">Permission</string>
+    <string name="empty">Empty</string>
+
+   </resources>

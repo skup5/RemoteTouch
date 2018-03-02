@@ -16,7 +16,8 @@ public class PermissionHelper {
   public static final int
       MY_PERMISSIONS_REQUEST_CALLING = 1,
       MY_PERMISSIONS_REQUEST_SMS = 2,
-      MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_ACCESS = 3;
+      MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_ACCESS = 3,
+      MY_PERMISSIONS_REQUEST_CONTACTS = 4;
 
 
   // CALLING ////////////////////////////////////////////////
@@ -134,6 +135,35 @@ public class PermissionHelper {
     Log.i(getLocalClassName(), activity.getLocalClassName() + " requestExternalStoragePermissions: request permission");
   }
 
+
+  // CONTACTS //////////////////////////////////////////////////
+
+  public static boolean checkContactsPermissions(Activity activity) {
+    if (!areContactsPermissionsGranted(activity)) {
+      requestContactsPermissions(activity);
+      return false;
+    }
+    Log.i(getLocalClassName(), activity.getLocalClassName() + " checkContactsPermissions: permissions granted");
+    return true;
+  }
+
+  public static boolean areContactsPermissionsGranted(Context context) {
+    return isPermissionGranted(context, Manifest.permission.READ_CONTACTS);
+  }
+
+  public static void requestContactsPermissions(Activity activity) {
+    if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_CONTACTS)) {
+      // Show an non-blocking explanation here.
+
+      Log.i(getLocalClassName(), activity.getLocalClassName() + " requestContactsPermissions(): shouldShowRequestPermissionRationale");
+    }
+
+    ActivityCompat.requestPermissions(activity,
+        new String[]{Manifest.permission.READ_CONTACTS},
+        MY_PERMISSIONS_REQUEST_CONTACTS);
+
+    Log.i(getLocalClassName(), activity.getLocalClassName() + " requestContactsPermissions: request permission");
+  }
 
   /////////////////////////////////////////////////////////////////////////////
 

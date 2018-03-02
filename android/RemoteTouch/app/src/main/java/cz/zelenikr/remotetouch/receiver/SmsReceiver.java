@@ -15,6 +15,7 @@ import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.dto.EventDTO;
 import cz.zelenikr.remotetouch.data.dto.SmsEventContent;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
+import cz.zelenikr.remotetouch.helper.ContactHelper;
 import cz.zelenikr.remotetouch.service.EventService;
 
 /**
@@ -37,7 +38,8 @@ public class SmsReceiver extends BroadcastReceiver {
   public void onReceive(Context context, Intent intent) {
     Log.i(TAG, "New SMS");
     if (intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
-      String smsSender = "";
+      String smsName = "";
+      String smsNumber = "";
       StringBuilder smsBody = new StringBuilder();
       long smsWhen;
       SmsMessage[] messages = null;
@@ -71,7 +73,12 @@ public class SmsReceiver extends BroadcastReceiver {
         for (SmsMessage smsMessage : messages) {
           smsBody.append(smsMessage.getMessageBody());
         }
-        smsSender = messages[0].getDisplayOriginatingAddress();
+        smsNumber = messages[0].getDisplayOriginatingAddress();
+        if (smsNumber == null) {
+          smsNumber = "";
+        } else {
+          smsName = ContactHelper.findContactDisplayNameByNumber(context, smsNumber, "");
+        }
         smsWhen = messages[0].getTimestampMillis();
       }
       // There are none sms
@@ -79,7 +86,7 @@ public class SmsReceiver extends BroadcastReceiver {
         return;
       }
 
-      Log.i(TAG, "From: " + smsSender);
+      Log.i(TAG, "From: " + smsName + " (" + smsNumber + ")");
       Log.i(TAG, "At: " + new Date(smsWhen).toString());
       Log.i(TAG, "Text: " + smsBody);
 
@@ -88,7 +95,7 @@ public class SmsReceiver extends BroadcastReceiver {
       // Send SMS test
 //      SmsManager.getDefault().sendTextMessage(smsSender, null, smsBody.toUpperCase(),null,null);
 
-      sendEvent(context, new SmsEventContent(smsSender, smsBody.toString(), smsWhen));
+      sendEvent(context, new SmsEventContent(smsName, smsNumber, smsBody.toString(), smsWhen));
 
     }
   }

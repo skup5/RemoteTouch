@@ -11,6 +11,7 @@ import cz.zelenikr.remotetouch.data.CallType;
 import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.dto.CallEventContent;
 import cz.zelenikr.remotetouch.data.dto.EventDTO;
+import cz.zelenikr.remotetouch.helper.ContactHelper;
 import cz.zelenikr.remotetouch.service.EventService;
 
 /**
@@ -30,15 +31,17 @@ public class CallReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
-    String intentAction = intent.getAction();
+    final String intentAction = intent.getAction();
     if (intentAction.equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
       lastNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+      if (lastNumber == null) lastNumber = "";
       onOutgoingCall(context);
       lastState = State.DIALING;
     } else {
-      String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
+      final String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
       if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
         lastNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
+        if (lastNumber == null) lastNumber = "";
         onIncomingCall(context);
         lastState = State.RINGING;
       } else if ((state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK))) {
@@ -63,7 +66,8 @@ public class CallReceiver extends BroadcastReceiver {
   private void onEndedCall(Context context) {
     Log.i(TAG, "Ended call - " + lastNumber);
     Toast.makeText(context, "Ended call - " + lastNumber, Toast.LENGTH_SHORT).show();
-    sendEvent(context, new CallEventContent("", lastNumber, CallType.ENDED));
+    final String name = ContactHelper.findContactDisplayNameByNumber(context, lastNumber, "");
+    sendEvent(context, new CallEventContent(name, lastNumber, CallType.ENDED));
   }
 
   /**
@@ -74,7 +78,8 @@ public class CallReceiver extends BroadcastReceiver {
   private void onMissedCall(Context context) {
     Log.i(TAG, "Missed call - " + lastNumber);
     Toast.makeText(context, "Missed call - " + lastNumber, Toast.LENGTH_SHORT).show();
-    sendEvent(context, new CallEventContent("", lastNumber, CallType.MISSED));
+    final String name = ContactHelper.findContactDisplayNameByNumber(context, lastNumber, "");
+    sendEvent(context, new CallEventContent(name, lastNumber, CallType.MISSED));
   }
 
   /**
@@ -85,7 +90,8 @@ public class CallReceiver extends BroadcastReceiver {
   private void onOngoingCall(Context context) {
     Log.i(TAG, "Ongoing call - " + lastNumber);
     Toast.makeText(context, "Ongoing call - " + lastNumber, Toast.LENGTH_SHORT).show();
-    sendEvent(context, new CallEventContent("", lastNumber, CallType.ONGOING));
+    final String name = ContactHelper.findContactDisplayNameByNumber(context, lastNumber, "");
+    sendEvent(context, new CallEventContent(name, lastNumber, CallType.ONGOING));
   }
 
   /**
@@ -96,7 +102,8 @@ public class CallReceiver extends BroadcastReceiver {
   private void onIncomingCall(Context context) {
     Log.i(TAG, "Incoming call - " + lastNumber);
     Toast.makeText(context, "Incoming call - " + lastNumber, Toast.LENGTH_SHORT).show();
-    sendEvent(context, new CallEventContent("", lastNumber, CallType.INCOMING));
+    final String name = ContactHelper.findContactDisplayNameByNumber(context, lastNumber, "");
+    sendEvent(context, new CallEventContent(name, lastNumber, CallType.INCOMING));
   }
 
   /**
@@ -107,7 +114,8 @@ public class CallReceiver extends BroadcastReceiver {
   private void onOutgoingCall(Context context) {
     Log.i(TAG, "Outgoing call - " + lastNumber);
     Toast.makeText(context, "Outgoing call - " + lastNumber, Toast.LENGTH_SHORT).show();
-    sendEvent(context, new CallEventContent("", lastNumber, CallType.OUTGOING));
+    final String name = ContactHelper.findContactDisplayNameByNumber(context, lastNumber, "");
+    sendEvent(context, new CallEventContent(name, lastNumber, CallType.OUTGOING));
   }
 
   private void sendEvent(Context context, CallEventContent content) {

@@ -47,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
   private static final Uri SMS_INBOX = Uri.parse("content://sms/inbox");
   private static final Uri CALLS = Uri.parse("content://call_log/calls");
 
-  private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
-
   private final NotificationDataStore notificationDataStore = new NotificationDataStore(this);
 
   @Override
@@ -90,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
     enableCallHandler();
 
+    enableContactsHandler();
+
   }
 
   @Override
@@ -118,13 +118,11 @@ public class MainActivity extends AppCompatActivity {
   }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode,
-                                         String permissions[], int[] grantResults) {
+  public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
     switch (requestCode) {
       case PermissionHelper.MY_PERMISSIONS_REQUEST_CALLING: {
         // If request is cancelled, the result arrays are empty.
-        if (grantResults.length > 0
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
           // permission was granted, yay! Do the
           // contacts-related task you need to do.
@@ -138,8 +136,7 @@ public class MainActivity extends AppCompatActivity {
       }
       case PermissionHelper.MY_PERMISSIONS_REQUEST_SMS: {
         // If request is cancelled, the result arrays are empty.
-        if (grantResults.length > 0
-            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
         } else {
 
@@ -153,9 +150,17 @@ public class MainActivity extends AppCompatActivity {
           onExportNotificationLogsBtClick();
         }
       }
+      case PermissionHelper.MY_PERMISSIONS_REQUEST_CONTACTS: {
+        // If request is cancelled, the result arrays are empty.
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-      // other 'case' lines to check for other
-      // permissions this app might request
+        } else {
+
+          // permission denied, boo! Disable the
+          // functionality that depends on this permission.
+        }
+        return;
+      }
     }
   }
 
@@ -300,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
    * If isn't enabled, shows information dialog to user. User can open system settings
    * and enable NotificationAccessService.
    *
-   * @return true if enabled, false otherwise
+   * @return true if already enabled, false otherwise
    */
   private boolean enableNotificationHandler() {
     if (!isNotificationServiceEnabled()) {
@@ -330,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
   /**
    * If isn't enabled, shows information dialog to user.
    *
-   * @return true if enabled, false otherwise
+   * @return true if already enabled, false otherwise
    */
   private boolean enableSmsHandler() {
     if (!PermissionHelper.areSmsPermissionsGranted(this)) {
@@ -353,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
   /**
    * If isn't enabled, shows information dialog to user.
    *
-   * @return true if enabled, false otherwise
+   * @return true if already enabled, false otherwise
    */
   private boolean enableCallHandler() {
     if (!PermissionHelper.areCallingPermissionsGranted(this)) {
@@ -364,6 +369,29 @@ public class MainActivity extends AppCompatActivity {
           .setPositiveButton(
               R.string.Actions_OK,
               (dialog, which) -> PermissionHelper.requestCallingPermissions(this)
+          )
+          .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
+          })
+          .show();
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * If isn't enabled, shows information dialog to user.
+   *
+   * @return true if already enabled, false otherwise
+   */
+  private boolean enableContactsHandler() {
+    if (!PermissionHelper.areContactsPermissionsGranted(this)) {
+      new AlertDialog.Builder(this)
+          .setIcon(R.mipmap.ic_launcher)
+          .setTitle(R.string.Application_Name)
+          .setMessage(R.string.check_contacts_permissions)
+          .setPositiveButton(
+              R.string.Actions_OK,
+              (dialog, which) -> PermissionHelper.requestContactsPermissions(this)
           )
           .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
           })
