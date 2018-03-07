@@ -103,7 +103,7 @@ public class EventService extends Service {
     private String loadRestUrl() {
         // TODO: load from Preferences
 //    return "http://10.0.0.46:4000";
-        return "http://remote-touch.azurewebsites.net/event";
+        return "https://remote-touch.azurewebsites.net/event";
     }
 
     private String loadSecureKey() {
