@@ -65,7 +65,8 @@
 
         <receiver
             android:name=".receiver.CallReceiver"
-            android:exported="true">
+            android:exported="true"
+            android:enabled="false">
 
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE"/>

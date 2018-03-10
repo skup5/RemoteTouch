@@ -1,5 +1,8 @@
 package cz.zelenikr.remotetouch.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,16 +11,15 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.Arrays;
-
 import cz.zelenikr.remotetouch.R;
+import cz.zelenikr.remotetouch.helper.AndroidAppComponentHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
+import cz.zelenikr.remotetouch.receiver.CallReceiver;
 
 /**
  * Contains basic application settings.
@@ -25,7 +27,7 @@ import cz.zelenikr.remotetouch.helper.PermissionHelper;
  * @author Roman Zelenik
  */
 public class SettingsFragment extends PreferenceFragmentCompat
-    implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
+    implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = SettingsFragment.class.getSimpleName();
 
@@ -33,6 +35,18 @@ public class SettingsFragment extends PreferenceFragmentCompat
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.preferences, rootKey);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -86,10 +100,19 @@ public class SettingsFragment extends PreferenceFragmentCompat
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.Key_Calls_Enabled))) {
+            SwitchPreference preference = (SwitchPreference) findPreference(key);
+            setReceiverEnabled(CallReceiver.class, preference.isChecked());
+        }
+    }
+
+
     private void onCallsEnabledClick(Preference preference) {
         SwitchPreference switchPreference = (SwitchPreference) preference;
         if (switchPreference.isChecked()) {
-            enableCallsHandler(switchPreference);
+            checkCallsPermissions(switchPreference);
         }
     }
 
@@ -108,11 +131,11 @@ public class SettingsFragment extends PreferenceFragmentCompat
     }
 
     /**
-     * If isn't enabled, shows information dialog to user.
+     * If isn't granted, shows information dialog to user.
      *
-     * @return true if already enabled, false otherwise
+     * @return true if already granted, false otherwise
      */
-    private boolean enableCallsHandler(SwitchPreference preference) {
+    private boolean checkCallsPermissions(SwitchPreference preference) {
         if (!PermissionHelper.areCallingPermissionsGranted(getContext())) {
             new AlertDialog.Builder(getContext())
                 .setIcon(R.mipmap.ic_launcher)
@@ -129,6 +152,12 @@ public class SettingsFragment extends PreferenceFragmentCompat
             return false;
         }
         return true;
+    }
+
+    private void setReceiverEnabled(@NonNull Class<? extends BroadcastReceiver> receiver, boolean enabled) {
+        Log.i(TAG, "setReceiverEnabled: " + enabled);
+        ComponentName component = new ComponentName(getContext(), receiver);
+        AndroidAppComponentHelper.setComponentEnabled(getContext(), component, enabled);
     }
 
 }

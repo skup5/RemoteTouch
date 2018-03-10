@@ -43,7 +43,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (isEnabled(context)) onStateChanged(context, intent);
+       onStateChanged(context, intent);
     }
 
     private void onStateChanged(Context context, Intent intent) {
@@ -137,10 +137,6 @@ public class CallReceiver extends BroadcastReceiver {
         Log.i(TAG, "Outgoing call - " + lastNumber);
         Toast.makeText(context, "Outgoing call - " + lastNumber, Toast.LENGTH_SHORT).show();
         sendEvent(context, CallType.OUTGOING);
-    }
-
-    private static boolean isEnabled(Context context) {
-        return SettingsHelper.isCallReceiverEnabled(context);
     }
 
     private static void updateName(Context context) {
