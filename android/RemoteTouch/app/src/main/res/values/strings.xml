@@ -6,11 +6,12 @@
     <string name="Actions.OK">OK</string>
     <string name="Actions.No">No</string>
     <string name="Actions.Yes">Yes</string>
+    <string name="Actions.Add_notification">Add notification</string>
 
     <string name="EventService.Label" translatable="false">EventService</string>
-    <string name="EventService.PersistentNotification.Text">Running...</string>
+    <string name="EventService.PersistentNotification.Text">Running…</string>
 
-    <string name="NotificationAccessService.PersistentNotification.Text">Running...</string>
+    <string name="NotificationAccessService.PersistentNotification.Text">Running…</string>
     <string name="NotificationAccessService.Label" translatable="false">NotificationAccessService</string>
 
     <string name="check_nl_permission">Zkontrolujte povolení pro odchyt notifikací.</string>
@@ -19,5 +20,23 @@
     <string name="check_contacts_permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
     <string name="permission">Permission</string>
     <string name="empty">Empty</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
 
-   </resources>
+    <string name="Preferences.SMS.Enable.Title">Incoming SMS</string>
+    <string name="Preferences.SMS.Enable.Summary">Alert of incoming SMS</string>
+    <string name="Preferences.Title">Settings</string>
+    <string name="Preferences.Calls.Enable.Title">Incoming call</string>
+    <string name="Preferences.Calls.Enable.Summary_on">I\'ll alert you about incoming call</string>
+    <string name="Preferences.Calls.Enable.Summary_off">I\'ll not alert you of an incoming call</string>
+    <string name="Preferences.Notification.Title">Application alerts</string>
+    <string name="Preferences.Notification.Enable.Title">New notification</string>
+    <string name="Preferences.Notification.Enable.Summary_off">I\'ll not alert you of an new notification</string>
+    <string name="Preferences.Notification.Enable.Summary_on">I\'ll alert you of an new notification</string>
+    <string name="Preferences.Alerts.Enable.Title">Alerts</string>
+    <string name="Preferences.Alerts.Enable.Summary_on">Turn on alerts</string>
+    <string name="Preferences.Alerts.Enable.Summary_off">Turn off alerts</string>
+    <string name="Preferences.Alerts.Select">Choose alerts</string>
+
+</resources>

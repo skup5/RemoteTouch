@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/Actions.Settings">
+
+    <SwitchPreference
+        android:key="@string/Key.Alerts.Enabled"
+        android:title="@string/Preferences.Alerts.Enable.Title"
+        android:summaryOn="@string/Preferences.Alerts.Enable.Summary_on"
+        android:summaryOff="@string/Preferences.Alerts.Enable.Summary_off"
+        android:defaultValue="@string/Def.Alerts.Enabled"/>
+
+    <PreferenceCategory
+        android:title="@string/Preferences.Alerts.Select"
+        android:dependency="@string/Key.Alerts.Enabled">
+
+        <!--<SwitchPreference-->
+            <!--android:defaultValue="false"-->
+            <!--android:key="@string/Key.Sms.Enabled"-->
+            <!--android:summary="@string/Preferences.SMS.Enable.Summary"-->
+            <!--android:title="@string/Preferences.SMS.Enable.Title"/>-->
+
+        <SwitchPreference
+            android:defaultValue="@string/Def.Calls.Enabled"
+            android:key="@string/Key.Calls.Enabled"
+            android:title="@string/Preferences.Calls.Enable.Title"
+            android:summaryOff="@string/Preferences.Calls.Enable.Summary_off"
+            android:summaryOn="@string/Preferences.Calls.Enable.Summary_on"/>
+
+        <!--<SwitchPreference-->
+            <!--android:key="@string/Key.Notifications.Enabled"-->
+            <!--android:title="@string/Preferences.Notification.Enable.Title"-->
+            <!--android:summaryOff="@string/Preferences.Notification.Enable.Summary_off"-->
+            <!--android:summaryOn="@string/Preferences.Notification.Enable.Summary_on"/>-->
+
+        <!--<PreferenceScreen-->
+            <!--android:key="@string/Key.Notifications"-->
+            <!--android:title="@string/Preferences.Notification.Title"-->
+            <!--android:summary="Application alerts summary">-->
+        <!--</PreferenceScreen>-->
+
+    </PreferenceCategory>
+
+    <!--<Preference-->
+        <!--android:key="@string/Key.Pair_key"-->
+        <!--android:title="Pair key"-->
+        <!--android:summary="A key to pair desktop client"-->
+        <!--android:persistent="true"-->
+        <!--android:dependency="pref_on"/>-->
+
+    <!--<ListPreference-->
+    <!--android:dependency="pref_sync"-->
+    <!--android:key="pref_syncConnectionType"-->
+    <!--android:title="@string/pref_syncConnectionType"-->
+    <!--android:dialogTitle="@string/pref_syncConnectionType"-->
+    <!--android:entries="@array/pref_syncConnectionTypes_entries"-->
+    <!--android:entryValues="@array/pref_syncConnectionTypes_values"-->
+    <!--android:defaultValue="@string/pref_syncConnectionTypes_default" />-->
+</PreferenceScreen>

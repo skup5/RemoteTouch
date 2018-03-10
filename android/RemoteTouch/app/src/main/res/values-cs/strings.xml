@@ -1,0 +1,30 @@
+<resources>
+
+    <string name="Actions.Export_notification_log">Export logs</string>
+    <string name="Actions.Settings">Nastavení</string>
+    <string name="Actions.OK">OK</string>
+    <string name="Actions.Yes">Ano</string>
+    <string name="Actions.No">Ne</string>
+
+    <string name="EventService.PersistentNotification.Text">Běží...</string>
+
+    <string name="NotificationAccessService.PersistentNotification.Text">Běží...</string>
+
+    <string name="check_nl_permission">Zkontrolujte povolení pro odchyt notifikací.</string>
+    <string name="check_sms_permissions">Aby Vás mohla aplikace upozornit na novou sms, potřebuje povolit přístup k Vašim SMS zprávam.</string>
+    <string name="check_calling_permissions">Aby Vás mohla aplikace upozornit na příchozí či zmeškané hovory, potřebuje povolit přístup k vašim hovorům.</string>
+    <string name="permission">Oprávnění</string>
+    <string name="empty">Prázdný</string>
+
+    <string name="Preferences.SMS.Enable.Summary">Upozornění na příchozí SMS</string>
+    <string name="Preferences.SMS.Enable.Title">Příchozí SMS</string>
+    <string name="Preferences.Title">Upozornit na</string>
+    <string name="Preferences.Calls.Enable.Summary_off">Neupozorním tě na příchozí hovor</string>
+    <string name="Preferences.Calls.Enable.Summary_on">Upozorním tě na příchozí hovor</string>
+    <string name="Preferences.Calls.Enable.Title">Příchozí hovor</string>
+    <string name="Preferences.Notification.Title">Application alerts</string>
+    <string name="Preferences.Notification.Enable.Title">New notification</string>
+    <string name="Preferences.Notification.Enable.Summary_off">I\'ll not alert you of an new notification</string>
+    <string name="Preferences.Notification.Enable.Summary_on">I\'ll alert you of an new notification</string>
+    <string name="check_contacts_permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
+</resources>

@@ -8,25 +8,26 @@
         android:minSdkVersion="18"
         android:targetSdkVersion="26"/>
 
-    <!--NETWORK PERMISSIONS-->
+    <!-- NETWORK PERMISSIONS -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <!--SMS PERMISSIONS-->
+    <!-- SMS PERMISSIONS -->
     <uses-permission android:name="android.permission.READ_SMS"/>
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
     <uses-permission android:name="android.permission.SEND_SMS"/>
-    <!--<uses-permission android:name="android.permission.RECEIVE_MMS"/>-->
+    <!-- <uses-permission android:name="android.permission.RECEIVE_MMS"/> -->
 
-    <!--CALLING PERMISSIONS-->
+
+    <!-- CALLING PERMISSIONS -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.READ_CALL_LOG"/>
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
 
-    <!--CONTACTS-->
+    <!-- CONTACTS -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
-    <!--EXTERNAL STORAGE PERMISSIONS-->
+    <!-- EXTERNAL STORAGE PERMISSIONS -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
@@ -39,8 +40,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!--<activity-->
+            <!--android:name=".MainActivity"-->
+            <!--android:label="@string/Application.Name"-->
+            <!--android:theme="@style/AppTheme.NoActionBar">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN"/>-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+
         <activity
-            android:name=".MainActivity"
+            android:name=".NavigationActivity"
             android:label="@string/Application.Name"
             android:theme="@style/AppTheme.NoActionBar">
 
