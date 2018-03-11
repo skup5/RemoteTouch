@@ -13,11 +13,12 @@
         android:title="@string/Preferences.Alerts.Select"
         android:dependency="@string/Key.Alerts.Enabled">
 
-        <!--<SwitchPreference-->
-            <!--android:defaultValue="false"-->
-            <!--android:key="@string/Key.Sms.Enabled"-->
-            <!--android:summary="@string/Preferences.SMS.Enable.Summary"-->
-            <!--android:title="@string/Preferences.SMS.Enable.Title"/>-->
+        <SwitchPreference
+            android:defaultValue="@string/Def.Sms.Enabled"
+            android:key="@string/Key.Sms.Enabled"
+            android:summaryOn="@string/Preferences.SMS.Enable.Summary_on"
+            android:summaryOff="@string/Preferences.SMS.Enable.Summary_off"
+            android:title="@string/Preferences.SMS.Enable.Title"/>
 
         <SwitchPreference
             android:defaultValue="@string/Def.Calls.Enabled"
@@ -42,10 +43,10 @@
 
     <!--<Preference-->
         <!--android:key="@string/Key.Pair_key"-->
-        <!--android:title="Pair key"-->
-        <!--android:summary="A key to pair desktop client"-->
+        <!--android:title="@string/Preferences.PairKey.Title"-->
+        <!--android:summary="@string/Preferences.PairKey.Summary"-->
         <!--android:persistent="true"-->
-        <!--android:dependency="pref_on"/>-->
+        <!--android:dependency="@string/Key.Alerts.Enabled"/>-->
 
     <!--<ListPreference-->
     <!--android:dependency="pref_sync"-->

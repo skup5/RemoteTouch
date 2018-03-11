@@ -135,6 +135,26 @@ public final class PermissionHelper {
         Log.i(TAG, activity.getLocalClassName() + " requestSmsPermissions: request permission");
     }
 
+    public static void requestSmsPermissions(Fragment fragment) {
+        if (fragment.shouldShowRequestPermissionRationale(Manifest.permission.READ_SMS) ||
+            fragment.shouldShowRequestPermissionRationale(Manifest.permission.RECEIVE_SMS) ||
+            fragment.shouldShowRequestPermissionRationale(Manifest.permission.SEND_SMS)) {
+            // Show an non-blocking explanation here.
+
+            Log.i(TAG, fragment.getClass().getSimpleName() + " requestSmsPermissions(): shouldShowRequestPermissionRationale");
+        }
+
+        fragment.requestPermissions(
+            new String[]{
+                Manifest.permission.READ_SMS,
+                Manifest.permission.RECEIVE_SMS,
+                Manifest.permission.SEND_SMS
+            },
+            MY_PERMISSIONS_REQUEST_SMS);
+
+        Log.i(TAG, fragment.getClass().getSimpleName() + " requestSmsPermissions: request permission");
+    }
+
     // EXTERNAL STORAGE //////////////////////////////////////////
 
     public static boolean checkExternalStoragePermissions(Activity activity) {

@@ -8,4 +8,5 @@
     <string name="Key.Alerts.Enabled">pref_on</string>
     <string name="Def.Alerts.Enabled">true</string>
     <string name="Def.Calls.Enabled">false</string>
+    <string name="Def.Sms.Enabled">false</string>
 </resources>

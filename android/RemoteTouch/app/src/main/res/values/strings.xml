@@ -14,7 +14,7 @@
     <string name="NotificationAccessService.PersistentNotification.Text">Running…</string>
     <string name="NotificationAccessService.Label" translatable="false">NotificationAccessService</string>
 
-    <string name="check_nl_permission">Zkontrolujte povolení pro odchyt notifikací.</string>
+    <string name="check_nl_permission">Aplikace potřebuje povolit přístup k notifikacím.</string>
     <string name="check_sms_permissions">Aby Vás mohla aplikace upozornit na novou sms, potřebuje povolit přístup k Vašim SMS zprávam.</string>
     <string name="check_calling_permissions">Aby Vás mohla aplikace upozornit na příchozí či zmeškané hovory, potřebuje povolit přístup k vašim hovorům.</string>
     <string name="check_contacts_permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
@@ -24,9 +24,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_navigation">NavigationActivity</string>
 
-    <string name="Preferences.SMS.Enable.Title">Incoming SMS</string>
-    <string name="Preferences.SMS.Enable.Summary">Alert of incoming SMS</string>
     <string name="Preferences.Title">Settings</string>
+    <string name="Preferences.SMS.Enable.Title">Incoming SMS</string>
+    <string name="Preferences.SMS.Enable.Summary_on">Allow send alert of incoming SMS</string>
+    <string name="Preferences.SMS.Enable.Summary_off">Turn off alerting of new sms.</string>
     <string name="Preferences.Calls.Enable.Title">Incoming call</string>
     <string name="Preferences.Calls.Enable.Summary_on">I\'ll alert you about incoming call</string>
     <string name="Preferences.Calls.Enable.Summary_off">I\'ll not alert you of an incoming call</string>
@@ -38,5 +39,7 @@
     <string name="Preferences.Alerts.Enable.Summary_on">Turn on alerts</string>
     <string name="Preferences.Alerts.Enable.Summary_off">Turn off alerts</string>
     <string name="Preferences.Alerts.Select">Choose alerts</string>
+    <string name="Preferences.PairKey.Title">Show pair key</string>
+    <string name="Preferences.PairKey.Summary">A key to pair desktop client</string>
 
 </resources>

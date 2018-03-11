@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.helper.AndroidAppComponentHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
 import cz.zelenikr.remotetouch.receiver.CallReceiver;
+import cz.zelenikr.remotetouch.receiver.SmsReceiver;
 
 /**
  * Contains basic application settings.
@@ -69,7 +71,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
         } else if (key.equals(getString(R.string.Key_Notifications_Enabled))) {
 
         } else if (key.equals(getString(R.string.Key_Sms_Enabled))) {
-
+            if (preference.isEnabled()) onSmsEnabledClick(preference);
         } else if (key.equals(getString(R.string.Key_Pair_key))) {
             onPairKeyClick(preference);
         }
@@ -93,6 +95,18 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 }
                 return;
             }
+            case PermissionHelper.MY_PERMISSIONS_REQUEST_SMS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i(TAG, "onRequestPermissionsResult: permissions granted");
+                } else {
+                    Log.i(TAG, "onRequestPermissionsResult: permissions denied");
+                    // Set 'Sms disabled'
+                    SwitchPreference preference = (SwitchPreference) findPreference(getString(R.string.Key_Sms_Enabled));
+                    preference.setChecked(false);
+                }
+                return;
+            }
             default:
                 break;
         }
@@ -105,6 +119,9 @@ public class SettingsFragment extends PreferenceFragmentCompat
         if (key.equals(getString(R.string.Key_Calls_Enabled))) {
             SwitchPreference preference = (SwitchPreference) findPreference(key);
             setReceiverEnabled(CallReceiver.class, preference.isChecked());
+        } else if (key.equals(getString(R.string.Key_Sms_Enabled))) {
+            SwitchPreference preference = (SwitchPreference) findPreference(key);
+            setReceiverEnabled(SmsReceiver.class, preference.isChecked());
         }
     }
 
@@ -113,6 +130,13 @@ public class SettingsFragment extends PreferenceFragmentCompat
         SwitchPreference switchPreference = (SwitchPreference) preference;
         if (switchPreference.isChecked()) {
             checkCallsPermissions(switchPreference);
+        }
+    }
+
+    private void onSmsEnabledClick(Preference preference) {
+        SwitchPreference switchPreference = (SwitchPreference) preference;
+        if (switchPreference.isChecked()) {
+            checkSmsPermissions(switchPreference);
         }
     }
 
@@ -144,6 +168,30 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 .setPositiveButton(
                     R.string.Actions_OK,
                     (dialog, which) -> PermissionHelper.requestCallingPermissions(this)
+                )
+                .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
+                    preference.setChecked(false);
+                })
+                .show();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * If isn't granted, shows information dialog to user.
+     *
+     * @return true if already granted, false otherwise
+     */
+    private boolean checkSmsPermissions(SwitchPreference preference) {
+        if (!PermissionHelper.areSmsPermissionsGranted(getContext())) {
+            new AlertDialog.Builder(getContext())
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(R.string.Application_Name)
+                .setMessage(R.string.check_sms_permissions)
+                .setPositiveButton(
+                    R.string.Actions_OK,
+                    (dialog, which) -> PermissionHelper.requestSmsPermissions(this)
                 )
                 .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
                     preference.setChecked(false);
