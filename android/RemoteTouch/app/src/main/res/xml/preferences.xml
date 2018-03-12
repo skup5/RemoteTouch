@@ -1,52 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/Actions.Settings">
+                  android:title="@string/Actions.Settings">
 
     <SwitchPreference
+        android:defaultValue="@string/Def.Alerts.Enabled"
         android:key="@string/Key.Alerts.Enabled"
-        android:title="@string/Preferences.Alerts.Enable.Title"
-        android:summaryOn="@string/Preferences.Alerts.Enable.Summary_on"
         android:summaryOff="@string/Preferences.Alerts.Enable.Summary_off"
-        android:defaultValue="@string/Def.Alerts.Enabled"/>
+        android:summaryOn="@string/Preferences.Alerts.Enable.Summary_on"
+        android:title="@string/Preferences.Alerts.Enable.Title"/>
 
     <PreferenceCategory
-        android:title="@string/Preferences.Alerts.Select"
-        android:dependency="@string/Key.Alerts.Enabled">
+        android:dependency="@string/Key.Alerts.Enabled"
+        android:title="@string/Preferences.Alerts.Title">
 
         <SwitchPreference
             android:defaultValue="@string/Def.Sms.Enabled"
             android:key="@string/Key.Sms.Enabled"
-            android:summaryOn="@string/Preferences.SMS.Enable.Summary_on"
             android:summaryOff="@string/Preferences.SMS.Enable.Summary_off"
+            android:summaryOn="@string/Preferences.SMS.Enable.Summary_on"
             android:title="@string/Preferences.SMS.Enable.Title"/>
 
         <SwitchPreference
             android:defaultValue="@string/Def.Calls.Enabled"
             android:key="@string/Key.Calls.Enabled"
-            android:title="@string/Preferences.Calls.Enable.Title"
             android:summaryOff="@string/Preferences.Calls.Enable.Summary_off"
-            android:summaryOn="@string/Preferences.Calls.Enable.Summary_on"/>
+            android:summaryOn="@string/Preferences.Calls.Enable.Summary_on"
+            android:title="@string/Preferences.Calls.Enable.Title"/>
 
         <!--<SwitchPreference-->
-            <!--android:key="@string/Key.Notifications.Enabled"-->
-            <!--android:title="@string/Preferences.Notification.Enable.Title"-->
-            <!--android:summaryOff="@string/Preferences.Notification.Enable.Summary_off"-->
-            <!--android:summaryOn="@string/Preferences.Notification.Enable.Summary_on"/>-->
+        <!--android:key="@string/Key.Notifications.Enabled"-->
+        <!--android:title="@string/Preferences.Notification.Enable.Title"-->
+        <!--android:summaryOff="@string/Preferences.Notification.Enable.Summary_off"-->
+        <!--android:summaryOn="@string/Preferences.Notification.Enable.Summary_on"/>-->
 
         <!--<PreferenceScreen-->
-            <!--android:key="@string/Key.Notifications"-->
-            <!--android:title="@string/Preferences.Notification.Title"-->
-            <!--android:summary="Application alerts summary">-->
+        <!--android:key="@string/Key.Notifications"-->
+        <!--android:title="@string/Preferences.Notification.Title"-->
+        <!--android:summary="Application alerts summary">-->
         <!--</PreferenceScreen>-->
 
     </PreferenceCategory>
 
-    <!--<Preference-->
+    <PreferenceCategory
+        android:title="@string/Preferences.Device.Title">
+
+        <EditTextPreference
+            android:defaultValue="@string/Def.Device.Name"
+            android:key="@string/Key.Device.Name"
+            android:title="@string/Preferences.Device.Name.Title"/>
+
+        <Preference
+            android:key="@string/Key.Device.Pair_key"
+            android:summary="@string/Preferences.PairKey.Summary"
+            android:title="@string/Preferences.PairKey.Title"/>
+
+        <!--<cz.zelenikr.remotetouch.settings.PairKeyPreference-->
         <!--android:key="@string/Key.Pair_key"-->
         <!--android:title="@string/Preferences.PairKey.Title"-->
         <!--android:summary="@string/Preferences.PairKey.Summary"-->
         <!--android:persistent="true"-->
         <!--android:dependency="@string/Key.Alerts.Enabled"/>-->
+
+    </PreferenceCategory>
 
     <!--<ListPreference-->
     <!--android:dependency="pref_sync"-->

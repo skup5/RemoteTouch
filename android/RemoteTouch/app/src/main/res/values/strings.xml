@@ -7,6 +7,7 @@
     <string name="Actions.No">No</string>
     <string name="Actions.Yes">Yes</string>
     <string name="Actions.Add_notification">Add notification</string>
+    <string name="Actions_Close">Close</string>
 
     <string name="EventService.Label" translatable="false">EventService</string>
     <string name="EventService.PersistentNotification.Text">Running…</string>
@@ -38,8 +39,11 @@
     <string name="Preferences.Alerts.Enable.Title">Alerts</string>
     <string name="Preferences.Alerts.Enable.Summary_on">Turn on alerts</string>
     <string name="Preferences.Alerts.Enable.Summary_off">Turn off alerts</string>
-    <string name="Preferences.Alerts.Select">Choose alerts</string>
+    <string name="Preferences.Alerts.Title">Choose alerts</string>
     <string name="Preferences.PairKey.Title">Show pair key</string>
     <string name="Preferences.PairKey.Summary">A key to pair desktop client</string>
+    <string name="Preferences.Device.Title">Device</string>
+    <string name="Preferences.Device.Name.Title">Name</string>
+    <string name="Def.Device.Name">myPhone</string>
 
 </resources>

@@ -11,9 +11,11 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import cz.zelenikr.remotetouch.security.exception.UnsupportedCipherException;
+import cz.zelenikr.remotetouch.security.exception.UnsupportedKeyLengthException;
+
 public final class AESCipher implements SymmetricCipher {
 
-    private static final int KEY_BITS_LENGTH = 256; // 192 and 256 bits may not be available
     private static final int BASE64_FLAGS = Base64.DEFAULT;
     private static final String SHA_VERSION = "SHA-256";
 
@@ -21,29 +23,12 @@ public final class AESCipher implements SymmetricCipher {
     private final Cipher cipher;
 
     /**
-     * Initializes new AES cipher with random key.
-     *
-     * @throws UnsupportedKeyLengthException
-     * @throws UnsupportedCipherException
-     */
-    public AESCipher() throws UnsupportedKeyLengthException, UnsupportedCipherException {
-        try {
-            this.secretKey = generateKey();
-        } catch (NoSuchAlgorithmException e) {
-            throw new UnsupportedKeyLengthException(KEY_BITS_LENGTH + "");
-        }
-
-        this.cipher = initCipher();
-    }
-
-    /**
      * Initializes new AES cipher with a specific key.
      *
      * @param plainKey the given key like a plain text
      * @throws UnsupportedCipherException
-     * @throws NoSuchAlgorithmException
      */
-    public AESCipher(@NonNull String plainKey) throws UnsupportedCipherException, NoSuchAlgorithmException {
+    public AESCipher(@NonNull String plainKey) throws UnsupportedCipherException {
         this(toSecretKey(plainKey));
     }
 
@@ -56,34 +41,6 @@ public final class AESCipher implements SymmetricCipher {
         this.cipher = initCipher();
     }
 
-    /**
-     * Generates new random key for AES cipher and returns it.
-     *
-     * @return new random key or null if some error occurred
-     */
-    public static byte[] generateAESKey() {
-        try {
-            return generateKey().getEncoded();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Generates new random key for AES cipher and returns it like a plain text.
-     *
-     * @return new random key or null if some error occurred
-     */
-    public static String generatePlainAESKey() {
-        try {
-            return generateKey().getEncoded().toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     private static Cipher initCipher() throws UnsupportedCipherException {
         try {
             return Cipher.getInstance("AES");
@@ -93,17 +50,16 @@ public final class AESCipher implements SymmetricCipher {
         }
     }
 
-    private static SecretKey toSecretKey(String plainKey) throws NoSuchAlgorithmException {
+    private static SecretKey toSecretKey(String plainKey) throws UnsupportedCipherException {
         byte[] key = plainKey.getBytes();
-        MessageDigest sha = MessageDigest.getInstance(SHA_VERSION);
+        MessageDigest sha = null;
+        try {
+            sha = MessageDigest.getInstance(SHA_VERSION);
+        } catch (NoSuchAlgorithmException e) {
+            throw new UnsupportedCipherException(e);
+        }
         key = sha.digest(key);
         return new SecretKeySpec(key, "AES");
-    }
-
-    private static SecretKey generateKey() throws NoSuchAlgorithmException {
-        KeyGenerator kgen = KeyGenerator.getInstance("AES");
-        kgen.init(KEY_BITS_LENGTH);
-        return kgen.generateKey();
     }
 
     @Override
@@ -139,22 +95,9 @@ public final class AESCipher implements SymmetricCipher {
         return cipher.doFinal(input);
     }
 
-
     private byte[] decrypt(byte[] input) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
         return cipher.doFinal(input);
     }
 
-
-    public static class UnsupportedKeyLengthException extends RuntimeException {
-        public UnsupportedKeyLengthException(String message) {
-            super(message);
-        }
-    }
-
-    public static class UnsupportedCipherException extends RuntimeException {
-        public UnsupportedCipherException(String message) {
-            super(message);
-        }
-    }
 }

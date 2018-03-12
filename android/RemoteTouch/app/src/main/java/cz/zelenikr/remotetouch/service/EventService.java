@@ -4,12 +4,15 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -19,13 +22,16 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 
 import cz.zelenikr.remotetouch.MainActivity;
+import cz.zelenikr.remotetouch.NavigationActivity;
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.dto.EventDTO;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
+import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.network.RestClient;
 import cz.zelenikr.remotetouch.network.SecureRestClient;
 import cz.zelenikr.remotetouch.network.SimpleRestClient;
 import cz.zelenikr.remotetouch.security.AESCipher;
+import cz.zelenikr.remotetouch.security.exception.UnsupportedCipherException;
 
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
 
@@ -57,7 +63,7 @@ public class EventService extends Service {
         try {
 //      this.restClient = new SimpleRestClient(loadClientToken(), new URL(loadRestUrl()));
             this.restClient = new SecureRestClient(loadClientToken(), new URL(loadRestUrl()), loadSecureKey());
-        } catch (MalformedURLException | AESCipher.UnsupportedCipherException | NoSuchAlgorithmException e) {
+        } catch (MalformedURLException | UnsupportedCipherException e) {
             Log.e(TAG, e.getLocalizedMessage());
             throw new RuntimeException(e);
         }
@@ -108,11 +114,13 @@ public class EventService extends Service {
 
     private String loadSecureKey() {
         // TODO: load from some secure store
-        return "[B@6e3c1e69";
+        String key = SettingsHelper.getPairKey(this);
+        if (key.isEmpty()) Log.e(TAG, "loadSecureKey: key is missing");
+        return key;
     }
 
     private void showNotification() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, NavigationActivity.class);
         PendingIntent pendingIntent =
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 

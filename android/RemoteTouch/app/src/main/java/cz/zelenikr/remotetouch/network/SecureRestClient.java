@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.dto.EventContent;
 import cz.zelenikr.remotetouch.data.dto.MessageDTO;
+import cz.zelenikr.remotetouch.helper.SecurityHelper;
 import cz.zelenikr.remotetouch.security.AESCipher;
 import cz.zelenikr.remotetouch.security.SymmetricCipher;
 
@@ -40,13 +41,11 @@ public class SecureRestClient implements RestClient {
      * @param clientToken
      * @param baseRestUrl
      * @param secureKey key (like a plain text) for encrypting/decrypting messages
-     * @throws NoSuchAlgorithmException
-     * @throws AESCipher.UnsupportedCipherException
      */
-    public SecureRestClient(String clientToken, URL baseRestUrl, String secureKey) throws NoSuchAlgorithmException, AESCipher.UnsupportedCipherException {
+    public SecureRestClient(String clientToken, URL baseRestUrl, String secureKey) {
         this.clientToken = clientToken;
         this.baseRestUrl = baseRestUrl;
-        this.symmetricCipher = new AESCipher(secureKey);
+        this.symmetricCipher = SecurityHelper.createSymmetricCipherInstance(secureKey);
     }
 
     @Override

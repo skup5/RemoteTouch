@@ -9,17 +9,20 @@ import android.support.annotation.NonNull;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.helper.AndroidAppComponentHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
+import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.receiver.CallReceiver;
 import cz.zelenikr.remotetouch.receiver.SmsReceiver;
 
@@ -37,6 +40,9 @@ public class SettingsFragment extends PreferenceFragmentCompat
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        Preference preference = findPreference(getString(R.string.Key_Device_Name));
+        if(preference != null) onDeviceNamePrefChanged(preference);
     }
 
     @Override
@@ -72,7 +78,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
         } else if (key.equals(getString(R.string.Key_Sms_Enabled))) {
             if (preference.isEnabled()) onSmsEnabledClick(preference);
-        } else if (key.equals(getString(R.string.Key_Pair_key))) {
+        } else if (key.equals(getString(R.string.Key_Device_Pair_key))) {
             onPairKeyClick(preference);
         }
 
@@ -122,9 +128,10 @@ public class SettingsFragment extends PreferenceFragmentCompat
         } else if (key.equals(getString(R.string.Key_Sms_Enabled))) {
             SwitchPreference preference = (SwitchPreference) findPreference(key);
             setReceiverEnabled(SmsReceiver.class, preference.isChecked());
+        } else if (key.equals(getString(R.string.Key_Device_Name))) {
+            onDeviceNamePrefChanged(findPreference(key));
         }
     }
-
 
     private void onCallsEnabledClick(Preference preference) {
         SwitchPreference switchPreference = (SwitchPreference) preference;
@@ -142,16 +149,37 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
     private void onPairKeyClick(Preference preference) {
         Toast.makeText(getContext(), preference.getTitle(), Toast.LENGTH_SHORT).show();
+
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         final View dialogView = getLayoutInflater().inflate(R.layout.pair_key_dialog, null);
+
+        Button pairKeyBt = dialogView.findViewById(R.id.pairKeyBt);
+        pairKeyBt.setOnClickListener(this::onPairKeyBtClick);
+        TextView pairKeyValue = dialogView.findViewById(R.id.pairKeyValue);
+        pairKeyValue.setText(SettingsHelper.getPairKey(getContext()));
+
         dialogBuilder
             .setView(dialogView)
+            .setIcon(android.R.drawable.ic_secure)
             .setTitle(preference.getTitle())
             .setMessage(preference.getSummary())
-            .setPositiveButton(R.string.Actions_OK, (dialog, bt) -> {
+            .setPositiveButton(R.string.Actions_Close, (dialog, bt) -> {
             })
             .create()
             .show();
+    }
+
+    private void onPairKeyBtClick(View view) {
+        Log.i(TAG, "onPairKeyBtClick: ");
+        View root = view.getRootView();
+        String newKey = SettingsHelper.regeneratePairKey(getContext());
+        TextView pairKeyValue = root.findViewById(R.id.pairKeyValue);
+        pairKeyValue.setText(newKey);
+    }
+
+    private void onDeviceNamePrefChanged(Preference preference) {
+        EditTextPreference pref = (EditTextPreference) preference;
+        preference.setSummary(pref.getText());
     }
 
     /**
