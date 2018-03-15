@@ -21,29 +21,29 @@
     <string name="check_contacts_permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
     <string name="permission">Permission</string>
     <string name="empty">Empty</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
 
     <string name="Preferences.Title">Settings</string>
     <string name="Preferences.SMS.Enable.Title">Incoming SMS</string>
-    <string name="Preferences.SMS.Enable.Summary_on">Allow send alert of incoming SMS</string>
-    <string name="Preferences.SMS.Enable.Summary_off">Turn off alerting of new sms.</string>
-    <string name="Preferences.Calls.Enable.Title">Incoming call</string>
-    <string name="Preferences.Calls.Enable.Summary_on">I\'ll alert you about incoming call</string>
-    <string name="Preferences.Calls.Enable.Summary_off">I\'ll not alert you of an incoming call</string>
+    <string name="Preferences.SMS.Enable.Summary_on">I\'ll alert you of an incoming sms.</string>
+    <string name="Preferences.SMS.Enable.Summary_off">I\'ll not alert you of an incoming sms.</string>
+    <string name="Preferences.Calls.Enable.Title">Calls</string>
+    <string name="Preferences.Calls.Enable.Summary_on">Alerting is allowed.</string>
+    <string name="Preferences.Calls.Enable.Summary_off">Alerting is denied.</string>
     <string name="Preferences.Notification.Title">Application alerts</string>
     <string name="Preferences.Notification.Enable.Title">New notification</string>
-    <string name="Preferences.Notification.Enable.Summary_off">I\'ll not alert you of an new notification</string>
-    <string name="Preferences.Notification.Enable.Summary_on">I\'ll alert you of an new notification</string>
-    <string name="Preferences.Alerts.Enable.Title">Alerts</string>
-    <string name="Preferences.Alerts.Enable.Summary_on">Turn on alerts</string>
-    <string name="Preferences.Alerts.Enable.Summary_off">Turn off alerts</string>
+    <string name="Preferences.Notification.Enable.Summary_off">I\'ll not alert you of an new notification.</string>
+    <string name="Preferences.Notification.Enable.Summary_on">I\'ll alert you of an new notification.</string>
+    <string name="Preferences.Alerts.Enable.Title">Alert service</string>
+    <string name="Preferences.Alerts.Enable.Summary_on">The service is turned on.</string>
+    <string name="Preferences.Alerts.Enable.Summary_off">The service is turned off. All alerts are denied.</string>
     <string name="Preferences.Alerts.Title">Choose alerts</string>
     <string name="Preferences.PairKey.Title">Show pair key</string>
-    <string name="Preferences.PairKey.Summary">A key to pair desktop client</string>
+    <string name="Preferences.PairKey.Summary">A key to pair desktop client.</string>
     <string name="Preferences.Device.Title">Device</string>
     <string name="Preferences.Device.Name.Title">Name</string>
     <string name="Def.Device.Name">myPhone</string>
+    <string name="generate_new_pair_key">Generate new pair key</string>
 
 </resources>

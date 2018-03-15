@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="Key.Notifications">pref_notifications</string>
-    <string name="Key.Sms.Enabled">pref_sms_enabled</string>
-    <string name="Key.Calls.Enabled">pref_calls_enabled</string>
-    <string name="Key.Notifications.Enabled">pref_notifications_enabled</string>
-    <string name="Key.Device.Pair_key">pref_device_pair_key</string>
-    <string name="Key.Alerts.Enabled">pref_on</string>
-    <string name="Def.Alerts.Enabled">true</string>
-    <string name="Def.Calls.Enabled">false</string>
-    <string name="Def.Sms.Enabled">false</string>
-    <string name="Key.Device.Name">pref_device_name</string>
+    <string name="Key.Notifications" translatable="false">pref_notifications</string>
+    <string name="Key.Sms.Enabled" translatable="false">pref_sms_enabled</string>
+    <string name="Key.Calls.Enabled" translatable="false">pref_calls_enabled</string>
+    <string name="Key.Notifications.Enabled" translatable="false">pref_notifications_enabled</string>
+    <string name="Key.Device.Pair_key" translatable="false">pref_device_pair_key</string>
+    <string name="Key.Alerts.Enabled" translatable="false">pref_on</string>
+    <string name="Def.Alerts.Enabled" translatable="false">true</string>
+    <string name="Def.Calls.Enabled" translatable="false">false</string>
+    <string name="Def.Sms.Enabled" translatable="false">false</string>
+    <string name="Key.Device.Name" translatable="false">pref_device_name</string>
 </resources>

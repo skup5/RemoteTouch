@@ -6,13 +6,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v14.preference.SwitchPreference;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.PreferenceScreen;
+import android.support.v7.preference.SwitchPreferenceCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +30,7 @@ import cz.zelenikr.remotetouch.receiver.SmsReceiver;
  * @author Roman Zelenik
  */
 public class SettingsFragment extends PreferenceFragmentCompat
-    implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback, SharedPreferences.OnSharedPreferenceChangeListener {
+    implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = SettingsFragment.class.getSimpleName();
 
@@ -42,7 +40,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
         Preference preference = findPreference(getString(R.string.Key_Device_Name));
-        if(preference != null) onDeviceNamePrefChanged(preference);
+        if (preference != null) onDeviceNamePrefChanged(preference);
     }
 
     @Override
@@ -55,18 +53,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
     public void onPause() {
         super.onPause();
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public Fragment getCallbackFragment() {
-        return this;
-    }
-
-
-    @Override
-    public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller, PreferenceScreen pref) {
-        caller.setPreferenceScreen(pref);
-        return true;
     }
 
     @Override
@@ -96,7 +82,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 } else {
                     Log.i(TAG, "onRequestPermissionsResult: permissions denied");
                     // Set 'Calls disabled'
-                    SwitchPreference preference = (SwitchPreference) findPreference(getString(R.string.Key_Calls_Enabled));
+                    SwitchPreferenceCompat preference = (SwitchPreferenceCompat) findPreference(getString(R.string.Key_Calls_Enabled));
                     preference.setChecked(false);
                 }
                 return;
@@ -108,7 +94,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 } else {
                     Log.i(TAG, "onRequestPermissionsResult: permissions denied");
                     // Set 'Sms disabled'
-                    SwitchPreference preference = (SwitchPreference) findPreference(getString(R.string.Key_Sms_Enabled));
+                    SwitchPreferenceCompat preference = (SwitchPreferenceCompat) findPreference(getString(R.string.Key_Sms_Enabled));
                     preference.setChecked(false);
                 }
                 return;
@@ -123,10 +109,10 @@ public class SettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.Key_Calls_Enabled))) {
-            SwitchPreference preference = (SwitchPreference) findPreference(key);
+            SwitchPreferenceCompat preference = (SwitchPreferenceCompat) findPreference(key);
             setReceiverEnabled(CallReceiver.class, preference.isChecked());
         } else if (key.equals(getString(R.string.Key_Sms_Enabled))) {
-            SwitchPreference preference = (SwitchPreference) findPreference(key);
+            SwitchPreferenceCompat preference = (SwitchPreferenceCompat) findPreference(key);
             setReceiverEnabled(SmsReceiver.class, preference.isChecked());
         } else if (key.equals(getString(R.string.Key_Device_Name))) {
             onDeviceNamePrefChanged(findPreference(key));
@@ -134,33 +120,33 @@ public class SettingsFragment extends PreferenceFragmentCompat
     }
 
     private void onCallsEnabledClick(Preference preference) {
-        SwitchPreference switchPreference = (SwitchPreference) preference;
-        if (switchPreference.isChecked()) {
-            checkCallsPermissions(switchPreference);
+        SwitchPreferenceCompat SwitchPreferenceCompat = (SwitchPreferenceCompat) preference;
+        if (SwitchPreferenceCompat.isChecked()) {
+            checkCallsPermissions(SwitchPreferenceCompat);
         }
     }
 
     private void onSmsEnabledClick(Preference preference) {
-        SwitchPreference switchPreference = (SwitchPreference) preference;
-        if (switchPreference.isChecked()) {
-            checkSmsPermissions(switchPreference);
+        SwitchPreferenceCompat SwitchPreferenceCompat = (SwitchPreferenceCompat) preference;
+        if (SwitchPreferenceCompat.isChecked()) {
+            checkSmsPermissions(SwitchPreferenceCompat);
         }
     }
 
     private void onPairKeyClick(Preference preference) {
-        Toast.makeText(getContext(), preference.getTitle(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), preference.getTitle(), Toast.LENGTH_SHORT).show();
 
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-        final View dialogView = getLayoutInflater().inflate(R.layout.pair_key_dialog, null);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.pair_key_dialog, null);
 
         Button pairKeyBt = dialogView.findViewById(R.id.pairKeyBt);
         pairKeyBt.setOnClickListener(this::onPairKeyBtClick);
         TextView pairKeyValue = dialogView.findViewById(R.id.pairKeyValue);
-        pairKeyValue.setText(SettingsHelper.getPairKey(getContext()));
+        pairKeyValue.setText(SettingsHelper.getPairKey(getActivity()));
 
         dialogBuilder
             .setView(dialogView)
-            .setIcon(android.R.drawable.ic_secure)
+            .setIcon(R.drawable.ic_action_secure)
             .setTitle(preference.getTitle())
             .setMessage(preference.getSummary())
             .setPositiveButton(R.string.Actions_Close, (dialog, bt) -> {
@@ -187,9 +173,9 @@ public class SettingsFragment extends PreferenceFragmentCompat
      *
      * @return true if already granted, false otherwise
      */
-    private boolean checkCallsPermissions(SwitchPreference preference) {
-        if (!PermissionHelper.areCallingPermissionsGranted(getContext())) {
-            new AlertDialog.Builder(getContext())
+    private boolean checkCallsPermissions(SwitchPreferenceCompat preference) {
+        if (!PermissionHelper.areCallingPermissionsGranted(getActivity())) {
+            new AlertDialog.Builder(getActivity())
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(R.string.Application_Name)
                 .setMessage(R.string.check_calling_permissions)
@@ -211,7 +197,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
      *
      * @return true if already granted, false otherwise
      */
-    private boolean checkSmsPermissions(SwitchPreference preference) {
+    private boolean checkSmsPermissions(SwitchPreferenceCompat preference) {
         if (!PermissionHelper.areSmsPermissionsGranted(getContext())) {
             new AlertDialog.Builder(getContext())
                 .setIcon(R.mipmap.ic_launcher)

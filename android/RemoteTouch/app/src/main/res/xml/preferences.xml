@@ -2,8 +2,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                   android:title="@string/Actions.Settings">
 
-    <SwitchPreference
+    <SwitchPreferenceCompat
         android:defaultValue="@string/Def.Alerts.Enabled"
+        android:icon="@android:drawable/ic_popup_reminder"
         android:key="@string/Key.Alerts.Enabled"
         android:summaryOff="@string/Preferences.Alerts.Enable.Summary_off"
         android:summaryOn="@string/Preferences.Alerts.Enable.Summary_on"
@@ -13,15 +14,17 @@
         android:dependency="@string/Key.Alerts.Enabled"
         android:title="@string/Preferences.Alerts.Title">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="@string/Def.Sms.Enabled"
+            android:icon="@drawable/ic_action_email"
             android:key="@string/Key.Sms.Enabled"
             android:summaryOff="@string/Preferences.SMS.Enable.Summary_off"
             android:summaryOn="@string/Preferences.SMS.Enable.Summary_on"
             android:title="@string/Preferences.SMS.Enable.Title"/>
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="@string/Def.Calls.Enabled"
+            android:icon="@drawable/ic_action_call"
             android:key="@string/Key.Calls.Enabled"
             android:summaryOff="@string/Preferences.Calls.Enable.Summary_off"
             android:summaryOn="@string/Preferences.Calls.Enable.Summary_on"
@@ -43,13 +46,14 @@
 
     <PreferenceCategory
         android:title="@string/Preferences.Device.Title">
-
         <EditTextPreference
             android:defaultValue="@string/Def.Device.Name"
+            android:icon="@drawable/ic_action_phone"
             android:key="@string/Key.Device.Name"
             android:title="@string/Preferences.Device.Name.Title"/>
 
         <Preference
+            android:icon="@drawable/ic_action_secure"
             android:key="@string/Key.Device.Pair_key"
             android:summary="@string/Preferences.PairKey.Summary"
             android:title="@string/Preferences.PairKey.Title"/>

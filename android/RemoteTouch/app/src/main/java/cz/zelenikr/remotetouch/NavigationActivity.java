@@ -21,8 +21,8 @@ import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.service.EventService;
 
 public class NavigationActivity extends AppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener,
-    DeveloperFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        DeveloperFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class NavigationActivity extends AppCompatActivity
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -68,18 +68,10 @@ public class NavigationActivity extends AppCompatActivity
         int id = item.getItemId();
         Fragment fragment = null;
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_developer) {
+        if (id == R.id.nav_developer) {
             fragment = new DeveloperFragment();
-        } else if (id == R.id.nav_manage || id == R.id.nav_settings) {
+        } else if (id == R.id.nav_settings) {
             fragment = new SettingsFragment();
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
 
         if (fragment != null) replaceFragment(fragment);
@@ -96,9 +88,9 @@ public class NavigationActivity extends AppCompatActivity
 
     private void replaceFragment(@NonNull Fragment fragment) {
         getSupportFragmentManager()
-            .beginTransaction()
-            .replace(R.id.flContent, fragment)
-            .commit();
+                .beginTransaction()
+                .replace(R.id.flContent, fragment)
+                .commit();
     }
 
     private void startEventService() {
