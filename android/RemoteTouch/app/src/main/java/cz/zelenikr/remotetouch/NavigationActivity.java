@@ -1,11 +1,8 @@
 package cz.zelenikr.remotetouch;
 
-import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -17,8 +14,6 @@ import android.view.MenuItem;
 
 import cz.zelenikr.remotetouch.fragment.DeveloperFragment;
 import cz.zelenikr.remotetouch.fragment.SettingsFragment;
-import cz.zelenikr.remotetouch.helper.ApiHelper;
-import cz.zelenikr.remotetouch.service.EventService;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -42,13 +37,6 @@ public class NavigationActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        startEventService();
     }
 
     @Override
@@ -93,11 +81,4 @@ public class NavigationActivity extends AppCompatActivity
                 .commit();
     }
 
-    private void startEventService() {
-        if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.O)) {
-            startForegroundService(new Intent(this, EventService.class));
-        } else {
-            startService(new Intent(this, EventService.class));
-        }
-    }
 }

@@ -1,10 +1,12 @@
 package cz.zelenikr.remotetouch.fragment;
 
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -20,11 +22,13 @@ import android.widget.Toast;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.helper.AndroidAppComponentHelper;
+import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.receiver.CallReceiver;
 import cz.zelenikr.remotetouch.receiver.SmsReceiver;
+import cz.zelenikr.remotetouch.service.EventService;
 
 /**
  * Contains basic application settings.
@@ -35,6 +39,13 @@ public class SettingsFragment extends PreferenceFragmentCompat
     implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = SettingsFragment.class.getSimpleName();
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        startEventService();
+    }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -63,7 +74,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
         if (key.equals(getString(R.string.Key_Calls_Enabled))) {
             if (preference.isEnabled()) onCallsEnabledClick(preference);
         } else if (key.equals(getString(R.string.Key_Notifications_Enabled))) {
-           // if (preference.isEnabled()) onNotificationsEnabledClick(preference);
+            if (preference.isEnabled()) onNotificationsEnabledClick(preference);
         } else if (key.equals(getString(R.string.Key_Sms_Enabled))) {
             if (preference.isEnabled()) onSmsEnabledClick(preference);
         } else if (key.equals(getString(R.string.Key_Device_Pair_key))) {
@@ -111,7 +122,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.Key_Alerts_Enabled))) {
-            //TODO:
+            SwitchPreferenceCompat preference = (SwitchPreferenceCompat) findPreference(key);
+            turnOnOffAlerts(preference);
         } else if (key.equals(getString(R.string.Key_Calls_Enabled))) {
             SwitchPreferenceCompat preference = (SwitchPreferenceCompat) findPreference(key);
             setReceiverEnabled(CallReceiver.class, preference.isChecked());
@@ -254,11 +266,37 @@ public class SettingsFragment extends PreferenceFragmentCompat
         return true;
     }
 
-
     private void setReceiverEnabled(@NonNull Class<? extends BroadcastReceiver> receiver, boolean enabled) {
         Log.i(TAG, "setReceiverEnabled: " + enabled);
         ComponentName component = new ComponentName(getContext(), receiver);
         AndroidAppComponentHelper.setComponentEnabled(getContext(), component, enabled);
     }
 
+    private void setServiceEnabled(@NonNull Class<? extends Service> service, boolean enabled){
+        Log.i(TAG, "setServiceEnabled: " + enabled);
+        ComponentName component = new ComponentName(getContext(), service);
+        AndroidAppComponentHelper.setComponentEnabled(getContext(), component, enabled);
+    }
+
+    private void startEventService() {
+        if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.O)) {
+            getActivity().startForegroundService(new Intent(getContext(), EventService.class));
+        } else {
+            getActivity().startService(new Intent(getContext(), EventService.class));
+        }
+    }
+
+    private void stopEventService(){
+        getActivity().stopService(new Intent(getContext(), EventService.class));
+    }
+
+    private void turnOnOffAlerts(SwitchPreferenceCompat preference){
+        boolean turnOn = preference.isChecked();
+        setServiceEnabled(EventService.class, turnOn);
+        if(turnOn){
+            startEventService();
+        }else{
+            stopEventService();
+        }
+    }
 }

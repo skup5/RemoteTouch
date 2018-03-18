@@ -20,6 +20,12 @@ public final class SettingsHelper {
         return PermissionHelper.areContactsPermissionsGranted(context);
     }
 
+    public static boolean areNotificationsEnabled(Context context){
+        String key = context.getString(R.string.Key_Notifications_Enabled);
+        Boolean def = context.getString(R.string.Def_Notifications_Enabled).equals("true");
+        return getSharedPreferences(context).getBoolean(key,def);
+    }
+
     /**
      * Loads actual pair-key. If doesn't exist, generates new.
      *

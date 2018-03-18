@@ -29,12 +29,13 @@
             android:summaryOn="@string/Preferences.Calls.Enable.Summary_on"
             android:title="@string/Preferences.Calls.Enable.Title"/>
 
-        <!--<SwitchPreferenceCompat-->
-            <!--android:icon="@android:drawable/ic_popup_reminder"-->
-            <!--android:key="@string/Key.Notifications.Enabled"-->
-            <!--android:summaryOff="@string/Preferences.Notification.Enable.Summary_off"-->
-            <!--android:summaryOn="@string/Preferences.Notification.Enable.Summary_on"-->
-            <!--android:title="@string/Preferences.Notification.Enable.Title"/>-->
+        <SwitchPreferenceCompat
+            android:defaultValue="@string/Def.Notifications.Enabled"
+            android:icon="@android:drawable/ic_popup_reminder"
+            android:key="@string/Key.Notifications.Enabled"
+            android:summaryOff="@string/Preferences.Notification.Enable.Summary_off"
+            android:summaryOn="@string/Preferences.Notification.Enable.Summary_on"
+            android:title="@string/Preferences.Notification.Enable.Title"/>
 
         <!--<PreferenceScreen-->
         <!--android:key="@string/Key.Notifications"-->

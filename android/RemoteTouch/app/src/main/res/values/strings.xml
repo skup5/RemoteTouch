@@ -8,6 +8,8 @@
     <string name="Actions.Yes">Yes</string>
     <string name="Actions.Add_notification">Add notification</string>
     <string name="Actions_Close">Close</string>
+    <string name="Actions.Developer">Developer</string>
+    <string name="Actions.Generate_new_pair_key">Generate new pair key</string>
 
     <string name="EventService.Label" translatable="false">EventService</string>
     <string name="EventService.PersistentNotification.Text">Running…</string>
@@ -43,9 +45,5 @@
     <string name="Preferences.PairKey.Summary">A key to pair desktop client.</string>
     <string name="Preferences.Device.Title">Device</string>
     <string name="Preferences.Device.Name.Title">Name</string>
-    <string name="Def.Device.Name">myPhone</string>
-    <string name="generate_new_pair_key">Generate new pair key</string>
-    <string name="Actions.Developer">Developer</string>
-    <string name="Key_Device_Token">pref_device_token</string>
 
 </resources>

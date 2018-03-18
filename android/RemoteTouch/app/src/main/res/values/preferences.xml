@@ -6,8 +6,13 @@
     <string name="Key.Notifications.Enabled" translatable="false">pref_notifications_enabled</string>
     <string name="Key.Device.Pair_key" translatable="false">pref_device_pair_key</string>
     <string name="Key.Alerts.Enabled" translatable="false">pref_on</string>
+    <string name="Key.Device.Name" translatable="false">pref_device_name</string>
+    <string name="Key_Device_Token" translatable="false">pref_device_token</string>
+
     <string name="Def.Alerts.Enabled" translatable="false">true</string>
     <string name="Def.Calls.Enabled" translatable="false">false</string>
     <string name="Def.Sms.Enabled" translatable="false">false</string>
-    <string name="Key.Device.Name" translatable="false">pref_device_name</string>
+    <string name="Def.Device.Name">myPhone</string>
+    <string name="Def.Notifications.Enabled">false</string>
+
 </resources>

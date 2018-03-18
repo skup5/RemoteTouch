@@ -116,7 +116,8 @@ public class EventService extends Service {
         PendingIntent pendingIntent =
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification =
+
+        Notification.Builder builder =
             new Notification.Builder(this)
                 .setContentTitle(getString(R.string.Application_Name) + " (EventService)")
                 .setContentText(getString(R.string.EventService_PersistentNotification_Text))
@@ -124,10 +125,10 @@ public class EventService extends Service {
                 .setShowWhen(true)
                 // .setAutoCancel(false)
                 .setPriority(Notification.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-                .build();
+//                .addAction()
+                .setContentIntent(pendingIntent);
 
-        startForeground(ONGOING_NOTIFICATION_ID, notification);
+        startForeground(ONGOING_NOTIFICATION_ID, builder.build());
     }
 
     private boolean isConnected() {
