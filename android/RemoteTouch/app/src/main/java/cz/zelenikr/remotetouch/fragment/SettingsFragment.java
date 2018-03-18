@@ -2,6 +2,7 @@ package cz.zelenikr.remotetouch.fragment;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.helper.AndroidAppComponentHelper;
+import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.receiver.CallReceiver;
@@ -61,7 +63,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
         if (key.equals(getString(R.string.Key_Calls_Enabled))) {
             if (preference.isEnabled()) onCallsEnabledClick(preference);
         } else if (key.equals(getString(R.string.Key_Notifications_Enabled))) {
-
+           // if (preference.isEnabled()) onNotificationsEnabledClick(preference);
         } else if (key.equals(getString(R.string.Key_Sms_Enabled))) {
             if (preference.isEnabled()) onSmsEnabledClick(preference);
         } else if (key.equals(getString(R.string.Key_Device_Pair_key))) {
@@ -108,12 +110,16 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getString(R.string.Key_Calls_Enabled))) {
+        if (key.equals(getString(R.string.Key_Alerts_Enabled))) {
+            //TODO:
+        } else if (key.equals(getString(R.string.Key_Calls_Enabled))) {
             SwitchPreferenceCompat preference = (SwitchPreferenceCompat) findPreference(key);
             setReceiverEnabled(CallReceiver.class, preference.isChecked());
         } else if (key.equals(getString(R.string.Key_Sms_Enabled))) {
             SwitchPreferenceCompat preference = (SwitchPreferenceCompat) findPreference(key);
             setReceiverEnabled(SmsReceiver.class, preference.isChecked());
+        } else if (key.equals(getString(R.string.Key_Notifications_Enabled))) {
+            //TODO:
         } else if (key.equals(getString(R.string.Key_Device_Name))) {
             onDeviceNamePrefChanged(findPreference(key));
         }
@@ -123,6 +129,13 @@ public class SettingsFragment extends PreferenceFragmentCompat
         SwitchPreferenceCompat SwitchPreferenceCompat = (SwitchPreferenceCompat) preference;
         if (SwitchPreferenceCompat.isChecked()) {
             checkCallsPermissions(SwitchPreferenceCompat);
+        }
+    }
+
+    private void onNotificationsEnabledClick(Preference preference) {
+        SwitchPreferenceCompat SwitchPreferenceCompat = (SwitchPreferenceCompat) preference;
+        if (SwitchPreferenceCompat.isChecked()) {
+            checkNotificationsPermissions(SwitchPreferenceCompat);
         }
     }
 
@@ -215,6 +228,32 @@ public class SettingsFragment extends PreferenceFragmentCompat
         }
         return true;
     }
+
+    /**
+     * If isn't granted, shows information dialog to user.
+     * User can open system settings and enable NotificationAccessService.
+     *
+     * @return true if already enabled, false otherwise
+     */
+    private boolean checkNotificationsPermissions(SwitchPreferenceCompat preference) {
+        if (!NotificationHelper.isNotificationListenerEnabled(getContext())) {
+            new AlertDialog.Builder(getContext())
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(R.string.Application_Name)
+                .setMessage(R.string.check_nl_permission)
+                .setPositiveButton(
+                    R.string.Actions_OK,
+                    (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+                )
+                .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
+                    preference.setChecked(false);
+                })
+                .show();
+            return false;
+        }
+        return true;
+    }
+
 
     private void setReceiverEnabled(@NonNull Class<? extends BroadcastReceiver> receiver, boolean enabled) {
         Log.i(TAG, "setReceiverEnabled: " + enabled);

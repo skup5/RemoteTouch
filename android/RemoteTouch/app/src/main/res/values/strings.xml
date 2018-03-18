@@ -45,5 +45,7 @@
     <string name="Preferences.Device.Name.Title">Name</string>
     <string name="Def.Device.Name">myPhone</string>
     <string name="generate_new_pair_key">Generate new pair key</string>
+    <string name="Actions.Developer">Developer</string>
+    <string name="Key_Device_Token">pref_device_token</string>
 
 </resources>

@@ -29,7 +29,7 @@ public class AESKeyGenerator implements SymmetricKeyGenerator<String> {
         }
     }
 
-    private static final KeyLength DEFAULT_KEY_BITS_LENGTH = KeyLength.Bits256;
+    private static final KeyLength DEFAULT_KEY_BITS_LENGTH = KeyLength.Bits128;
 
     private final int keyBitsLength;
 

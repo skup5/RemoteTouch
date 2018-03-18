@@ -4,24 +4,19 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 
-import cz.zelenikr.remotetouch.MainActivity;
 import cz.zelenikr.remotetouch.NavigationActivity;
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.dto.EventDTO;
@@ -29,8 +24,6 @@ import cz.zelenikr.remotetouch.helper.ConnectionHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.network.RestClient;
 import cz.zelenikr.remotetouch.network.SecureRestClient;
-import cz.zelenikr.remotetouch.network.SimpleRestClient;
-import cz.zelenikr.remotetouch.security.AESCipher;
 import cz.zelenikr.remotetouch.security.exception.UnsupportedCipherException;
 
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
@@ -102,18 +95,17 @@ public class EventService extends Service {
     }
 
     private String loadClientToken() {
-        // TODO: get from authentication
-        return "1";
+        return SettingsHelper.getToken(this);
+//        return "1";
     }
 
     private String loadRestUrl() {
         // TODO: load from Preferences
-//    return "http://10.0.0.46:4000";
+//    return "http://10.0.0.52:443/event";
         return "https://remote-touch.azurewebsites.net/event";
     }
 
     private String loadSecureKey() {
-        // TODO: load from some secure store
         String key = SettingsHelper.getPairKey(this);
         if (key.isEmpty()) Log.e(TAG, "loadSecureKey: key is missing");
         return key;

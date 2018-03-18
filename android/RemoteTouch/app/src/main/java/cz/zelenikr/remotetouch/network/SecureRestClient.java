@@ -13,13 +13,11 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 
 import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.dto.EventContent;
 import cz.zelenikr.remotetouch.data.dto.MessageDTO;
 import cz.zelenikr.remotetouch.helper.SecurityHelper;
-import cz.zelenikr.remotetouch.security.AESCipher;
 import cz.zelenikr.remotetouch.security.SymmetricCipher;
 
 /**
@@ -37,10 +35,9 @@ public class SecureRestClient implements RestClient {
     private final SymmetricCipher symmetricCipher;
 
     /**
-     *
      * @param clientToken
      * @param baseRestUrl
-     * @param secureKey key (like a plain text) for encrypting/decrypting messages
+     * @param secureKey   key (like a plain text) for encrypting/decrypting messages
      */
     public SecureRestClient(String clientToken, URL baseRestUrl, String secureKey) {
         this.clientToken = clientToken;
@@ -63,7 +60,7 @@ public class SecureRestClient implements RestClient {
         String contentJson = toJson(message.getContent());
         // Encrypt content JSON
         Serializable content = symmetricCipher.encrypt(contentJson);
-        if (content == null){
+        if (content == null) {
             Log.e(TAG, "Error on content encrypting");
             content = message.getContent();
         }
@@ -71,6 +68,7 @@ public class SecureRestClient implements RestClient {
         message = new MessageDTO(message.getId(), message.getEvent(), content);
         String json = toJson(message);
         //System.out.println(json);
+        Log.i(TAG, "New Message to " + message.getId());
         HttpContent httpContent = new ByteArrayContent("application/json", json.getBytes());
         return httpContent;
     }
@@ -95,7 +93,7 @@ public class SecureRestClient implements RestClient {
                 if (httpResponse.isSuccessStatusCode()) {
                     success = true;
                 } else {
-                    Log.w(TAG, httpResponse.getStatusCode() + " - " + httpResponse.getStatusMessage());
+                    Log.w(TAG, httpResponse.getStatusCode() + " - " + httpResponse.getStatusMessage() + ": " + httpResponse.parseAsString());
                 }
             } finally {
                 httpResponse.disconnect();

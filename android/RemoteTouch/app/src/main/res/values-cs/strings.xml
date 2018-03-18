@@ -40,4 +40,5 @@
     <string name="Preferences.PairKey.Summary">Klíč pro spárování s počítačovým klientem.</string>
     <string name="Preferences.PairKey.Title">Zobrazit párovací klíč</string>
     <string name="generate_new_pair_key">Vygeneruj nový klíč</string>
+    <string name="Actions.Developer">Vývojář</string>
 </resources>

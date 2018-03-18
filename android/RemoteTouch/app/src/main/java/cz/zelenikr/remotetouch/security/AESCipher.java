@@ -1,26 +1,33 @@
 package cz.zelenikr.remotetouch.security;
 
 import android.support.annotation.NonNull;
-
 import android.util.Base64;
 
-import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
-
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import cz.zelenikr.remotetouch.security.exception.UnsupportedCipherException;
-import cz.zelenikr.remotetouch.security.exception.UnsupportedKeyLengthException;
 
 public final class AESCipher implements SymmetricCipher {
 
     private static final int BASE64_FLAGS = Base64.DEFAULT;
-    private static final String SHA_VERSION = "SHA-256";
+    private static final String
+        HASH_VERSION = "SHA-1",
+        DEF_CHARSET = "UTF-8";
 
     private final SecretKey secretKey;
     private final Cipher cipher;
+    private static final Charset charset = Charset.forName(DEF_CHARSET);
 
     /**
      * Initializes new AES cipher with a specific key.
@@ -50,22 +57,28 @@ public final class AESCipher implements SymmetricCipher {
         }
     }
 
-    private static SecretKey toSecretKey(String plainKey) throws UnsupportedCipherException {
-        byte[] key = plainKey.getBytes();
-        MessageDigest sha = null;
-        try {
-            sha = MessageDigest.getInstance(SHA_VERSION);
-        } catch (NoSuchAlgorithmException e) {
-            throw new UnsupportedCipherException(e);
-        }
-        key = sha.digest(key);
+    private static SecretKey toSecretKey(String plainKey) {
+        byte[] key = plainKey.getBytes(charset);
+        key = hashKey(key);
         return new SecretKeySpec(key, "AES");
     }
 
-    @Override
-    public String encrypt(String plainData) {
+    private static byte[] hashKey(byte[] rawKey) {
+        MessageDigest sha = null;
         try {
-            return Base64.encodeToString(encrypt(plainData.getBytes()), BASE64_FLAGS);
+            sha = MessageDigest.getInstance(HASH_VERSION);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] key = sha.digest(rawKey);
+        key = Arrays.copyOf(key, 16); // use only first 128 bit
+        return key;
+    }
+
+    @Override
+    public String encrypt(@NonNull String plainData) {
+        try {
+            return Base64.encodeToString(encrypt(plainData.getBytes(charset)), BASE64_FLAGS);
         } catch (InvalidKeyException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
@@ -77,9 +90,9 @@ public final class AESCipher implements SymmetricCipher {
     }
 
     @Override
-    public String decrypt(String base64EncryptedMessage) {
+    public String decrypt(@NonNull String base64EncryptedMessage) {
         try {
-            return new String(decrypt(Base64.decode(base64EncryptedMessage, BASE64_FLAGS)));
+            return new String(decrypt(Base64.decode(base64EncryptedMessage, BASE64_FLAGS)), charset);
         } catch (BadPaddingException e) {
             e.printStackTrace();
         } catch (IllegalBlockSizeException e) {

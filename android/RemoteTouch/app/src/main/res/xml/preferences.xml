@@ -4,7 +4,6 @@
 
     <SwitchPreferenceCompat
         android:defaultValue="@string/Def.Alerts.Enabled"
-        android:icon="@android:drawable/ic_popup_reminder"
         android:key="@string/Key.Alerts.Enabled"
         android:summaryOff="@string/Preferences.Alerts.Enable.Summary_off"
         android:summaryOn="@string/Preferences.Alerts.Enable.Summary_on"
@@ -30,11 +29,12 @@
             android:summaryOn="@string/Preferences.Calls.Enable.Summary_on"
             android:title="@string/Preferences.Calls.Enable.Title"/>
 
-        <!--<SwitchPreference-->
-        <!--android:key="@string/Key.Notifications.Enabled"-->
-        <!--android:title="@string/Preferences.Notification.Enable.Title"-->
-        <!--android:summaryOff="@string/Preferences.Notification.Enable.Summary_off"-->
-        <!--android:summaryOn="@string/Preferences.Notification.Enable.Summary_on"/>-->
+        <!--<SwitchPreferenceCompat-->
+            <!--android:icon="@android:drawable/ic_popup_reminder"-->
+            <!--android:key="@string/Key.Notifications.Enabled"-->
+            <!--android:summaryOff="@string/Preferences.Notification.Enable.Summary_off"-->
+            <!--android:summaryOn="@string/Preferences.Notification.Enable.Summary_on"-->
+            <!--android:title="@string/Preferences.Notification.Enable.Title"/>-->
 
         <!--<PreferenceScreen-->
         <!--android:key="@string/Key.Notifications"-->

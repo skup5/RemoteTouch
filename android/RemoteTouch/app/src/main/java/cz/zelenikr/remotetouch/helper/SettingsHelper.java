@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import cz.zelenikr.remotetouch.R;
+import cz.zelenikr.remotetouch.security.Hash;
 import cz.zelenikr.remotetouch.security.SymmetricKeyGenerator;
 
 
@@ -48,11 +49,38 @@ public final class SettingsHelper {
         return pairKey;
     }
 
+    public static String getToken(Context context) {
+        String key = context.getString(R.string.Key_Device_Token);
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        if (sharedPreferences.contains(key)) {
+            return sharedPreferences.getString(key, "");
+        } else {
+            return refreshToken(context);
+        }
+    }
+
+    public static String refreshToken(Context context) {
+        Hash hash = SecurityHelper.createHashInstance();
+        String hashValue = hash.hash(getDeviceName(context) + getPairKey(context));
+        setToken(context, hashValue);
+        return hashValue;
+    }
+
+    public static String getDeviceName(Context context) {
+        String key = context.getString(R.string.Key_Device_Name);
+        String def = context.getString(R.string.Def_Device_Name);
+        return getSharedPreferences(context).getString(key, def);
+    }
+
     private static void setPairKey(Context context, String pairKey) {
         String key = context.getString(R.string.Key_Device_Pair_key);
         getSharedPreferences(context).edit().putString(key, pairKey).apply();
     }
 
+    private static void setToken(Context context, String token) {
+        String key = context.getString(R.string.Key_Device_Token);
+        getSharedPreferences(context).edit().putString(key, token).apply();
+    }
 
     private static SharedPreferences getSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
