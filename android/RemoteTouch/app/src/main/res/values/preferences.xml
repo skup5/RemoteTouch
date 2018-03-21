@@ -13,6 +13,6 @@
     <string name="Def.Calls.Enabled" translatable="false">false</string>
     <string name="Def.Sms.Enabled" translatable="false">false</string>
     <string name="Def.Device.Name">myPhone</string>
-    <string name="Def.Notifications.Enabled">false</string>
+    <string name="Def.Notifications.Enabled" translatable="false">false</string>
 
 </resources>

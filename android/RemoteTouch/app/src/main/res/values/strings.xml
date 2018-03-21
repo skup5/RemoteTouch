@@ -10,6 +10,8 @@
     <string name="Actions_Close">Close</string>
     <string name="Actions.Developer">Developer</string>
     <string name="Actions.Generate_new_pair_key">Generate new pair key</string>
+    <string name="Actions.Notifications">Notifications</string>
+    <string name="Actions.Search">Search</string>
 
     <string name="EventService.Label" translatable="false">EventService</string>
     <string name="EventService.PersistentNotification.Text">Running…</string>
@@ -23,6 +25,7 @@
     <string name="check_contacts_permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
     <string name="permission">Permission</string>
     <string name="empty">Empty</string>
+    <string name="unknown">Unknown</string>
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
 

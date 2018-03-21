@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="Actions.Export_notification_log">Export logs</string>
+    <string name="Actions.Export_notification_log">Exportovat logy</string>
     <string name="Actions.Settings">Nastavení</string>
     <string name="Actions.OK">OK</string>
     <string name="Actions.Yes">Ano</string>
@@ -21,7 +21,7 @@
     <string name="Preferences.Calls.Enable.Summary_off">Upozornění je zakázáno.</string>
     <string name="Preferences.Calls.Enable.Summary_on">Upozornění je povoleno.</string>
     <string name="Preferences.Calls.Enable.Title">Hovory</string>
-    <string name="Preferences.Notification.Title">Application alerts</string>
+    <string name="Preferences.Notification.Title">Upozornění aplikací</string>
     <string name="Preferences.Notification.Enable.Title">Nové oznámení</string>
     <string name="Preferences.Notification.Enable.Summary_off">Upozorním tě na nové oznámení.</string>
     <string name="Preferences.Notification.Enable.Summary_on">Neupozorním tě na nové oznámení.</string>
@@ -41,4 +41,7 @@
     <string name="Preferences.PairKey.Title">Zobrazit párovací klíč</string>
     <string name="Actions.Generate_new_pair_key">Vygeneruj nový klíč</string>
     <string name="Actions.Developer">Vývojář</string>
+    <string name="unknown">Neznámý</string>
+    <string name="Actions.Notifications">Oznámení</string>
+    <string name="Actions.Search">Hledat</string>
 </resources>

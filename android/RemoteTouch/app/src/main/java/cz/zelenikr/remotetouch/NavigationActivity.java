@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,13 +12,17 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
+import cz.zelenikr.remotetouch.data.AppInfo;
+import cz.zelenikr.remotetouch.fragment.InstalledAppsFragment;
 import cz.zelenikr.remotetouch.fragment.DeveloperFragment;
 import cz.zelenikr.remotetouch.fragment.SettingsFragment;
 
 public class NavigationActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        DeveloperFragment.OnFragmentInteractionListener {
+    implements NavigationView.OnNavigationItemSelectedListener,
+    DeveloperFragment.OnFragmentInteractionListener,
+    InstalledAppsFragment.OnListItemStateChangedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +32,12 @@ public class NavigationActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Fragment fragment = new SettingsFragment();
+//        Fragment fragment = new InstalledAppsFragment();
         replaceFragment(fragment);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -60,6 +66,8 @@ public class NavigationActivity extends AppCompatActivity
             fragment = new DeveloperFragment();
         } else if (id == R.id.nav_settings) {
             fragment = new SettingsFragment();
+        } else if (id == R.id.nav_notifications) {
+            fragment = new InstalledAppsFragment();
         }
 
         if (fragment != null) replaceFragment(fragment);
@@ -74,11 +82,22 @@ public class NavigationActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onStateChanged(AppInfo item, int position) {
+        snackbar(item.getAppName(), Snackbar.LENGTH_SHORT);
+    }
+
     private void replaceFragment(@NonNull Fragment fragment) {
         getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flContent, fragment)
-                .commit();
+            .beginTransaction()
+            .replace(R.id.navigation_content, fragment)
+            .commit();
     }
+
+    private void snackbar(String text, int duration) {
+        View view = findViewById(R.id.navigation_content);
+        Snackbar.make(view, text, duration).show();
+    }
+
 
 }

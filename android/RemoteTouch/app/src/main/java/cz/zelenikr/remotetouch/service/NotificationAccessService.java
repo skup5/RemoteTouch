@@ -1,10 +1,6 @@
 package cz.zelenikr.remotetouch.service;
 
 import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -19,8 +15,7 @@ import android.widget.Toast;
 import java.util.Date;
 import java.util.Set;
 
-import cz.zelenikr.remotetouch.MainActivity;
-import cz.zelenikr.remotetouch.R;
+import cz.zelenikr.remotetouch.helper.AndroidAppHelper;
 import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.data.dto.EventDTO;
@@ -28,8 +23,6 @@ import cz.zelenikr.remotetouch.data.dto.NotificationEventContent;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
-
-import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
 
 /**
  * This service is handling notifications of other applications.
@@ -208,20 +201,13 @@ public class NotificationAccessService extends NotificationListenerService {
         String ticker = notification.tickerText != null ? notification.tickerText.toString() : "";
         String title = "";
         String text = "";
-        String label = "";
+        String label = AndroidAppHelper.getAppLabelByPackageName(this, app);
 
         // Require API >= 19
         if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.KITKAT)) {
             Bundle extras = notification.extras;
             title = extras.getString(Notification.EXTRA_TITLE, "");
             text = extras.getString(Notification.EXTRA_TEXT, "");
-            Object appInfoObj = extras.get("android.appInfo");
-            if (appInfoObj != null && appInfoObj instanceof ApplicationInfo) {
-                ApplicationInfo appInfo = (ApplicationInfo) appInfoObj;
-                PackageManager packageManager = getApplicationContext().getPackageManager();
-                CharSequence appLabel = packageManager.getApplicationLabel(appInfo);
-                label = appLabel != null ? appLabel.toString() : "";
-            }
         }
 
         Intent intent = new Intent(this, EventService.class);
