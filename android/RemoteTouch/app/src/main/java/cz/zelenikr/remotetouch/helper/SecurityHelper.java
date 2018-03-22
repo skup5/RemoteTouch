@@ -16,8 +16,11 @@ import cz.zelenikr.remotetouch.security.exception.UnsupportedCipherException;
  */
 public final class SecurityHelper {
 
-    public static SymmetricCipher createSymmetricCipherInstance(@NonNull String symmetricKey) throws UnsupportedCipherException {
-        return new AESCipher(symmetricKey);
+    public static <T> SymmetricCipher<T> createSymmetricCipherInstance(@NonNull T symmetricKey) throws UnsupportedCipherException {
+        if (symmetricKey instanceof String)
+            return (SymmetricCipher<T>) new AESCipher((String) symmetricKey);
+        else
+            throw new UnsupportedCipherException("Unsupported type of key <" + symmetricKey.getClass().getSimpleName() + ">.");
     }
 
     public static SymmetricKeyGenerator<String> createSymmetricKeyGeneratorInstance() {

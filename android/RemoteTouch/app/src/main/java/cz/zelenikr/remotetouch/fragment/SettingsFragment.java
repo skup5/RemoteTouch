@@ -181,7 +181,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     }
 
     private void onPairKeyBtClick(View view) {
-        Log.i(TAG, "onPairKeyBtClick: ");
+//        Log.i(TAG, "onPairKeyBtClick: ");
         View root = view.getRootView();
         String newKey = SettingsHelper.regeneratePairKey(getContext());
         TextView pairKeyValue = root.findViewById(R.id.pairKeyValue);
@@ -191,6 +191,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     private void onDeviceNamePrefChanged(Preference preference) {
         EditTextPreference pref = (EditTextPreference) preference;
         preference.setSummary(pref.getText());
+        SettingsHelper.refreshToken(getContext());
     }
 
     /**

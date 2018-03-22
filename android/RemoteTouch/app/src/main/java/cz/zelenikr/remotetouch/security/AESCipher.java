@@ -18,16 +18,16 @@ import javax.crypto.spec.SecretKeySpec;
 
 import cz.zelenikr.remotetouch.security.exception.UnsupportedCipherException;
 
-public final class AESCipher implements SymmetricCipher {
+public final class AESCipher implements SymmetricCipher<String> {
 
     private static final int BASE64_FLAGS = Base64.DEFAULT;
     private static final String
         HASH_VERSION = "SHA-1",
         DEF_CHARSET = "UTF-8";
-
-    private final SecretKey secretKey;
-    private final Cipher cipher;
     private static final Charset charset = Charset.forName(DEF_CHARSET);
+
+    private  SecretKey secretKey;
+    private final Cipher cipher;
 
     /**
      * Initializes new AES cipher with a specific key.
@@ -101,6 +101,12 @@ public final class AESCipher implements SymmetricCipher {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public boolean changeKey(@NonNull String plainKey){
+        this.secretKey = toSecretKey(plainKey);
+        return true;
     }
 
     private byte[] encrypt(byte[] input) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {

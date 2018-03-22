@@ -16,6 +16,8 @@ import cz.zelenikr.remotetouch.security.SymmetricKeyGenerator;
  */
 public final class SettingsHelper {
 
+    public static final String TAG = SettingsHelper.class.getSimpleName();
+
     public static boolean isContactsReadingEnabled(Context context) {
         return PermissionHelper.areContactsPermissionsGranted(context);
     }
@@ -52,6 +54,7 @@ public final class SettingsHelper {
         SymmetricKeyGenerator<String> keyGenerator = SecurityHelper.createSymmetricKeyGeneratorInstance();
         String pairKey = keyGenerator.generate();
         setPairKey(context, pairKey);
+        refreshToken(context);
         return pairKey;
     }
 
@@ -66,6 +69,7 @@ public final class SettingsHelper {
     }
 
     public static String refreshToken(Context context) {
+//        Log.i(TAG, "refreshToken");
         Hash hash = SecurityHelper.createHashInstance();
         String hashValue = hash.hash(getDeviceName(context) + getPairKey(context));
         setToken(context, hashValue);

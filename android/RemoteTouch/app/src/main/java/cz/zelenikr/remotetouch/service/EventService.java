@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -11,6 +12,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.support.annotation.Nullable;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -22,7 +24,7 @@ import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.dto.EventDTO;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
-import cz.zelenikr.remotetouch.network.RestClient;
+import cz.zelenikr.remotetouch.network.JsonSecureRestClient;
 import cz.zelenikr.remotetouch.network.SecureRestClient;
 import cz.zelenikr.remotetouch.security.exception.UnsupportedCipherException;
 
@@ -31,19 +33,17 @@ import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
 /**
  * @author Roman Zelenik
  */
-public class EventService extends Service {
+public class EventService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String
         INTENT_EXTRA_EVENT = "event",
-        INTENT_EXTRA_CONTENT = "content",
         INTENT_EXTRA_NAME = "cz.zelenikr.remotetouch.Event";
 
     private static final int ONGOING_NOTIFICATION_ID = 1;
     private static final String TAG = EventService.class.getSimpleName();
     private Looper serviceLooper;
     private EventHandler eventHandler;
-    private RestClient restClient;
-
+    private SecureRestClient restClient;
 
     @Override
     public void onCreate() {
@@ -53,20 +53,13 @@ public class EventService extends Service {
         showNotification();
 
         // Try initialize rest client
-        try {
-//      this.restClient = new SimpleRestClient(loadClientToken(), new URL(loadRestUrl()));
-            this.restClient = new SecureRestClient(loadClientToken(), new URL(loadRestUrl()), loadSecureKey());
-        } catch (MalformedURLException | UnsupportedCipherException e) {
-            Log.e(TAG, e.getLocalizedMessage());
-            throw new RuntimeException(e);
-        }
+        initRestClient(loadClientToken(), loadRestUrl(), loadSecureKey());
 
         // Initialize HandlerThread and Looper and use it for EventHandler
-        HandlerThread handlerThread = new HandlerThread("EventServiceHandlerThread",
-            Process.THREAD_PRIORITY_BACKGROUND);
-        handlerThread.start();
-        serviceLooper = handlerThread.getLooper();
-        eventHandler = new EventHandler(serviceLooper);
+        initServiceLooper();
+        initServiceHandler(serviceLooper);
+
+        registerOnPreferenceChangedListener();
 
         Log.i(TAG, "Was created");
     }
@@ -90,8 +83,40 @@ public class EventService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        unregisterOnPreferenceChangedListener();
         Log.i(TAG, "Was destroyed");
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.Key_Device_Pair_key)) && sharedPreferences.contains(key)) {
+            restClient.setSecureKey(sharedPreferences.getString(key, ""));
+//            Log.i(TAG, "onSharedPreferenceChanged: pairKey");
+        } else if (key.equals(getString(R.string.Key_Device_Token)) && sharedPreferences.contains(key)) {
+            restClient.setSecureToken(sharedPreferences.getString(key, ""));
+//            Log.i(TAG, "onSharedPreferenceChanged: token");
+        }
+    }
+
+    private void initRestClient(String token, String url, String key) {
+        try {
+//      this.restClient = new SimpleRestClient(loadClientToken(), new URL(loadRestUrl()));
+            this.restClient = new JsonSecureRestClient(token, new URL(url), key);
+        } catch (MalformedURLException | UnsupportedCipherException e) {
+            Log.e(TAG, e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void initServiceLooper() {
+        HandlerThread handlerThread = new HandlerThread("EventServiceHandlerThread",
+            Process.THREAD_PRIORITY_BACKGROUND);
+        handlerThread.start();
+        serviceLooper = handlerThread.getLooper();
+    }
+
+    private void initServiceHandler(Looper looper) {
+        eventHandler = new EventHandler(looper);
     }
 
     private String loadClientToken() {
@@ -134,6 +159,15 @@ public class EventService extends Service {
     private boolean isConnected() {
         return ConnectionHelper.isConnected(this);
     }
+
+    private void registerOnPreferenceChangedListener() {
+        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).registerOnSharedPreferenceChangeListener(this);
+    }
+
+    private void unregisterOnPreferenceChangedListener() {
+        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).unregisterOnSharedPreferenceChangeListener(this);
+    }
+
 
     private final class EventHandler extends Handler {
 
