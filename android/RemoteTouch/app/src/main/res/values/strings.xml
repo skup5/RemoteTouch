@@ -2,15 +2,12 @@
     <string name="Application.Name" translatable="false">RemoteTouch</string>
 
     <string name="Actions.Export_notification_log">Export logs</string>
-    <string name="Actions.Settings">Settings</string>
     <string name="Actions.OK">OK</string>
     <string name="Actions.No">No</string>
     <string name="Actions.Yes">Yes</string>
     <string name="Actions.Add_notification">Add notification</string>
-    <string name="Actions_Close">Close</string>
-    <string name="Actions.Developer">Developer</string>
+    <string name="Actions.Close">Close</string>
     <string name="Actions.Generate_new_pair_key">Generate new pair key</string>
-    <string name="Actions.Notifications">Notifications</string>
     <string name="Actions.Search">Search</string>
 
     <string name="EventService.Label" translatable="false">EventService</string>
@@ -26,8 +23,15 @@
     <string name="permission">Permission</string>
     <string name="empty">Empty</string>
     <string name="unknown">Unknown</string>
-    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
-    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+
+    <string name="Navigation.Advanced.Title">Advanced settings</string>
+    <string name="Navigation.Drawer.Open" translatable="false">Open navigation drawer</string>
+    <string name="Navigation.Drawer.Close" translatable="false">Close navigation drawer</string>
+    <string name="Navigation.Developer">Developer</string>
+    <string name="Navigation.Notifications">Notifications</string>
+    <string name="Navigation.Settings">Settings</string>
+    <string name="Navigation.Connection">Connection</string>
+
 
     <string name="Preferences.Title">Settings</string>
     <string name="Preferences.SMS.Enable.Title">Incoming SMS</string>
@@ -48,5 +52,6 @@
     <string name="Preferences.PairKey.Summary">A key to pair desktop client.</string>
     <string name="Preferences.Device.Title">Device</string>
     <string name="Preferences.Device.Name.Title">Name</string>
+    <string name="Preferences.Connection.Server.Url.Title">Url address</string>
 
 </resources>

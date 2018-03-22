@@ -7,23 +7,23 @@
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_action_settings"
-            android:title="@string/Actions.Settings"/>
+            android:title="@string/Navigation.Settings"/>
         <item
             android:id="@+id/nav_developer"
             android:icon="@drawable/ic_action_not_secure"
-            android:title="@string/Actions.Developer"/>
+            android:title="@string/Navigation.Developer"/>
     </group>
 
-    <item android:title="Advanced">
+    <item android:title="@string/Navigation.Advanced.Title">
         <menu>
             <item
                 android:id="@+id/nav_notifications"
                 android:icon="@android:drawable/ic_popup_reminder"
-                android:title="@string/Actions.Notifications"/>
-            <!--<item-->
-                <!--android:id="@+id/nav_send"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send"/>-->
+                android:title="@string/Navigation.Notifications"/>
+            <item
+                android:id="@+id/nav_connection"
+                android:icon="@drawable/ic_action_import_export"
+                android:title="@string/Navigation.Connection"/>
         </menu>
     </item>
 

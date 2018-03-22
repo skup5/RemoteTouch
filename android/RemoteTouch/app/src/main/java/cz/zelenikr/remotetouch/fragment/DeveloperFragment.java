@@ -222,7 +222,7 @@ public class DeveloperFragment extends Fragment {
     private void onNotificationsBtClick(View view) {
         List<String> notificationList;
 
-        // Load from shared preferences
+        // Load from shared preferences_main
 //    notificationList = loadPreferences(NotificationAccessService.getLocalClassName());
 
         // Load from sqlite db

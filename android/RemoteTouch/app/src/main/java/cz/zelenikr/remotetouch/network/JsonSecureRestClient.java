@@ -29,9 +29,10 @@ public class JsonSecureRestClient implements SecureRestClient {
     private static final Gson GSON = new Gson();
     private static final String TAG = JsonSecureRestClient.class.getSimpleName();
 
-    private  String clientToken;
+    private String clientToken;
+    private URL baseRestUrl;
+
     private final HttpTransport httpTransport = new NetHttpTransport();
-    private final URL baseRestUrl;
     private final SymmetricCipher<String> symmetricCipher;
 
     /**
@@ -63,6 +64,11 @@ public class JsonSecureRestClient implements SecureRestClient {
     @Override
     public void setSecureKey(String secureKey) {
         symmetricCipher.changeKey(secureKey);
+    }
+
+    @Override
+    public void setRestServer(URL url) {
+        baseRestUrl = url;
     }
 
     private HttpContent makeJSONContent(MessageDTO message) {

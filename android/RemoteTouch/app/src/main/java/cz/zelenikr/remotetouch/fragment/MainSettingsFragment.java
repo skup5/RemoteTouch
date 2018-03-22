@@ -35,10 +35,10 @@ import cz.zelenikr.remotetouch.service.EventService;
  *
  * @author Roman Zelenik
  */
-public class SettingsFragment extends PreferenceFragmentCompat
+public class MainSettingsFragment extends PreferenceFragmentCompat
     implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final String TAG = SettingsFragment.class.getSimpleName();
+    private static final String TAG = MainSettingsFragment.class.getSimpleName();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -49,8 +49,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        // Load the preferences from an XML resource
-        setPreferencesFromResource(R.xml.preferences, rootKey);
+        // Load the preferences_main from an XML resource
+        setPreferencesFromResource(R.xml.preferences_main, rootKey);
 
         Preference preference = findPreference(getString(R.string.Key_Device_Name));
         if (preference != null) onDeviceNamePrefChanged(preference);

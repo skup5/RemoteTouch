@@ -8,11 +8,13 @@
     <string name="Key.Alerts.Enabled" translatable="false">pref_on</string>
     <string name="Key.Device.Name" translatable="false">pref_device_name</string>
     <string name="Key_Device_Token" translatable="false">pref_device_token</string>
+    <string name="Key.Connection.Server" translatable="false">pref_connect_server</string>
 
     <string name="Def.Alerts.Enabled" translatable="false">true</string>
     <string name="Def.Calls.Enabled" translatable="false">false</string>
     <string name="Def.Sms.Enabled" translatable="false">false</string>
     <string name="Def.Device.Name">myPhone</string>
     <string name="Def.Notifications.Enabled" translatable="false">false</string>
+    <string name="Def.Server.Url" translatable="false">https://remote-touch.azurewebsites.net/event</string>
 
 </resources>

@@ -1,5 +1,7 @@
 package cz.zelenikr.remotetouch.network;
 
+import java.net.URL;
+
 import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.dto.EventContent;
 
@@ -9,22 +11,23 @@ import cz.zelenikr.remotetouch.data.dto.EventContent;
  * @author Roman Zelenik
  */
 public interface RestClient {
-  /**
-   * Sends a specific event text message to the server.
-   *
-   * @param msg   text content
-   * @param event event type of message
-   * @return true if message was successfully sent, false otherwise
-   */
-  boolean send(String msg, EventType event);
+    /**
+     * Sends a specific event text message to the server.
+     *
+     * @param msg   text content
+     * @param event event type of message
+     * @return true if message was successfully sent, false otherwise
+     */
+    boolean send(String msg, EventType event);
 
-  /**
-   * Sends a specific event message to the server.
-   *
-   * @param content object, which attributes are the message content
-   * @param event   event type of message
-   * @return true if message was successfully sent, false otherwise
-   */
-  boolean send(EventContent content, EventType event);
+    /**
+     * Sends a specific event message to the server.
+     *
+     * @param content object, which attributes are the message content
+     * @param event   event type of message
+     * @return true if message was successfully sent, false otherwise
+     */
+    boolean send(EventContent content, EventType event);
 
+    void setRestServer(URL url);
 }

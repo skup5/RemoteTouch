@@ -22,71 +22,76 @@ import cz.zelenikr.remotetouch.data.dto.MessageDTO;
  *
  * @author Roman Zelenik
  */
-public class SimpleRestClient implements RestClient { // TODO: make a Singleton ?
+public class SimpleRestClient implements RestClient {
 
-  private static final Gson GSON = new Gson();
-  private static final String CLASS_NAME = SimpleRestClient.class.getSimpleName();
+    private static final Gson GSON = new Gson();
+    private static final String CLASS_NAME = SimpleRestClient.class.getSimpleName();
 
-  private final String clientToken;
-  private final HttpTransport httpTransport = new NetHttpTransport();
-  private final URL baseRestUrl;
+    private final String clientToken;
+    private final HttpTransport httpTransport = new NetHttpTransport();
+    private URL baseRestUrl;
 
-  public SimpleRestClient(String clientToken, URL baseRestUrl) {
-    this.clientToken = clientToken;
-    this.baseRestUrl = baseRestUrl;
-  }
-
-  @Override
-  public boolean send(String msg, EventType event) {
-    return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, msg)));
-  }
-
-  @Override
-  public boolean send(EventContent content, EventType event) {
-    return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, content)));
-  }
-
-  private HttpContent makeJSONContent(Object pojo) {
-    String json = toJson(pojo);
-    //System.out.println(json);
-    HttpContent httpContent = new ByteArrayContent("application/json", json.getBytes());
-    return httpContent;
-
-  }
-
-  private boolean postRequest(String subUrl, HttpContent httpContent) {
-    boolean success = false;
-    try {
-      Log.i(CLASS_NAME, "post request");
-      GenericUrl restUrl = new GenericUrl(baseRestUrl);
-      if (subUrl != null) {
-        if (!subUrl.startsWith("/")) {
-          subUrl = "/" + subUrl;
-        }
-        restUrl.appendRawPath(subUrl);
-      }
-      Log.i(CLASS_NAME, "send to " + restUrl);
-      HttpResponse httpResponse = httpTransport.createRequestFactory()
-          .buildPostRequest(restUrl, httpContent)
-          .setThrowExceptionOnExecuteError(false)
-          .execute();
-      try {
-        if (httpResponse.isSuccessStatusCode()) {
-          success = true;
-        } else {
-          Log.w(CLASS_NAME, httpResponse.getStatusCode() + " - " + httpResponse.getStatusMessage());
-        }
-      } finally {
-        httpResponse.disconnect();
-      }
-    } catch (IOException e) {
-//                e.printStackTrace();
-      Log.w(CLASS_NAME, e.toString());
+    public SimpleRestClient(String clientToken, URL baseRestUrl) {
+        this.clientToken = clientToken;
+        this.baseRestUrl = baseRestUrl;
     }
-    return success;
-  }
 
-  private String toJson(Object object) {
-    return GSON.toJson(object);
-  }
+    @Override
+    public boolean send(String msg, EventType event) {
+        return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, msg)));
+    }
+
+    @Override
+    public boolean send(EventContent content, EventType event) {
+        return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, content)));
+    }
+
+    @Override
+    public void setRestServer(URL url) {
+        baseRestUrl = url;
+    }
+
+    private HttpContent makeJSONContent(Object pojo) {
+        String json = toJson(pojo);
+        //System.out.println(json);
+        HttpContent httpContent = new ByteArrayContent("application/json", json.getBytes());
+        return httpContent;
+
+    }
+
+    private boolean postRequest(String subUrl, HttpContent httpContent) {
+        boolean success = false;
+        try {
+            Log.i(CLASS_NAME, "post request");
+            GenericUrl restUrl = new GenericUrl(baseRestUrl);
+            if (subUrl != null) {
+                if (!subUrl.startsWith("/")) {
+                    subUrl = "/" + subUrl;
+                }
+                restUrl.appendRawPath(subUrl);
+            }
+            Log.i(CLASS_NAME, "send to " + restUrl);
+            HttpResponse httpResponse = httpTransport.createRequestFactory()
+                .buildPostRequest(restUrl, httpContent)
+                .setThrowExceptionOnExecuteError(false)
+                .execute();
+            try {
+                if (httpResponse.isSuccessStatusCode()) {
+                    success = true;
+                } else {
+                    Log.w(CLASS_NAME, httpResponse.getStatusCode() + " - " + httpResponse.getStatusMessage());
+                }
+            } finally {
+                httpResponse.disconnect();
+            }
+        } catch (IOException e) {
+//                e.printStackTrace();
+            Log.w(CLASS_NAME, e.toString());
+        }
+        return success;
+    }
+
+    private String toJson(Object object) {
+        return GSON.toJson(object);
+    }
 }

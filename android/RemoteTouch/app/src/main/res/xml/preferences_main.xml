@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:title="@string/Actions.Settings">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreferenceCompat
         android:defaultValue="@string/Def.Alerts.Enabled"
@@ -37,12 +36,6 @@
             android:summaryOn="@string/Preferences.Notification.Enable.Summary_on"
             android:title="@string/Preferences.Notification.Enable.Title"/>
 
-        <!--<PreferenceScreen-->
-        <!--android:key="@string/Key.Notifications"-->
-        <!--android:title="@string/Preferences.Notification.Title"-->
-        <!--android:summary="Application alerts summary">-->
-        <!--</PreferenceScreen>-->
-
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -58,13 +51,6 @@
             android:key="@string/Key.Device.Pair_key"
             android:summary="@string/Preferences.PairKey.Summary"
             android:title="@string/Preferences.PairKey.Title"/>
-
-        <!--<cz.zelenikr.remotetouch.settings.PairKeyPreference-->
-        <!--android:key="@string/Key.Pair_key"-->
-        <!--android:title="@string/Preferences.PairKey.Title"-->
-        <!--android:summary="@string/Preferences.PairKey.Summary"-->
-        <!--android:persistent="true"-->
-        <!--android:dependency="@string/Key.Alerts.Enabled"/>-->
 
     </PreferenceCategory>
 

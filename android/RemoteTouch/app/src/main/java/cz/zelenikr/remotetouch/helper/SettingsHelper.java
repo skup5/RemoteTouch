@@ -22,10 +22,10 @@ public final class SettingsHelper {
         return PermissionHelper.areContactsPermissionsGranted(context);
     }
 
-    public static boolean areNotificationsEnabled(Context context){
+    public static boolean areNotificationsEnabled(Context context) {
         String key = context.getString(R.string.Key_Notifications_Enabled);
         Boolean def = context.getString(R.string.Def_Notifications_Enabled).equals("true");
-        return getSharedPreferences(context).getBoolean(key,def);
+        return getSharedPreferences(context).getBoolean(key, def);
     }
 
     /**
@@ -82,6 +82,18 @@ public final class SettingsHelper {
         return getSharedPreferences(context).getString(key, def);
     }
 
+    public static String getServerUrl(Context context) {
+        String key = context.getString(R.string.Key_Connection_Server);
+        SharedPreferences preferences = getSharedPreferences(context);
+        if (preferences.contains(key)) {
+            return preferences.getString(key, "");
+        } else {
+            String def = context.getString(R.string.Def_Server_Url);
+            setServerUrl(context, def);
+            return def;
+        }
+    }
+
     private static void setPairKey(Context context, String pairKey) {
         String key = context.getString(R.string.Key_Device_Pair_key);
         getSharedPreferences(context).edit().putString(key, pairKey).apply();
@@ -90,6 +102,11 @@ public final class SettingsHelper {
     private static void setToken(Context context, String token) {
         String key = context.getString(R.string.Key_Device_Token);
         getSharedPreferences(context).edit().putString(key, token).apply();
+    }
+
+    private static void setServerUrl(Context context, String serverUrl) {
+        String key = context.getString(R.string.Key_Connection_Server);
+        getSharedPreferences(context).edit().putString(key, serverUrl).apply();
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {

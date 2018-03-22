@@ -95,6 +95,14 @@ public class EventService extends Service implements SharedPreferences.OnSharedP
         } else if (key.equals(getString(R.string.Key_Device_Token)) && sharedPreferences.contains(key)) {
             restClient.setSecureToken(sharedPreferences.getString(key, ""));
 //            Log.i(TAG, "onSharedPreferenceChanged: token");
+        } else if (key.equals(getString(R.string.Key_Connection_Server)) && sharedPreferences.contains(key)) {
+            Log.i(TAG, "onSharedPreferenceChanged: server url");
+            try {
+                URL url = new URL(sharedPreferences.getString(key, ""));
+                restClient.setRestServer(url);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -125,9 +133,7 @@ public class EventService extends Service implements SharedPreferences.OnSharedP
     }
 
     private String loadRestUrl() {
-        // TODO: load from Preferences
-//    return "http://10.0.0.52:443/event";
-        return "https://remote-touch.azurewebsites.net/event";
+        return SettingsHelper.getServerUrl(this);
     }
 
     private String loadSecureKey() {
