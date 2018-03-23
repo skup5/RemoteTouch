@@ -2,6 +2,7 @@ package cz.zelenikr.remotetouch.service;
 
 import android.app.Notification;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -9,12 +10,16 @@ import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.util.ArraySet;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
+import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.helper.AndroidAppHelper;
 import cz.zelenikr.remotetouch.data.EventType;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
@@ -29,7 +34,8 @@ import cz.zelenikr.remotetouch.storage.NotificationDataStore;
  *
  * @author Roman Zelenik
  */
-public class NotificationAccessService extends NotificationListenerService {
+public class NotificationAccessService extends NotificationListenerService
+    implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = getLocalClassName();
     private static final EventType EVENT_TYPE = EventType.NOTIFICATION;
@@ -48,6 +54,7 @@ public class NotificationAccessService extends NotificationListenerService {
         super.onCreate();
 
         handleStart();
+        registerOnPreferenceChangedListener();
 
         Log.i(TAG, "Was created");
     }
@@ -123,25 +130,34 @@ public class NotificationAccessService extends NotificationListenerService {
         isConnected = false;
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.i(TAG, "onSharedPreferenceChanged ");
+        // Update notifications filter
+        if (key.equals(getString(R.string.Key_Notifications_Selected_apps))) {
+            setAppsFilterSet(sharedPreferences.getStringSet(key, Collections.emptySet()));
+        }
+    }
+
     private boolean isEnabled() {
         return SettingsHelper.areNotificationsEnabled(this);
     }
 
     private void handleStart() {
-        this.appsFilterSet = loadFilterSet();
+        setAppsFilterSet(loadFilterSet());
         this.dataStore.open();
     }
 
     private void handleDestroy() {
         this.dataStore.close();
+        unregisterOnPreferenceChangedListener();
     }
 
     private Set<String> loadFilterSet() {
-        // TODO: 26.12.2017 Replace by reading from file
-
-        ArraySet<String> filterSet = new ArraySet<>(1);
-        filterSet.add(getPackageName());
-        return filterSet;
+        return SettingsHelper.getNotificationsApps(this);
+//        ArraySet<String> filterSet = new ArraySet<>(1);
+//        filterSet.add(getPackageName());
+//        return filterSet;
     }
 
     private void logNotification(StatusBarNotification sbn) {
@@ -219,4 +235,18 @@ public class NotificationAccessService extends NotificationListenerService {
 
         startService(intent);
     }
+
+    private void setAppsFilterSet(Set<String> appsFilterSet) {
+        Log.i(TAG, "setAppsFilterSet: " + Arrays.toString(appsFilterSet.toArray()));
+        this.appsFilterSet = appsFilterSet;
+    }
+
+    private void registerOnPreferenceChangedListener() {
+        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).registerOnSharedPreferenceChangeListener(this);
+    }
+
+    private void unregisterOnPreferenceChangedListener() {
+        PreferenceManager.getDefaultSharedPreferences(getBaseContext()).unregisterOnSharedPreferenceChangeListener(this);
+    }
+
 }

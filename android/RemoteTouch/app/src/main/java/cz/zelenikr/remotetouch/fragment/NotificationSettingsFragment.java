@@ -3,16 +3,18 @@ package cz.zelenikr.remotetouch.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArraySet;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Set;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.AppInfo;
+import cz.zelenikr.remotetouch.helper.SettingsHelper;
 
 /**
  * Contains advanced notifications settings.
@@ -66,7 +68,7 @@ public class NotificationSettingsFragment extends PreferenceFragmentCompat
 
     @Override
     public void onStateChanged(AppInfo item, int position) {
-//        Log.i(TAG, "onStateChanged: " + item);
+        Log.i(TAG, "onStateChanged: " + item);
         Set<String> appSet = loadAppsPreference();
         if (item.isSelected()) {
             appSet.add(item.getAppPackage());
@@ -77,12 +79,14 @@ public class NotificationSettingsFragment extends PreferenceFragmentCompat
     }
 
     private Set<String> loadAppsPreference() {
-        Preference preference = findPreference(getString(R.string.Key_Notifications_Installed_apps));
-        return preference.getPersistedStringSet(new ArraySet<>());
+        return SettingsHelper.getNotificationsApps(getContext());
     }
 
     private void saveAppsPreference(Set<String> apps) {
-        Preference preference = findPreference(getString(R.string.Key_Notifications_Installed_apps));
-        preference.persistStringSet(apps);
+        String key = getString(R.string.Key_Notifications_Selected_apps);
+        PreferenceManager.getDefaultSharedPreferences(getContext())
+            .edit()
+            .putStringSet(key, apps)
+            .apply();
     }
 }

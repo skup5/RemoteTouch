@@ -3,6 +3,10 @@ package cz.zelenikr.remotetouch.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.util.ArraySet;
+
+import java.util.Collections;
+import java.util.Set;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.security.Hash;
@@ -92,6 +96,14 @@ public final class SettingsHelper {
             setServerUrl(context, def);
             return def;
         }
+    }
+
+    public static Set<String> getNotificationsApps(Context context) {
+        String key = context.getString(R.string.Key_Notifications_Selected_apps);
+        SharedPreferences preferences = getSharedPreferences(context);
+        Set<String> apps = new ArraySet<>();
+        apps.addAll(preferences.getStringSet(key, Collections.emptySet()));
+        return apps;
     }
 
     private static void setPairKey(Context context, String pairKey) {

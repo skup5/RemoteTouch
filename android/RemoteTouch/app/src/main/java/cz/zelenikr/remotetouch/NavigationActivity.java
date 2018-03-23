@@ -140,6 +140,7 @@ public class NavigationActivity extends AppCompatActivity
         if (fragment instanceof MainSettingsFragment) return R.id.nav_settings;
         if (fragment instanceof DeveloperFragment) return R.id.nav_developer;
         if (fragment instanceof NotificationSettingsFragment) return R.id.nav_notifications;
+        if (fragment instanceof InstalledAppsFragment) return R.id.nav_notifications;
         if (fragment instanceof ConnectionSettingsFragment) return R.id.nav_connection;
         return -1;
     }

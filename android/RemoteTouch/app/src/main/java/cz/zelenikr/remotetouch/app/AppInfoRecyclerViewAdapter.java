@@ -3,6 +3,7 @@ package cz.zelenikr.remotetouch.app;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,6 +30,8 @@ import cz.zelenikr.remotetouch.fragment.InstalledAppsFragment.OnListItemStateCha
  */
 public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecyclerViewAdapter.ViewHolder>
     implements Filterable {
+
+    public static final String TAG = AppInfoRecyclerViewAdapter.class.getSimpleName();
 
     private final InstalledAppsFragment.OnListItemStateChangedListener mListener;
     private final List<AppInfo> allItems;
@@ -128,6 +132,7 @@ public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecy
     }
 
     public void selectByPackage(Collection<String> packageNames) {
+        Log.i(TAG, "selectByPackage: " + Arrays.toString(packageNames.toArray()));
         boolean changed = false;
         for (AppInfo appInfo : allItems) {
             if (packageNames.contains(appInfo.getAppPackage())) {
