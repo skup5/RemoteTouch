@@ -16,5 +16,6 @@
     <string name="Def.Device.Name">myPhone</string>
     <string name="Def.Notifications.Enabled" translatable="false">false</string>
     <string name="Def.Server.Url" translatable="false">https://remote-touch.azurewebsites.net/event</string>
+    <string name="Key.Notifications.Installed_apps">pref_notifications_installed_apps</string>
 
 </resources>

@@ -16,14 +16,16 @@
 
     <item android:title="@string/Navigation.Advanced.Title">
         <menu>
-            <item
-                android:id="@+id/nav_notifications"
-                android:icon="@android:drawable/ic_popup_reminder"
-                android:title="@string/Navigation.Notifications"/>
-            <item
-                android:id="@+id/nav_connection"
-                android:icon="@drawable/ic_action_import_export"
-                android:title="@string/Navigation.Connection"/>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_notifications"
+                    android:icon="@android:drawable/ic_popup_reminder"
+                    android:title="@string/Navigation.Notifications"/>
+                <item
+                    android:id="@+id/nav_connection"
+                    android:icon="@drawable/ic_action_import_export"
+                    android:title="@string/Navigation.Connection"/>
+            </group>
         </menu>
     </item>
 

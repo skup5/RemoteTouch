@@ -53,5 +53,7 @@
     <string name="Preferences.Device.Title">Device</string>
     <string name="Preferences.Device.Name.Title">Name</string>
     <string name="Preferences.Connection.Server.Url.Title">Url address</string>
+    <string name="Preferences.Notifications.Installed_apps.Title">Applications</string>
+    <string name="Preferences.Notifications.Installed_apps.Summary">Choose apps whose notifications you are interested in.</string>
 
 </resources>

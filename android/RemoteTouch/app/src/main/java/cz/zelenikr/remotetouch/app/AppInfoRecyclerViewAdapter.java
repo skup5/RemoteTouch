@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import cz.zelenikr.remotetouch.R;
@@ -72,9 +73,9 @@ public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecy
         holder.mImageViewIcon.setImageDrawable(icon);
 
         holder.mAppSelect.setChecked(item.isSelected());
-        holder.mAppSelect.setOnClickListener((buttonView) -> onItemChecked(position));
+        holder.mAppSelect.setOnClickListener((buttonView) -> onItemCheckClick(position));
 
-        holder.mItem.setOnClickListener(v -> onItemChecked(position));
+        holder.mItem.setOnClickListener(v -> onItemCheckClick(position));
 
     }
 
@@ -119,11 +120,22 @@ public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecy
         };
     }
 
-    private void onItemChecked(int itemIndex) {
+    private void onItemCheckClick(int itemIndex) {
         AppInfo item = filteredItemList.get(itemIndex);
         item.setSelected(!item.isSelected());
         mListener.onStateChanged(item, itemIndex);
         AppInfoRecyclerViewAdapter.this.notifyDataSetChanged();
+    }
+
+    public void selectByPackage(Collection<String> packageNames) {
+        boolean changed = false;
+        for (AppInfo appInfo : allItems) {
+            if (packageNames.contains(appInfo.getAppPackage())) {
+                appInfo.setSelected(true);
+                changed = true;
+            }
+        }
+        if (changed) notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

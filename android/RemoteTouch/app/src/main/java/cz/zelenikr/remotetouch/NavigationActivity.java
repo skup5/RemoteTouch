@@ -11,19 +11,27 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import cz.zelenikr.remotetouch.data.AppInfo;
 import cz.zelenikr.remotetouch.fragment.ConnectionSettingsFragment;
-import cz.zelenikr.remotetouch.fragment.InstalledAppsFragment;
 import cz.zelenikr.remotetouch.fragment.DeveloperFragment;
+import cz.zelenikr.remotetouch.fragment.InstalledAppsFragment;
 import cz.zelenikr.remotetouch.fragment.MainSettingsFragment;
+import cz.zelenikr.remotetouch.fragment.NotificationSettingsFragment;
+import cz.zelenikr.remotetouch.fragment.OpenFragmentListener;
 
 public class NavigationActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
     DeveloperFragment.OnFragmentInteractionListener,
-    InstalledAppsFragment.OnListItemStateChangedListener {
+    InstalledAppsFragment.OnListItemStateChangedListener,
+    OpenFragmentListener {
+
+    public static final String TAG = NavigationActivity.class.getSimpleName();
+
+    private NotificationSettingsFragment notificationSettingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +39,7 @@ public class NavigationActivity extends AppCompatActivity
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         Fragment fragment = new MainSettingsFragment();
 //        Fragment fragment = new InstalledAppsFragment();
@@ -45,10 +54,13 @@ public class NavigationActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_settings);
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this::onBackStackChanged);
     }
 
     @Override
     public void onBackPressed() {
+        Log.i(TAG, "onBackPressed: ");
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -59,25 +71,31 @@ public class NavigationActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Fragment fragment = null;
 
         if (id == R.id.nav_developer) {
             fragment = new DeveloperFragment();
-            replaceFragment(fragment);
+//            replaceFragment(fragment);
+            addFragment(fragment);
         } else if (id == R.id.nav_settings) {
             fragment = new MainSettingsFragment();
-            replaceFragment(fragment);
+//            replaceFragment(fragment);
+            addFragment(fragment);
         }
         // Advanced settings
         else if (id == R.id.nav_notifications) {
-            fragment = new InstalledAppsFragment();
+//            fragment = new InstalledAppsFragment();
+            fragment = new NotificationSettingsFragment();
+            notificationSettingsFragment = (NotificationSettingsFragment) fragment;
             addFragment(fragment);
+//            replaceFragment(fragment);
         } else if (id == R.id.nav_connection) {
             fragment = new ConnectionSettingsFragment();
             addFragment(fragment);
+//            replaceFragment(fragment);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -92,21 +110,79 @@ public class NavigationActivity extends AppCompatActivity
 
     @Override
     public void onStateChanged(AppInfo item, int position) {
+        if (notificationSettingsFragment != null) {
+            notificationSettingsFragment.onStateChanged(item, position);
+        }
         snackbar(item.getAppName(), Snackbar.LENGTH_SHORT);
     }
 
+    @Override
+    public void openFragment(Fragment fragment) {
+        addFragment(fragment);
+    }
+
+    private void onBackStackChanged() {
+        int id = getNavItemIdByFragment(getCurrentFragment());
+        if (id > 0) {
+            NavigationView navigation = findViewById(R.id.nav_view);
+            if (navigation != null) navigation.setCheckedItem(id);
+        }
+    }
+
+    /**
+     * Returns resource menu item id for the specific fragment or -1
+     * if this {@code fragment} doesn't bellow any navigation item.
+     *
+     * @param fragment
+     * @return resource id or -1
+     */
+    private int getNavItemIdByFragment(Fragment fragment) {
+        if (fragment instanceof MainSettingsFragment) return R.id.nav_settings;
+        if (fragment instanceof DeveloperFragment) return R.id.nav_developer;
+        if (fragment instanceof NotificationSettingsFragment) return R.id.nav_notifications;
+        if (fragment instanceof ConnectionSettingsFragment) return R.id.nav_connection;
+        return -1;
+    }
+
     private void addFragment(@NonNull Fragment fragment) {
-        getSupportFragmentManager()
-            .beginTransaction()
-            .replace(R.id.navigation_content, fragment)
-            .addToBackStack(null)
-            .commit();
+        if (!isCurrentFragment(fragment)) {
+            getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.navigation_content, fragment, getFragmentTag(fragment))
+                .addToBackStack(null)
+                .commit();
+        }
+    }
+
+    private String getFragmentTag(@NonNull Fragment fragment) {
+        return fragment.getClass().getSimpleName();
+    }
+
+    private int getFragmentsCount() {
+        return getSupportFragmentManager().getBackStackEntryCount();
+    }
+
+    private boolean isCurrentFragment(@NonNull Fragment fragment) {
+        Fragment founded = getSupportFragmentManager().findFragmentByTag(getFragmentTag(fragment));
+        return (founded != null) && founded.isVisible();
+    }
+
+    /**
+     * Finds current visible fragment stored in fragment manager.
+     *
+     * @return current fragment or null
+     */
+    private Fragment getCurrentFragment() {
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment.isVisible()) return fragment;
+        }
+        return null;
     }
 
     private void replaceFragment(@NonNull Fragment fragment) {
         getSupportFragmentManager()
             .beginTransaction()
-            .replace(R.id.navigation_content, fragment)
+            .replace(R.id.navigation_content, fragment, getFragmentTag(fragment))
             .commit();
     }
 

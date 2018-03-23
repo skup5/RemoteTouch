@@ -51,4 +51,16 @@ public class AppInfo {
     public void setSystem(boolean system) {
         isSystem = system;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("AppInfo{");
+        sb.append("appName='").append(appName).append('\'');
+        sb.append(", appPackage='").append(appPackage).append('\'');
+        sb.append(", appIcon=").append(appIcon);
+        sb.append(", isSelected=").append(isSelected);
+        sb.append(", isSystem=").append(isSystem);
+        sb.append('}');
+        return sb.toString();
+    }
 }
