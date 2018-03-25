@@ -7,12 +7,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import cz.zelenikr.remotetouch.MainActivity;
+import cz.zelenikr.remotetouch.NavigationActivity;
 
 /**
  * A service that extends FirebaseMessagingService. This is required if you want to do any message
@@ -48,9 +52,13 @@ public class FCMService extends FirebaseMessagingService {
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
+        toast("FCM msg from: " + remoteMessage.getFrom(), Toast.LENGTH_LONG);
+
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+
+            toast("FCM data: "+remoteMessage.getData(), Toast.LENGTH_LONG);
 
             if (/* Check if data needs to be processed by long running job */ false) {
                 // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
@@ -107,7 +115,7 @@ public class FCMService extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, NavigationActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
             PendingIntent.FLAG_ONE_SHOT);
@@ -127,5 +135,9 @@ public class FCMService extends FirebaseMessagingService {
             (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    private void toast(String msg, int duration) {
+        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(FCMService.this, msg, duration).show());
     }
 }

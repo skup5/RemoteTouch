@@ -1,6 +1,9 @@
 package cz.zelenikr.remotetouch.service;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
@@ -28,6 +31,8 @@ public class FIIDService extends FirebaseInstanceIdService {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Refreshed token: " + refreshedToken);
 
+        toast("Got FCM token", Toast.LENGTH_LONG);
+
         // Subscribe to receiving broadcasts for android clients from your server.
         FirebaseMessaging.getInstance().subscribeToTopic(getPackageName());
 
@@ -45,5 +50,9 @@ public class FIIDService extends FirebaseInstanceIdService {
     private void sendRegistrationToServer(String token) {
         // TODO: Implement this method to send token to your app server.
         Log.w(TAG, "sendRegistrationToServer(token) is not implemented yet");
+    }
+
+    private void toast(String msg, int duration) {
+        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(FIIDService.this, msg, duration).show());
     }
 }
