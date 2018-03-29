@@ -34,7 +34,7 @@ import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
-import cz.zelenikr.remotetouch.service.EventService;
+import cz.zelenikr.remotetouch.service.MessageSenderService;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 import cz.zelenikr.remotetouch.storage.NotificationDbHelper;
 
@@ -76,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
     super.onPostCreate(savedInstanceState);
 
     if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.O)) {
-      startForegroundService(new Intent(this, EventService.class));
+      startForegroundService(new Intent(this, MessageSenderService.class));
     } else {
-      startService(new Intent(this, EventService.class));
+      startService(new Intent(this, MessageSenderService.class));
     }
 
     enableNotificationHandler();

@@ -21,7 +21,7 @@ import java.net.URL;
 
 import cz.zelenikr.remotetouch.NavigationActivity;
 import cz.zelenikr.remotetouch.R;
-import cz.zelenikr.remotetouch.data.dto.EventDTO;
+import cz.zelenikr.remotetouch.data.event.EventDTO;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.network.JsonSecureRestClient;
@@ -33,17 +33,21 @@ import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
 /**
  * @author Roman Zelenik
  */
-public class EventService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MessageSenderService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String
-        INTENT_EXTRA_EVENT = "event",
-        INTENT_EXTRA_NAME = "cz.zelenikr.remotetouch.Event";
+        INTENT_EXTRA_IS_MSG = "isMsg",
+        INTENT_EXTRA_NAME = "cz.zelenikr.remotetouch.MessageSender";
+
+    private static final String EVENT_REST_PATH = "/event";
 
     private static final int ONGOING_NOTIFICATION_ID = 1;
-    private static final String TAG = EventService.class.getSimpleName();
+    private static final String TAG = MessageSenderService.class.getSimpleName();
     private Looper serviceLooper;
-    private EventHandler eventHandler;
+    private MessageHandler messageHandler;
     private SecureRestClient restClient;
+
+    // TODO: 29.3.2018 Queue for unsent messages
 
     @Override
     public void onCreate() {
@@ -55,7 +59,7 @@ public class EventService extends Service implements SharedPreferences.OnSharedP
         // Try initialize rest client
         initRestClient(loadClientToken(), loadRestUrl(), loadSecureKey());
 
-        // Initialize HandlerThread and Looper and use it for EventHandler
+        // Initialize HandlerThread and Looper and use it for MessageHandler
         initServiceLooper();
         initServiceHandler(serviceLooper);
 
@@ -66,8 +70,8 @@ public class EventService extends Service implements SharedPreferences.OnSharedP
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && intent.getBooleanExtra(INTENT_EXTRA_EVENT, false)) {
-            eventHandler.obtainMessage(0, intent).sendToTarget();
+        if (intent != null && intent.getBooleanExtra(INTENT_EXTRA_IS_MSG, false)) {
+            messageHandler.obtainMessage(0, intent).sendToTarget();
         }
 
         // Restart after kill
@@ -93,7 +97,7 @@ public class EventService extends Service implements SharedPreferences.OnSharedP
             restClient.setSecureKey(sharedPreferences.getString(key, ""));
 //            Log.i(TAG, "onSharedPreferenceChanged: pairKey");
         } else if (key.equals(getString(R.string.Key_Device_Token)) && sharedPreferences.contains(key)) {
-            restClient.setSecureToken(sharedPreferences.getString(key, ""));
+            restClient.setClientToken(sharedPreferences.getString(key, ""));
 //            Log.i(TAG, "onSharedPreferenceChanged: token");
         } else if (key.equals(getString(R.string.Key_Connection_Server)) && sharedPreferences.contains(key)) {
             Log.i(TAG, "onSharedPreferenceChanged: server url");
@@ -108,7 +112,7 @@ public class EventService extends Service implements SharedPreferences.OnSharedP
 
     private void initRestClient(String token, String url, String key) {
         try {
-//      this.restClient = new SimpleRestClient(loadClientToken(), new URL(loadRestUrl()));
+//      this.restClient = new JsonSimpleRestClient(loadClientToken(), new URL(loadRestUrl()));
             this.restClient = new JsonSecureRestClient(token, new URL(url), key);
         } catch (MalformedURLException | UnsupportedCipherException e) {
             Log.e(TAG, e.getLocalizedMessage());
@@ -124,7 +128,7 @@ public class EventService extends Service implements SharedPreferences.OnSharedP
     }
 
     private void initServiceHandler(Looper looper) {
-        eventHandler = new EventHandler(looper);
+        messageHandler = new MessageHandler(looper);
     }
 
     private String loadClientToken() {
@@ -150,8 +154,8 @@ public class EventService extends Service implements SharedPreferences.OnSharedP
 
         Notification.Builder builder =
             new Notification.Builder(this)
-                .setContentTitle(getString(R.string.Application_Name) + " (EventService)")
-                .setContentText(getString(R.string.EventService_PersistentNotification_Text))
+                .setContentTitle(getString(R.string.Application_Name) + " (MessageSenderService)")
+                .setContentText(getString(R.string.MsgSenderService_PersistentNotification_Text))
                 .setSmallIcon(APP_ICON_ID)
                 .setShowWhen(true)
                 // .setAutoCancel(false)
@@ -175,37 +179,39 @@ public class EventService extends Service implements SharedPreferences.OnSharedP
     }
 
 
-    private final class EventHandler extends Handler {
+    private final class MessageHandler extends Handler {
 
-        public EventHandler(Looper looper) {
+        public MessageHandler(Looper looper) {
             super(looper);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            if (msg.obj instanceof Intent) handleEvent((Intent) msg.obj);
+            if (msg.obj instanceof Intent) {
+                final Intent intent = (Intent) msg.obj;
+                final Serializable serializableExtra = intent.getSerializableExtra(INTENT_EXTRA_NAME);
+                if (serializableExtra == null) {
+                    Log.w(TAG, "DTO is null");
+                    return;
+                }
+                if (serializableExtra instanceof EventDTO) {
+                    handleEvent((EventDTO) serializableExtra);
+                } else {
+                    Log.w(TAG, serializableExtra.getClass().getSimpleName() + " isn't available DTO instance.");
+                }
+            }
 
             // Stop the service using the startId, so that we don't stop
             // the service in the middle of handling another job
             //stopSelf(msg.arg1);
         }
 
-        private void handleEvent(Intent intent) {
-            final Serializable serializableExtra = intent.getSerializableExtra(INTENT_EXTRA_NAME);
-            if (serializableExtra == null) {
-                Log.w(TAG, "EventDTO is null");
-                return;
-            }
-            if (serializableExtra instanceof EventDTO) {
-                EventDTO event = (EventDTO) serializableExtra;
-                Log.i(TAG, "received event " + event.getType().name() + ": " + event.getContent().toString());
-                if (isConnected()) {
-                    boolean result = restClient.send(event.getContent(), event.getType());
-                } else {
-                    Log.i(TAG, "handleEvent: device is not connected to network");
-                }
+        private void handleEvent(EventDTO event) {
+            Log.i(TAG, "received event " + event.getType().name() + ": " + event.getContent().toString());
+            if (isConnected()) {
+                boolean result = restClient.send(event, EVENT_REST_PATH);
             } else {
-                Log.w(TAG, serializableExtra.getClass().getSimpleName() + " isn't instance of " + EventDTO.class.getSimpleName());
+                Log.i(TAG, "handleEvent: device is not connected to network");
             }
         }
 

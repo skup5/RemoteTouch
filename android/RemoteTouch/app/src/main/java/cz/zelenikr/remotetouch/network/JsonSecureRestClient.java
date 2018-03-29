@@ -3,20 +3,14 @@ package cz.zelenikr.remotetouch.network;
 import android.util.Log;
 
 import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 
-import cz.zelenikr.remotetouch.data.EventType;
-import cz.zelenikr.remotetouch.data.dto.EventContent;
-import cz.zelenikr.remotetouch.data.dto.MessageDTO;
+import cz.zelenikr.remotetouch.data.message.MessageDTO;
 import cz.zelenikr.remotetouch.helper.SecurityHelper;
 import cz.zelenikr.remotetouch.security.SymmetricCipher;
 
@@ -25,14 +19,9 @@ import cz.zelenikr.remotetouch.security.SymmetricCipher;
  *
  * @author Roman Zelenik
  */
-public class JsonSecureRestClient implements SecureRestClient {
-    private static final Gson GSON = new Gson();
+public class JsonSecureRestClient extends BaseJsonRestClient implements SecureRestClient {
     private static final String TAG = JsonSecureRestClient.class.getSimpleName();
 
-    private String clientToken;
-    private URL baseRestUrl;
-
-    private final HttpTransport httpTransport = new NetHttpTransport();
     private final SymmetricCipher<String> symmetricCipher;
 
     /**
@@ -41,24 +30,8 @@ public class JsonSecureRestClient implements SecureRestClient {
      * @param secureKey   key (like a plain text) for encrypting/decrypting messages
      */
     public JsonSecureRestClient(String clientToken, URL baseRestUrl, String secureKey) {
-        this.clientToken = clientToken;
-        this.baseRestUrl = baseRestUrl;
+        super(clientToken, baseRestUrl);
         this.symmetricCipher = SecurityHelper.createSymmetricCipherInstance(secureKey);
-    }
-
-    @Override
-    public boolean send(String msg, EventType event) {
-        return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, msg)));
-    }
-
-    @Override
-    public boolean send(EventContent content, EventType event) {
-        return postRequest(null, makeJSONContent(new MessageDTO(clientToken, event, content)));
-    }
-
-    @Override
-    public void setSecureToken(String clientToken) {
-        this.clientToken = clientToken;
     }
 
     @Override
@@ -67,11 +40,7 @@ public class JsonSecureRestClient implements SecureRestClient {
     }
 
     @Override
-    public void setRestServer(URL url) {
-        baseRestUrl = url;
-    }
-
-    private HttpContent makeJSONContent(MessageDTO message) {
+    protected HttpContent makeJSONContent(MessageDTO message) {
         // Convert message content to JSON
         String contentJson = toJson(message.getContent());
         // Encrypt content JSON
@@ -81,7 +50,7 @@ public class JsonSecureRestClient implements SecureRestClient {
             content = message.getContent();
         }
         // Create new MessageDTO with encrypted content
-        message = new MessageDTO(message.getId(), message.getEvent(), content);
+        message = new MessageDTO(message.getId(), message.getType(), content);
         String json = toJson(message);
         //System.out.println(json);
         Log.i(TAG, "New Message to " + message.getId());
@@ -89,39 +58,24 @@ public class JsonSecureRestClient implements SecureRestClient {
         return httpContent;
     }
 
-    private boolean postRequest(String subUrl, HttpContent httpContent) {
-        boolean success = false;
-        try {
-            Log.i(TAG, "post request");
-            GenericUrl restUrl = new GenericUrl(baseRestUrl);
-            if (subUrl != null) {
-                if (!subUrl.startsWith("/")) {
-                    subUrl = "/" + subUrl;
-                }
-                restUrl.appendRawPath(subUrl);
-            }
-            Log.i(TAG, "send to " + restUrl);
-            HttpResponse httpResponse = httpTransport.createRequestFactory()
-                .buildPostRequest(restUrl, httpContent)
-                .setThrowExceptionOnExecuteError(false)
-                .execute();
-            try {
-                if (httpResponse.isSuccessStatusCode()) {
-                    success = true;
-                } else {
-                    Log.w(TAG, httpResponse.getStatusCode() + " - " + httpResponse.getStatusMessage() + ": " + httpResponse.parseAsString());
-                }
-            } finally {
-                httpResponse.disconnect();
-            }
-        } catch (IOException e) {
-//                e.printStackTrace();
-            Log.w(TAG, e.toString());
-        }
-        return success;
+    @Override
+    protected String getClassName() {
+        return TAG;
     }
 
-    private static String toJson(Object object) {
-        return GSON.toJson(object);
+    @Override
+    protected boolean onSuccessResponse(HttpResponse response) {
+        return true;
     }
+
+    @Override
+    protected void onErrorResponse(HttpResponse response) {
+        try {
+            Log.w(getClassName(), response.getStatusCode() + " - " + response.getStatusMessage() + " : " + response.parseAsString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

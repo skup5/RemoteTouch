@@ -28,7 +28,7 @@ import cz.zelenikr.remotetouch.helper.PermissionHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.receiver.CallReceiver;
 import cz.zelenikr.remotetouch.receiver.SmsReceiver;
-import cz.zelenikr.remotetouch.service.EventService;
+import cz.zelenikr.remotetouch.service.MessageSenderService;
 
 /**
  * Contains basic application settings.
@@ -281,19 +281,19 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
 
     private void startEventService() {
         if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.O)) {
-            getActivity().startForegroundService(new Intent(getContext(), EventService.class));
+            getActivity().startForegroundService(new Intent(getContext(), MessageSenderService.class));
         } else {
-            getActivity().startService(new Intent(getContext(), EventService.class));
+            getActivity().startService(new Intent(getContext(), MessageSenderService.class));
         }
     }
 
     private void stopEventService(){
-        getActivity().stopService(new Intent(getContext(), EventService.class));
+        getActivity().stopService(new Intent(getContext(), MessageSenderService.class));
     }
 
     private void turnOnOffAlerts(SwitchPreferenceCompat preference){
         boolean turnOn = preference.isChecked();
-        setServiceEnabled(EventService.class, turnOn);
+        setServiceEnabled(MessageSenderService.class, turnOn);
         if(turnOn){
             startEventService();
         }else{

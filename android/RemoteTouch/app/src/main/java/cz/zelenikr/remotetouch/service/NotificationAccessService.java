@@ -21,10 +21,10 @@ import java.util.Set;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.helper.AndroidAppHelper;
-import cz.zelenikr.remotetouch.data.EventType;
+import cz.zelenikr.remotetouch.data.event.EventType;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
-import cz.zelenikr.remotetouch.data.dto.EventDTO;
-import cz.zelenikr.remotetouch.data.dto.NotificationEventContent;
+import cz.zelenikr.remotetouch.data.event.EventDTO;
+import cz.zelenikr.remotetouch.data.event.NotificationEventContent;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
@@ -226,10 +226,10 @@ public class NotificationAccessService extends NotificationListenerService
             text = extras.getString(Notification.EXTRA_TEXT, "");
         }
 
-        Intent intent = new Intent(this, EventService.class);
-        intent.putExtra(EventService.INTENT_EXTRA_EVENT, true);
+        Intent intent = new Intent(this, MessageSenderService.class);
+        intent.putExtra(MessageSenderService.INTENT_EXTRA_IS_MSG, true);
         intent.putExtra(
-            EventService.INTENT_EXTRA_NAME,
+            MessageSenderService.INTENT_EXTRA_NAME,
             new EventDTO(EVENT_TYPE, new NotificationEventContent(app, label, ticker, title, text, when))
         );
 

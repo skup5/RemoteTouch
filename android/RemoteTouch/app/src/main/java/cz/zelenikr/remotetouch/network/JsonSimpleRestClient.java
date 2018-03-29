@@ -1,0 +1,50 @@
+package cz.zelenikr.remotetouch.network;
+
+import android.util.Log;
+
+import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.http.HttpContent;
+import com.google.api.client.http.HttpResponse;
+
+import java.net.URL;
+
+import cz.zelenikr.remotetouch.data.message.MessageDTO;
+
+/**
+ * Provides unsecured JSON message sending to the REST server.
+ *
+ * @author Roman Zelenik
+ */
+public class JsonSimpleRestClient extends BaseJsonRestClient {
+
+    private static final String CLASS_NAME = JsonSimpleRestClient.class.getSimpleName();
+
+    public JsonSimpleRestClient(String clientToken, URL baseRestUrl) {
+        super(clientToken, baseRestUrl);
+    }
+
+    @Override
+    protected HttpContent makeJSONContent(MessageDTO message) {
+        String json = toJson(message);
+        //System.out.println(json);
+        HttpContent httpContent = new ByteArrayContent("application/json", json.getBytes());
+        return httpContent;
+
+    }
+
+    @Override
+    protected String getClassName() {
+        return CLASS_NAME;
+    }
+
+    @Override
+    protected boolean onSuccessResponse(HttpResponse response) {
+        return true;
+    }
+
+    @Override
+    protected void onErrorResponse(HttpResponse response) {
+        Log.w(getClassName(), response.getStatusCode() + " - " + response.getStatusMessage());
+    }
+
+}

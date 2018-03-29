@@ -11,13 +11,13 @@ import android.util.Log;
 
 import java.util.Date;
 
-import cz.zelenikr.remotetouch.data.EventType;
-import cz.zelenikr.remotetouch.data.dto.EventDTO;
-import cz.zelenikr.remotetouch.data.dto.SmsEventContent;
+import cz.zelenikr.remotetouch.data.event.EventType;
+import cz.zelenikr.remotetouch.data.event.EventDTO;
+import cz.zelenikr.remotetouch.data.event.SmsEventContent;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.ContactHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
-import cz.zelenikr.remotetouch.service.EventService;
+import cz.zelenikr.remotetouch.service.MessageSenderService;
 
 /**
  * @author Roman Zelenik
@@ -101,10 +101,10 @@ public class SmsReceiver extends BroadcastReceiver {
     }
 
     private void sendEvent(Context context, SmsEventContent content) {
-        Intent intent = new Intent(context, EventService.class);
-        intent.putExtra(EventService.INTENT_EXTRA_EVENT, true);
+        Intent intent = new Intent(context, MessageSenderService.class);
+        intent.putExtra(MessageSenderService.INTENT_EXTRA_IS_MSG, true);
         intent.putExtra(
-            EventService.INTENT_EXTRA_NAME,
+            MessageSenderService.INTENT_EXTRA_NAME,
             new EventDTO(EVENT_TYPE, content)
         );
 

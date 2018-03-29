@@ -10,8 +10,8 @@
     <string name="Actions.Generate_new_pair_key">Generate new pair key</string>
     <string name="Actions.Search">Search</string>
 
-    <string name="EventService.Label" translatable="false">EventService</string>
-    <string name="EventService.PersistentNotification.Text">Running…</string>
+    <string name="MsgSenderService.Label" translatable="false">DataService</string>
+    <string name="MsgSenderService.PersistentNotification.Text">Running…</string>
 
     <string name="NotificationAccessService.PersistentNotification.Text">Running…</string>
     <string name="NotificationAccessService.Label" translatable="false">NotificationAccessService</string>

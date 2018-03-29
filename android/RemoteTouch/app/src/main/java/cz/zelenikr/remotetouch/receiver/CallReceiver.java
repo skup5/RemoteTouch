@@ -8,13 +8,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import cz.zelenikr.remotetouch.data.CallType;
-import cz.zelenikr.remotetouch.data.EventType;
-import cz.zelenikr.remotetouch.data.dto.CallEventContent;
-import cz.zelenikr.remotetouch.data.dto.EventContent;
-import cz.zelenikr.remotetouch.data.dto.EventDTO;
+import cz.zelenikr.remotetouch.data.event.EventType;
+import cz.zelenikr.remotetouch.data.event.CallEventContent;
+import cz.zelenikr.remotetouch.data.event.EventContent;
+import cz.zelenikr.remotetouch.data.event.EventDTO;
 import cz.zelenikr.remotetouch.helper.ContactHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
-import cz.zelenikr.remotetouch.service.EventService;
+import cz.zelenikr.remotetouch.service.MessageSenderService;
 
 /**
  * Receives NEW_OUTGOING_CALL and PHONE_STATE actions from the system. <br/>
@@ -147,10 +147,10 @@ public class CallReceiver extends BroadcastReceiver {
 
     private void sendEvent(Context context, CallType type) {
         EventContent content = new CallEventContent(lastName, lastNumber, type);
-        Intent intent = new Intent(context, EventService.class);
-        intent.putExtra(EventService.INTENT_EXTRA_EVENT, true);
+        Intent intent = new Intent(context, MessageSenderService.class);
+        intent.putExtra(MessageSenderService.INTENT_EXTRA_IS_MSG, true);
         intent.putExtra(
-            EventService.INTENT_EXTRA_NAME,
+            MessageSenderService.INTENT_EXTRA_NAME,
             new EventDTO(EVENT_TYPE, content)
         );
 

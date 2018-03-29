@@ -85,9 +85,9 @@
         </receiver>
 
         <service
-            android:name=".service.EventService"
+            android:name=".service.MessageSenderService"
             android:exported="false"
-            android:label="@string/EventService.Label"/>
+            android:label="@string/MsgSenderService.Label"/>
 
         <service
             android:name=".service.NotificationAccessService"

@@ -6,7 +6,7 @@
     <string name="Actions.Yes">Ano</string>
     <string name="Actions.No">Ne</string>
 
-    <string name="EventService.PersistentNotification.Text">Běží...</string>
+    <string name="MsgSenderService.PersistentNotification.Text">Běží...</string>
 
     <string name="NotificationAccessService.PersistentNotification.Text">Běží...</string>
 
