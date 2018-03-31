@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="18"
-        android:targetSdkVersion="26"/>
+        android:targetSdkVersion="27"/>
 
     <!-- NETWORK PERMISSIONS -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
