@@ -31,6 +31,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
+    <!-- required by JobIntentService -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:allowBackup="true"
@@ -41,14 +43,14 @@
         android:theme="@style/AppTheme">
 
         <!--<activity-->
-            <!--android:name=".MainActivity"-->
-            <!--android:label="@string/Application.Name"-->
-            <!--android:theme="@style/AppTheme.NoActionBar">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN"/>-->
+        <!--android:name=".MainActivity"-->
+        <!--android:label="@string/Application.Name"-->
+        <!--android:theme="@style/AppTheme.NoActionBar">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.MAIN"/>-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-            <!--</intent-filter>-->
+        <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+        <!--</intent-filter>-->
         <!--</activity>-->
 
         <activity
@@ -65,8 +67,8 @@
 
         <receiver
             android:name=".receiver.CallReceiver"
-            android:exported="true"
-            android:enabled="false">
+            android:enabled="false"
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE"/>
@@ -76,13 +78,23 @@
 
         <receiver
             android:name=".receiver.SmsReceiver"
-            android:exported="true"
-            android:enabled="false">
+            android:enabled="false"
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name="cz.zelenikr.remotetouch.receiver.ServerCmdReceiver"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <service
+            android:name=".service.ServerCmdSenderService"
+            android:enabled="true"
+            android:exported="false"/>
 
         <service
             android:name=".service.MessageSenderService"

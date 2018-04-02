@@ -1,6 +1,8 @@
 package cz.zelenikr.remotetouch.fragment;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,8 +33,11 @@ import java.util.Map;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
+import cz.zelenikr.remotetouch.data.command.Command;
+import cz.zelenikr.remotetouch.data.command.CommandDTO;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
+import cz.zelenikr.remotetouch.receiver.ServerCmdReceiver;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 import cz.zelenikr.remotetouch.storage.NotificationDbHelper;
 
@@ -171,6 +176,9 @@ public class DeveloperFragment extends Fragment {
         } else if (id == R.id.action_export_notification_logs) {
             onExportNotificationLogsBtClick(item.getActionView());
             return true;
+        } else if(id==R.id.action_test_br){
+            onTestBroadcastReceiver();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -250,6 +258,15 @@ public class DeveloperFragment extends Fragment {
             resultMessage += " export FAILED!";
         }
         snackbar(resultMessage, Toast.LENGTH_LONG);
+    }
+
+    private void onTestBroadcastReceiver(){
+                Intent intent = new Intent(getContext(), ServerCmdReceiver.class);
+//        Intent intent = new Intent(ServerCmdReceiver.ACTION);
+//        Intent intent = new Intent();
+//        intent.setComponent(new ComponentName(getContext(), ServerCmdReceiver.class));
+        intent.putExtra(ServerCmdReceiver.INTENT_EXTRAS, new CommandDTO(Command.TEST));
+        getContext().sendBroadcast(intent);
     }
 
     private List<String> getCallDetails() {

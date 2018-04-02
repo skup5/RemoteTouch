@@ -9,14 +9,17 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import cz.zelenikr.remotetouch.MainActivity;
 import cz.zelenikr.remotetouch.NavigationActivity;
+import cz.zelenikr.remotetouch.data.command.Command;
+import cz.zelenikr.remotetouch.data.command.CommandDTO;
+import cz.zelenikr.remotetouch.receiver.ServerCmdReceiver;
 
 /**
  * A service that extends FirebaseMessagingService. This is required if you want to do any message
@@ -58,7 +61,7 @@ public class FCMService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
-            toast("FCM data: "+remoteMessage.getData(), Toast.LENGTH_LONG);
+            toast("FCM data: " + remoteMessage.getData(), Toast.LENGTH_LONG);
 
             if (/* Check if data needs to be processed by long running job */ false) {
                 // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
@@ -100,12 +103,15 @@ public class FCMService extends FirebaseMessagingService {
     private void handleNow(RemoteMessage remoteMessage) {
         Log.i(TAG, "handleNow");
         String cmd = remoteMessage.getData().get("cmd");
-        if (cmd != null) switch (cmd) {
-            case "SIGN_UP":
-                Log.i(TAG, "handleNow: " + cmd);
-                break;
-            default:
-                break;
+        if (cmd != null) {
+            try {
+                Command command = Command.valueOf(cmd);
+                Intent intent = new Intent(this, ServerCmdReceiver.class);
+                intent.putExtra(ServerCmdReceiver.INTENT_EXTRAS, new CommandDTO(command));
+                sendBroadcast(intent);
+            } catch (IllegalArgumentException e) {
+                Log.w(TAG, "handleNow: unknown command " + cmd);
+            }
         }
     }
 
