@@ -20,8 +20,6 @@ import cz.zelenikr.remotetouch.data.AppInfo;
  */
 public final class AndroidAppHelper {
 
-    private static List<AppInfo> installedApps = Collections.emptyList();
-
     /**
      * Returns sorted list (by name) of installed apps.
      *
@@ -29,8 +27,7 @@ public final class AndroidAppHelper {
      * @return
      */
     public static List<AppInfo> getApps(Context context) {
-        if (installedApps.isEmpty()) loadApps(context);
-        return installedApps;
+        return loadApps(context);
     }
 
     /**
@@ -74,12 +71,13 @@ public final class AndroidAppHelper {
      * Loads all installed apps into the {@code installedApps} list. List is sorted by app name.
      *
      * @param context
+     * @return installed apps
      */
-    private static void loadApps(Context context) {
+    private static List<AppInfo> loadApps(Context context) {
         AppInfo newApp;
         boolean userApp;
         List<ApplicationInfo> packages = context.getPackageManager().getInstalledApplications(0);
-        installedApps = new ArrayList<>(packages.size());
+        List<AppInfo> installedApps = new ArrayList<>(packages.size());
 
         for (ApplicationInfo packageInfo : packages) {
             newApp = new AppInfo();
@@ -92,6 +90,7 @@ public final class AndroidAppHelper {
         }
 
         Collections.sort(installedApps, (s1, s2) -> s1.getAppName().compareToIgnoreCase(s2.getAppName()));
+        return installedApps;
     }
 
     private AndroidAppHelper() {

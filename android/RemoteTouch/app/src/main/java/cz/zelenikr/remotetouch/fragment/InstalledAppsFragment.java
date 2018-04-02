@@ -1,6 +1,7 @@
 package cz.zelenikr.remotetouch.fragment;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -65,15 +66,14 @@ public class InstalledAppsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set the adapter
-        List<AppInfo> installedApps = AndroidAppHelper.getApps(getContext());
-        adapter = new AppInfoRecyclerViewAdapter(installedApps, mListener);
+        List<String> selectedApps = null;
         // Process arguments
         if (getArguments() != null) {
-            List<String> selectedApps = getArguments().getStringArrayList(ARG_SELECTED_APPS);
-            if (selectedApps != null) setSelected(selectedApps);
+            selectedApps = getArguments().getStringArrayList(ARG_SELECTED_APPS);
         }
 
+        // Set the adapter
+        prepareAdapter(selectedApps);
         setHasOptionsMenu(true);
     }
 
@@ -146,6 +146,11 @@ public class InstalledAppsFragment extends Fragment {
         });
     }
 
+    private void prepareAdapter(List<String> selectedApps) {
+        adapter = new AppInfoRecyclerViewAdapter(mListener);
+        new AppsLoader().setSelectedApps(selectedApps).execute(this);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -161,5 +166,27 @@ public class InstalledAppsFragment extends Fragment {
          * @param position position of item in the adapter
          */
         void onStateChanged(AppInfo item, int position);
+    }
+
+    private static class AppsLoader extends AsyncTask<InstalledAppsFragment, Void, List<AppInfo>> {
+        List<String> selectedApps;
+        InstalledAppsFragment fragment;
+
+        @Override
+        protected List<AppInfo> doInBackground(InstalledAppsFragment... fragments) {
+            this.fragment = fragments[0];
+            return AndroidAppHelper.getApps(fragment.getContext());
+        }
+
+        @Override
+        protected void onPostExecute(List<AppInfo> appInfos) {
+            fragment.adapter.setData(appInfos);
+            if (selectedApps != null) fragment.setSelected(selectedApps);
+        }
+
+        public AppsLoader setSelectedApps(List<String> selectedApps) {
+            this.selectedApps = selectedApps;
+            return this;
+        }
     }
 }

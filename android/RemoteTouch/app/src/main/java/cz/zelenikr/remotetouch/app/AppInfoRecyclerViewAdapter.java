@@ -2,6 +2,7 @@ package cz.zelenikr.remotetouch.app;
 
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +38,10 @@ public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecy
     private final List<AppInfo> allItems;
     private List<AppInfo> filteredItemList;
     private Filter searchFilter;
+
+    public AppInfoRecyclerViewAdapter(OnListItemStateChangedListener mListener) {
+        this(new ArrayList<>(), mListener);
+    }
 
     public AppInfoRecyclerViewAdapter(List<AppInfo> items, OnListItemStateChangedListener listener) {
         filteredItemList = items;
@@ -141,6 +146,12 @@ public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecy
             }
         }
         if (changed) notifyDataSetChanged();
+    }
+
+    public void setData(@NonNull List<AppInfo> data) {
+        allItems.clear();
+        allItems.addAll(data);
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
