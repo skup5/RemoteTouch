@@ -1,6 +1,5 @@
 package cz.zelenikr.remotetouch.app;
 
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -36,29 +35,33 @@ public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecy
 
     private final InstalledAppsFragment.OnListItemStateChangedListener mListener;
     private final List<AppInfo> allItems;
-    private List<AppInfo> filteredItemList;
+    private List<AppInfo> filteredItemList, visibleItemList;
     private Filter searchFilter;
+    private boolean showOnlySelected;
 
     public AppInfoRecyclerViewAdapter(OnListItemStateChangedListener mListener) {
         this(new ArrayList<>(), mListener);
     }
 
     public AppInfoRecyclerViewAdapter(List<AppInfo> items, OnListItemStateChangedListener listener) {
+        showOnlySelected = false;
         filteredItemList = items;
+        visibleItemList = items;
         allItems = items;
         mListener = listener;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
             .inflate(R.layout.fragment_appinfo_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        final AppInfo item = filteredItemList.get(position);
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        final AppInfo item = getActualData().get(position);
         // Get the current package name
         final String packageName = item.getAppPackage();
 
@@ -70,11 +73,12 @@ public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecy
 
         // Set the current app label
         holder.mTextViewLabel.setText(label);
-        if (item.isSystem()) {
+        /* if (item.isSystem()) {
             holder.mTextViewLabel.setTypeface(null, Typeface.BOLD_ITALIC);
         } else {
             holder.mTextViewLabel.setTypeface(null, Typeface.NORMAL);
-        }
+        }*/
+
         // Set the current app package name
         holder.mTextViewPackage.setText(packageName);
 
@@ -90,7 +94,7 @@ public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecy
 
     @Override
     public int getItemCount() {
-        return filteredItemList.size();
+        return getActualData().size();
     }
 
     @Override
@@ -99,41 +103,22 @@ public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecy
         return searchFilter;
     }
 
-    private Filter createSearchFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                List<AppInfo> filtered = new ArrayList<>();
-                String query = constraint.toString().toLowerCase();
-
-                if (query.isEmpty()) {
-                    filtered = allItems;
-                } else {
-                    for (AppInfo item : allItems) {
-                        if (item.getAppName().toLowerCase().contains(query) || item.getAppPackage().contains(query)) {
-                            filtered.add(item);
-                        }
-                    }
-                }
-
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = filtered;
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredItemList = (List<AppInfo>) results.values;
-                notifyDataSetChanged();
-            }
-        };
+    public void selectAll() {
+        Log.d(TAG, "selectAll: ");
+        for (AppInfo appInfo : allItems) {
+            appInfo.setSelected(true);
+        }
+        mListener.onItemsStateChanged(allItems);
+        notifyDataSetChanged();
     }
 
-    private void onItemCheckClick(int itemIndex) {
-        AppInfo item = filteredItemList.get(itemIndex);
-        item.setSelected(!item.isSelected());
-        mListener.onStateChanged(item, itemIndex);
-        AppInfoRecyclerViewAdapter.this.notifyDataSetChanged();
+    public void unSelectAll() {
+        Log.d(TAG, "unSelectAll: ");
+        for (AppInfo appInfo : allItems) {
+            appInfo.setSelected(false);
+        }
+        mListener.onItemsStateChanged(allItems);
+        notifyDataSetChanged();
     }
 
     public void selectByPackage(Collection<String> packageNames) {
@@ -151,6 +136,72 @@ public class AppInfoRecyclerViewAdapter extends RecyclerView.Adapter<AppInfoRecy
     public void setData(@NonNull List<AppInfo> data) {
         allItems.clear();
         allItems.addAll(data);
+        notifyDataSetChanged();
+    }
+
+    public void setShowOnlySelected(boolean showOnlySelected) {
+        if (this.showOnlySelected != showOnlySelected) {
+            this.showOnlySelected = showOnlySelected;
+            showOnlySelected();
+        }
+    }
+
+    private Filter createSearchFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                List<AppInfo> filtered = new ArrayList<>();
+                String query = constraint.toString().toLowerCase();
+
+                if (query.isEmpty()) {
+                    filtered = visibleItemList;
+                } else {
+                    for (AppInfo item : visibleItemList) {
+                        if (item.getAppName().toLowerCase().contains(query) || item.getAppPackage().contains(query)) {
+                            filtered.add(item);
+                        }
+                    }
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filtered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                setActualData((List<AppInfo>) results.values);
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+    private List<AppInfo> getActualData() {
+        return filteredItemList;
+    }
+
+    private void onItemCheckClick(int itemIndex) {
+        AppInfo item = getActualData().get(itemIndex);
+        item.setSelected(!item.isSelected());
+        mListener.onItemStateChanged(item, itemIndex);
+        notifyDataSetChanged();
+    }
+
+    private void setActualData(@NonNull List<AppInfo> items) {
+        filteredItemList = items;
+    }
+
+    private void showOnlySelected() {
+        if (showOnlySelected) {
+            List<AppInfo> visibleItems = new ArrayList<>();
+            for (AppInfo appInfo : allItems) {
+                if (appInfo.isSelected()) visibleItems.add(appInfo);
+            }
+            visibleItemList = visibleItems;
+        } else {
+            visibleItemList = allItems;
+        }
+        setActualData(visibleItemList);
         notifyDataSetChanged();
     }
 

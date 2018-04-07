@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/appinfo_item"
+<RelativeLayout android:id="@+id/appinfo_item"
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -18,7 +18,7 @@
                 android:id="@+id/appinfo_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginTop="6dp"
                 android:src="@mipmap/ic_launcher"/>
 
@@ -26,10 +26,10 @@
                 android:id="@+id/appinfo_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
                 android:layout_marginTop="6dp"
                 android:layout_toEndOf="@id/appinfo_image"
-                android:layout_toRightOf="@id/appinfo_image"
+                android:layout_toStartOf="@id/appinfo_select"
                 android:textColor="#000"/>
 
             <TextView
@@ -37,9 +37,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/appinfo_name"
-                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
                 android:layout_toEndOf="@id/appinfo_image"
-                android:layout_toRightOf="@id/appinfo_image"
+                android:layout_toStartOf="@id/appinfo_select"
                 android:textColor="#795548"/>
 
             <CheckBox

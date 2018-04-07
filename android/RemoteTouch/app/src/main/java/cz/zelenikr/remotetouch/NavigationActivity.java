@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.List;
+
 import cz.zelenikr.remotetouch.data.AppInfo;
 import cz.zelenikr.remotetouch.fragment.ConnectionSettingsFragment;
 import cz.zelenikr.remotetouch.fragment.DeveloperFragment;
@@ -109,11 +111,19 @@ public class NavigationActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStateChanged(AppInfo item, int position) {
+    public void onItemStateChanged(AppInfo item, int position) {
         if (notificationSettingsFragment != null) {
-            notificationSettingsFragment.onStateChanged(item, position);
+            notificationSettingsFragment.onItemStateChanged(item, position);
         }
         snackbar(item.getAppName(), Snackbar.LENGTH_SHORT);
+    }
+
+    @Override
+    public void onItemsStateChanged(List<AppInfo> items) {
+        if (notificationSettingsFragment != null) {
+            notificationSettingsFragment.onItemsStateChanged(items);
+        }
+        snackbar(items.size() + " items", Snackbar.LENGTH_SHORT);
     }
 
     @Override

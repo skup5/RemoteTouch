@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="app_list_types">
+        <item>Všechny aplikace</item>
+        <item>Vybrané aplikace</item>
+    </string-array>
+</resources>

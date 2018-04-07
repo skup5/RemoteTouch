@@ -3,6 +3,7 @@ package cz.zelenikr.remotetouch.fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +35,7 @@ import cz.zelenikr.remotetouch.helper.AndroidAppHelper;
  * Activities containing this fragment MUST implement the {@link OnListItemStateChangedListener}
  * interface.
  */
-public class InstalledAppsFragment extends Fragment {
+public class InstalledAppsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String
         ARG_SELECTED_APPS = "param1";
@@ -78,16 +83,21 @@ public class InstalledAppsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_appinfo, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_appinfo, container, false);
+        ViewGroup content = root.findViewById(R.id.appinfo_content);
 
+        prepareListTypeSpinner((ViewGroup) root);
+
+        View view = inflater.inflate(R.layout.fragment_appinfo_list, content, false);
+        content.addView(view);
         // Set the list
         if (view instanceof RecyclerView) {
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             recyclerView.setAdapter(adapter);
         }
-        return view;
+        return root;
     }
 
     @Override
@@ -114,6 +124,31 @@ public class InstalledAppsFragment extends Fragment {
         MenuItem searchItem = menu.findItem(R.id.menu_appinfo_search);
         initSearchView(searchItem);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_appinfo_select_all:
+                onSelectAllApps();
+                return true;
+            case R.id.menu_appinfo_unselect_all:
+                onUnselectAllApps();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(getContext(), position + ":" + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
+        adapter.setShowOnlySelected(position != 0);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     /**
@@ -151,6 +186,27 @@ public class InstalledAppsFragment extends Fragment {
         new AppsLoader().setSelectedApps(selectedApps).execute(this);
     }
 
+    private void prepareListTypeSpinner(ViewGroup root) {
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        // ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+        //   R.array.app_list_types, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        Spinner spinner = (Spinner) root.findViewById(R.id.appinfo_list_spinner);
+        // Apply the adapter to the spinner
+        // spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+    }
+
+    private void onSelectAllApps() {
+        adapter.selectAll();
+    }
+
+    private void onUnselectAllApps() {
+        adapter.unSelectAll();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -165,7 +221,12 @@ public class InstalledAppsFragment extends Fragment {
          * @param item     the changed item
          * @param position position of item in the adapter
          */
-        void onStateChanged(AppInfo item, int position);
+        void onItemStateChanged(AppInfo item, int position);
+
+        /**
+         * @param items list of changed items
+         */
+        void onItemsStateChanged(List<AppInfo> items);
     }
 
     private static class AppsLoader extends AsyncTask<InstalledAppsFragment, Void, List<AppInfo>> {

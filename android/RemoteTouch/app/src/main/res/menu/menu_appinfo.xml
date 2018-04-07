@@ -3,10 +3,16 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="cz.zelenikr.remotetouch.fragment.InstalledAppsFragment">
-<item
-    android:id="@+id/menu_appinfo_search"
-    android:icon="@android:drawable/ic_menu_search"
-    android:title="@string/Actions.Search"
-    app:showAsAction="ifRoom|collapseActionView"
-    app:actionViewClass="android.support.v7.widget.SearchView"/>
+    <item
+        android:id="@+id/menu_appinfo_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/Actions.Search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView"/>
+    <item
+        android:id="@+id/menu_appinfo_select_all"
+        android:title="@string/Actions.Select_all"/>
+    <item
+        android:id="@+id/menu_appinfo_unselect_all"
+        android:title="@string/Actions.Unselect_all"/>
 </menu>

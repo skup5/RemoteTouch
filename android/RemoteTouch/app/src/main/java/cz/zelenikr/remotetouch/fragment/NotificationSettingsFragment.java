@@ -1,6 +1,7 @@
 package cz.zelenikr.remotetouch.fragment;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.Preference;
@@ -10,6 +11,8 @@ import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import cz.zelenikr.remotetouch.R;
@@ -67,8 +70,8 @@ public class NotificationSettingsFragment extends PreferenceFragmentCompat
     }
 
     @Override
-    public void onStateChanged(AppInfo item, int position) {
-        Log.i(TAG, "onStateChanged: " + item);
+    public void onItemStateChanged(AppInfo item, int position) {
+        Log.i(TAG, "onItemStateChanged: " + item);
         Set<String> appSet = loadAppsPreference();
         if (item.isSelected()) {
             appSet.add(item.getAppPackage());
@@ -76,6 +79,13 @@ public class NotificationSettingsFragment extends PreferenceFragmentCompat
             appSet.remove(item.getAppPackage());
         }
         saveAppsPreference(appSet);
+    }
+
+    @Override
+    public void onItemsStateChanged(List<AppInfo> items) {
+        Log.i(TAG, "onItemsStateChanged: " + items.size() + " items");
+        // Save preference changes asynchronously
+        new MultiAppsPreferenceSaver().setAppInfos(items).execute(this);
     }
 
     private Set<String> loadAppsPreference() {
@@ -88,5 +98,29 @@ public class NotificationSettingsFragment extends PreferenceFragmentCompat
             .edit()
             .putStringSet(key, apps)
             .apply();
+    }
+
+    private static class MultiAppsPreferenceSaver extends AsyncTask<NotificationSettingsFragment, Void, Void> {
+        private List<AppInfo> appInfos = Collections.emptyList();
+
+        @Override
+        protected Void doInBackground(NotificationSettingsFragment... fragments) {
+            NotificationSettingsFragment settingsFragment = fragments[0];
+            Set<String> appSet = settingsFragment.loadAppsPreference();
+            for (AppInfo appInfo : appInfos) {
+                if (appInfo.isSelected()) {
+                    appSet.add(appInfo.getAppPackage());
+                } else {
+                    appSet.remove(appInfo.getAppPackage());
+                }
+            }
+            settingsFragment.saveAppsPreference(appSet);
+            return null;
+        }
+
+        public MultiAppsPreferenceSaver setAppInfos(List<AppInfo> appInfos) {
+            this.appInfos = appInfos;
+            return this;
+        }
     }
 }
