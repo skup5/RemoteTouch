@@ -11,6 +11,7 @@
     <string name="Actions.Search">Search</string>
     <string name="Actions.Select_all">Select all</string>
     <string name="Actions.Unselect_all">Unselect all</string>
+    <string name="Actions.Test_url_address">Test url address</string>
 
     <string name="MsgSenderService.Label" translatable="false">DataService</string>
     <string name="MsgSenderService.PersistentNotification.Text">Running…</string>
@@ -54,6 +55,8 @@
     <string name="Preferences.Device.Title">Device</string>
     <string name="Preferences.Device.Name.Title">Name</string>
     <string name="Preferences.Connection.Server.Url.Title">Url address</string>
+    <string name="Preferences.Connection.Server.Url.Try_connect_result_ok">The server %1$s is connected.</string>
+    <string name="Preferences.Connection.Server.Url.Try_connect_result_fail">The server %1$s is unreachable.</string>
     <string name="Preferences.Notifications.Installed_apps.Title">Applications</string>
     <string name="Preferences.Notifications.Installed_apps.Summary">Choose apps whose notifications you are interested in.</string>
 

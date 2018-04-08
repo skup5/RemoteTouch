@@ -2,6 +2,7 @@ package cz.zelenikr.remotetouch.network;
 
 import android.util.Log;
 
+import com.google.api.client.http.EmptyContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpResponse;
@@ -22,6 +23,7 @@ import cz.zelenikr.remotetouch.data.message.MessageDTO;
  */
 abstract class BaseJsonRestClient implements RestClient {
     protected static final Gson GSON = new Gson();
+    private static final String PING_PATH = "/ping";
     private final HttpTransport httpTransport = new NetHttpTransport();
     protected String clientToken;
     protected URL baseRestUrl;
@@ -33,6 +35,12 @@ abstract class BaseJsonRestClient implements RestClient {
 
     protected static String toJson(Object object) {
         return GSON.toJson(object);
+    }
+
+    @Override
+    public boolean ping() {
+        HttpContent httpContent = new EmptyContent();
+        return postRequest(PING_PATH, httpContent);
     }
 
     @Override
@@ -56,32 +64,12 @@ abstract class BaseJsonRestClient implements RestClient {
     }
 
     /**
-     * Prepares JSON content of {@link com.google.api.client.http.HttpRequest} from specific {@link MessageDTO}.
      *
-     * @param message the given message to converting to JSON
-     * @return message like a JSON content
+     * @param subUrl
+     * @param httpContent content of POST request
+     * @return true if successful response was received
      */
-    protected abstract HttpContent makeJSONContent(MessageDTO message);
-
-    protected abstract String getClassName();
-
-    /**
-     * Processes received response with success status code. Returns true if this response means
-     * really successful request.
-     *
-     * @param response received successful response
-     * @return true if processed response means success, false otherwise
-     */
-    protected abstract boolean onSuccessResponse(HttpResponse response);
-
-    /**
-     * Processes received response with non-success status code.
-     *
-     * @param response received error response
-     */
-    protected abstract void onErrorResponse(HttpResponse response);
-
-    private boolean postRequest(String subUrl, HttpContent httpContent) {
+    protected boolean postRequest(String subUrl, HttpContent httpContent) {
         boolean success = false;
         try {
             Log.i(getClassName(), "post request");
@@ -112,4 +100,31 @@ abstract class BaseJsonRestClient implements RestClient {
         }
         return success;
     }
+
+    /**
+     * Prepares JSON content of {@link com.google.api.client.http.HttpRequest} from specific {@link MessageDTO}.
+     *
+     * @param message the given message to converting to JSON
+     * @return message like a JSON content
+     */
+    protected abstract HttpContent makeJSONContent(MessageDTO message);
+
+    protected abstract String getClassName();
+
+    /**
+     * Processes received response with success status code. Returns true if this response means
+     * really successful request.
+     *
+     * @param response received successful response
+     * @return true if processed response means success, false otherwise
+     */
+    protected abstract boolean onSuccessResponse(HttpResponse response);
+
+    /**
+     * Processes received response with non-success status code.
+     *
+     * @param response received error response
+     */
+    protected abstract void onErrorResponse(HttpResponse response);
+
 }
