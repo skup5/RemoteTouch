@@ -9,6 +9,8 @@
     <string name="Actions.Close">Close</string>
     <string name="Actions.Generate_new_pair_key">Generate new pair key</string>
     <string name="Actions.Search">Search</string>
+    <string name="Actions.Select_all">Select all</string>
+    <string name="Actions.Unselect_all">Unselect all</string>
 
     <string name="MsgSenderService.Label" translatable="false">DataService</string>
     <string name="MsgSenderService.PersistentNotification.Text">Running…</string>
@@ -32,7 +34,6 @@
     <string name="Navigation.Settings">Settings</string>
     <string name="Navigation.Connection">Connection</string>
 
-
     <string name="Preferences.Title">Settings</string>
     <string name="Preferences.SMS.Enable.Title">Incoming SMS</string>
     <string name="Preferences.SMS.Enable.Summary_on">I\'ll alert you of an incoming sms.</string>
@@ -55,7 +56,7 @@
     <string name="Preferences.Connection.Server.Url.Title">Url address</string>
     <string name="Preferences.Notifications.Installed_apps.Title">Applications</string>
     <string name="Preferences.Notifications.Installed_apps.Summary">Choose apps whose notifications you are interested in.</string>
-    <string name="Actions.Select_all">Select all</string>
-    <string name="Actions.Unselect_all">Unselect all</string>
+
+    <string name="InstalledApps.Loading.Label">Loading…</string>
 
 </resources>

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -42,6 +40,7 @@ public class InstalledAppsFragment extends Fragment implements AdapterView.OnIte
 
     private OnListItemStateChangedListener mListener;
     private AppInfoRecyclerViewAdapter adapter;
+    private RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -88,15 +87,8 @@ public class InstalledAppsFragment extends Fragment implements AdapterView.OnIte
         ViewGroup content = root.findViewById(R.id.appinfo_content);
 
         prepareListTypeSpinner((ViewGroup) root);
+        prepareListView(inflater, (ViewGroup) content);
 
-        View view = inflater.inflate(R.layout.fragment_appinfo_list, content, false);
-        content.addView(view);
-        // Set the list
-        if (view instanceof RecyclerView) {
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            recyclerView.setAdapter(adapter);
-        }
         return root;
     }
 
@@ -199,12 +191,25 @@ public class InstalledAppsFragment extends Fragment implements AdapterView.OnIte
         spinner.setOnItemSelectedListener(this);
     }
 
+    private void prepareListView(LayoutInflater inflater, ViewGroup container) {
+        View view = inflater.inflate(R.layout.fragment_appinfo_list, container, false);
+        // Set the list
+        recyclerView = (RecyclerView) view;
+        recyclerView.setAdapter(adapter);
+    }
+
     private void onSelectAllApps() {
         adapter.selectAll();
     }
 
     private void onUnselectAllApps() {
         adapter.unSelectAll();
+    }
+    
+    private void changeViewContent(View newContent) {
+        ViewGroup content = getView().findViewById(R.id.appinfo_content);
+        content.removeAllViews();
+        content.addView(newContent);
     }
 
     /**
@@ -241,6 +246,7 @@ public class InstalledAppsFragment extends Fragment implements AdapterView.OnIte
 
         @Override
         protected void onPostExecute(List<AppInfo> appInfos) {
+            fragment.changeViewContent(fragment.recyclerView);
             fragment.adapter.setData(appInfos);
             if (selectedApps != null) fragment.setSelected(selectedApps);
         }
@@ -250,4 +256,5 @@ public class InstalledAppsFragment extends Fragment implements AdapterView.OnIte
             return this;
         }
     }
+
 }

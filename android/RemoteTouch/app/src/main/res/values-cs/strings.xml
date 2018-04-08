@@ -51,4 +51,5 @@
     <string name="Preferences.Notifications.Installed_apps.Summary">Vyberte aplikace na jejichž notifikace chcete upozorňovat.</string>
     <string name="Actions.Select_all">Vybrat vše</string>
     <string name="Actions.Unselect_all">Zrušit vše</string>
+    <string name="InstalledApps.Loading.Label">Načítání…</string>
 </resources>
