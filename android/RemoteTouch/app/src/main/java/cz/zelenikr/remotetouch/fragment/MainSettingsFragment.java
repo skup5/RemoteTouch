@@ -21,12 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import cz.zelenikr.remotetouch.R;
+import cz.zelenikr.remotetouch.data.command.Command;
+import cz.zelenikr.remotetouch.data.command.CommandDTO;
 import cz.zelenikr.remotetouch.helper.AndroidAppComponentHelper;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.receiver.CallReceiver;
+import cz.zelenikr.remotetouch.receiver.ServerCmdReceiver;
 import cz.zelenikr.remotetouch.receiver.SmsReceiver;
 import cz.zelenikr.remotetouch.service.MessageSenderService;
 
@@ -130,8 +133,8 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         } else if (key.equals(getString(R.string.Key_Sms_Enabled))) {
             SwitchPreferenceCompat preference = (SwitchPreferenceCompat) findPreference(key);
             setReceiverEnabled(SmsReceiver.class, preference.isChecked());
-        } else if (key.equals(getString(R.string.Key_Notifications_Enabled))) {
-            //TODO:
+        } else if (key.equals(getString(R.string.Key_Device_Pair_key))) {
+            onPairKeyPrefChanged(findPreference(key));
         } else if (key.equals(getString(R.string.Key_Device_Name))) {
             onDeviceNamePrefChanged(findPreference(key));
         }
@@ -192,6 +195,11 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         EditTextPreference pref = (EditTextPreference) preference;
         preference.setSummary(pref.getText());
         SettingsHelper.refreshToken(getContext());
+        sendUpdateFCMToken();
+    }
+
+    private void onPairKeyPrefChanged(Preference preference) {
+        sendUpdateFCMToken();
     }
 
     /**
@@ -273,7 +281,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         AndroidAppComponentHelper.setComponentEnabled(getContext(), component, enabled);
     }
 
-    private void setServiceEnabled(@NonNull Class<? extends Service> service, boolean enabled){
+    private void setServiceEnabled(@NonNull Class<? extends Service> service, boolean enabled) {
         Log.i(TAG, "setServiceEnabled: " + enabled);
         ComponentName component = new ComponentName(getContext(), service);
         AndroidAppComponentHelper.setComponentEnabled(getContext(), component, enabled);
@@ -287,16 +295,22 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         }
     }
 
-    private void stopEventService(){
+    private void stopEventService() {
         getActivity().stopService(new Intent(getContext(), MessageSenderService.class));
     }
 
-    private void turnOnOffAlerts(SwitchPreferenceCompat preference){
+    private void sendUpdateFCMToken() {
+        Intent intent = new Intent(getContext(), ServerCmdReceiver.class);
+        intent.putExtra(ServerCmdReceiver.INTENT_EXTRAS, new CommandDTO(Command.FCM_SIGN_UP));
+        getContext().sendBroadcast(intent);
+    }
+
+    private void turnOnOffAlerts(SwitchPreferenceCompat preference) {
         boolean turnOn = preference.isChecked();
         setServiceEnabled(MessageSenderService.class, turnOn);
-        if(turnOn){
+        if (turnOn) {
             startEventService();
-        }else{
+        } else {
             stopEventService();
         }
     }
