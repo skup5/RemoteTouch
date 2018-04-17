@@ -18,18 +18,18 @@
 
     <string name="Preferences.SMS.Enable.Title">Příchozí SMS</string>
     <string name="Preferences.Title">Nastavení</string>
-    <string name="Preferences.Calls.Enable.Summary_off">Upozornění je zakázáno.</string>
-    <string name="Preferences.Calls.Enable.Summary_on">Upozornění je povoleno.</string>
+    <string name="Preferences.Calls.Enable.Summary_off">Upozornění na hovory je vypnuto.</string>
+    <string name="Preferences.Calls.Enable.Summary_on">Upozornění na hovory je zapnuto.</string>
     <string name="Preferences.Calls.Enable.Title">Hovory</string>
     <string name="Preferences.Notification.Title">Upozornění aplikací</string>
     <string name="Preferences.Notification.Enable.Title">Nové oznámení</string>
-    <string name="Preferences.Notification.Enable.Summary_off">Upozorním tě na nové oznámení.</string>
-    <string name="Preferences.Notification.Enable.Summary_on">Neupozorním tě na nové oznámení.</string>
+    <string name="Preferences.Notification.Enable.Summary_off">Upozornění na nová oznámení je vypnuto.</string>
+    <string name="Preferences.Notification.Enable.Summary_on">Upozornění na nová oznámení je zapnuto.</string>
     <string name="check_contacts_permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
     <string name="Actions.Close">Zavřít</string>
     <string name="Actions.Add_notification">Přidat notifikaci</string>
-    <string name="Preferences.SMS.Enable.Summary_on">Upozorním tě na příchozí sms.</string>
-    <string name="Preferences.SMS.Enable.Summary_off">Neupozorním tě na příchozí sms.</string>
+    <string name="Preferences.SMS.Enable.Summary_on">Upozornění na příchozí sms je zapnuto.</string>
+    <string name="Preferences.SMS.Enable.Summary_off">Upozornění na příchozí sms je vypnuto.</string>
     <string name="Preferences.Device.Title">Zařízení</string>
     <string name="Preferences.Device.Name.Title">Název</string>
     <string name="Def.Device.Name">mujTelefon</string>
@@ -38,7 +38,7 @@
     <string name="Preferences.Alerts.Enable.Summary_off">Služba je vypnutá. Všechna upozornění jsou zakázána.</string>
     <string name="Preferences.Alerts.Enable.Summary_on">Služba je zapnutá.</string>
     <string name="Preferences.PairKey.Summary">Klíč pro spárování s počítačovým klientem.</string>
-    <string name="Preferences.PairKey.Title">Zobrazit párovací klíč</string>
+    <string name="Preferences.PairKey.Title">Párovací klíč</string>
     <string name="Actions.Generate_new_pair_key">Vygeneruj nový klíč</string>
     <string name="Navigation.Developer">Vývojář</string>
     <string name="unknown">Neznámý</string>
