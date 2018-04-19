@@ -41,7 +41,7 @@ public class ConnectionHelper {
      */
     public static boolean tryServer(@NonNull Context context, @NonNull String address) {
         try {
-            return new JsonSimpleRestClient(SettingsHelper.getToken(context), new URL(address)).ping();
+            return new JsonSimpleRestClient(SettingsHelper.getToken(context), new URL(address), context).ping();
         } catch (MalformedURLException e) {
             return false;
         }

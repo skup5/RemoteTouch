@@ -1,5 +1,6 @@
 package cz.zelenikr.remotetouch.network;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.api.client.http.ByteArrayContent;
@@ -29,8 +30,8 @@ public class JsonSecureRestClient extends BaseJsonRestClient implements SecureRe
      * @param baseRestUrl
      * @param secureKey   key (like a plain text) for encrypting/decrypting messages
      */
-    public JsonSecureRestClient(String clientToken, URL baseRestUrl, String secureKey) {
-        super(clientToken, baseRestUrl);
+    public JsonSecureRestClient(String clientToken, URL baseRestUrl, String secureKey, Context context) {
+        super(clientToken, baseRestUrl,context);
         this.symmetricCipher = SecurityHelper.createSymmetricCipherInstance(secureKey);
     }
 

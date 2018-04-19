@@ -121,7 +121,7 @@ public class MessageSenderService extends Service implements SharedPreferences.O
     private void initRestClient(String token, String url, String key) {
         try {
 //      this.restClient = new JsonSimpleRestClient(loadClientToken(), new URL(loadRestUrl()));
-            this.restClient = new JsonSecureRestClient(token, new URL(url), key);
+            this.restClient = new JsonSecureRestClient(token, new URL(url), key, this);
         } catch (MalformedURLException | UnsupportedCipherException e) {
             Log.e(TAG, e.getLocalizedMessage());
             throw new RuntimeException(e);

@@ -1,5 +1,6 @@
 package cz.zelenikr.remotetouch.network;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.api.client.http.ByteArrayContent;
@@ -19,8 +20,8 @@ public class JsonSimpleRestClient extends BaseJsonRestClient {
 
     private static final String CLASS_NAME = JsonSimpleRestClient.class.getSimpleName();
 
-    public JsonSimpleRestClient(String clientToken, URL baseRestUrl) {
-        super(clientToken, baseRestUrl);
+    public JsonSimpleRestClient(String clientToken, URL baseRestUrl, Context context) {
+        super(clientToken, baseRestUrl, context);
     }
 
     @Override

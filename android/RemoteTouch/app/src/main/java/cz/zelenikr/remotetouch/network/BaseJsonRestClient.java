@@ -1,5 +1,6 @@
 package cz.zelenikr.remotetouch.network;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.api.client.http.EmptyContent;
@@ -11,8 +12,22 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+
+import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.message.MessageContent;
 import cz.zelenikr.remotetouch.data.message.MessageDTO;
 
@@ -24,13 +39,18 @@ import cz.zelenikr.remotetouch.data.message.MessageDTO;
 abstract class BaseJsonRestClient implements RestClient {
     protected static final Gson GSON = new Gson();
     private static final String PING_PATH = "/ping";
-    private final HttpTransport httpTransport = new NetHttpTransport();
+    private final HttpTransport httpTransport;
     protected String clientToken;
     protected URL baseRestUrl;
 
-    BaseJsonRestClient(String clientToken, URL baseRestUrl) {
+    BaseJsonRestClient(String clientToken, URL baseRestUrl, Context context) {
         this.clientToken = clientToken;
         this.baseRestUrl = baseRestUrl;
+        try {
+            this.httpTransport = new NetHttpTransport.Builder().setSslSocketFactory(initSocketFactory(context)).build();
+        } catch (CertificateException | IOException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected static String toJson(Object object) {
@@ -64,7 +84,6 @@ abstract class BaseJsonRestClient implements RestClient {
     }
 
     /**
-     *
      * @param subUrl
      * @param httpContent content of POST request
      * @return true if successful response was received
@@ -127,4 +146,37 @@ abstract class BaseJsonRestClient implements RestClient {
      */
     protected abstract void onErrorResponse(HttpResponse response);
 
+    private SSLSocketFactory initSocketFactory(Context context) throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        // Load CAs from an InputStream
+// (could be from a resource or ByteArrayInputStream or ...)
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+// From https://www.washington.edu/itconnect/security/ca/load-der.crt
+
+        Certificate ca;
+        try (/*InputStream caInput = new BufferedInputStream(new FileInputStream("load-der.crt"))*/
+            InputStream caInput = context.getResources().openRawResource(R.raw.certificate)
+        ) {
+            ca = cf.generateCertificate(caInput);
+            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+// Create a KeyStore containing our trusted CAs
+        String keyStoreType = KeyStore.getDefaultType();
+        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("ca", ca);
+
+// Create a TrustManager that trusts the CAs in our KeyStore
+        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+        tmf.init(keyStore);
+
+// Create an SSLContext that uses our TrustManager
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, tmf.getTrustManagers(), null);
+
+        return sslContext.getSocketFactory();
+    }
 }

@@ -1,7 +1,5 @@
 package cz.zelenikr.remotetouch.service;
 
-import android.app.IntentService;
-import android.app.Service;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
@@ -62,7 +60,7 @@ public class ServerCmdSenderService extends JobIntentService {
 
     private void initRestClient(String token, String url) {
         try {
-            this.restClient = new JsonSimpleRestClient(token, new URL(url));
+            this.restClient = new JsonSimpleRestClient(token, new URL(url), this);
         } catch (MalformedURLException e) {
             Log.e(TAG, e.getLocalizedMessage());
             throw new RuntimeException(e);
