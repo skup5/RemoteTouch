@@ -7,11 +7,13 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 import cz.zelenikr.remotetouch.data.CallType;
-import cz.zelenikr.remotetouch.data.event.EventType;
 import cz.zelenikr.remotetouch.data.event.CallEventContent;
 import cz.zelenikr.remotetouch.data.event.EventContent;
 import cz.zelenikr.remotetouch.data.event.EventDTO;
+import cz.zelenikr.remotetouch.data.event.EventType;
 import cz.zelenikr.remotetouch.helper.ContactHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.service.MessageSenderService;
@@ -146,7 +148,7 @@ public class CallReceiver extends BroadcastReceiver {
     }
 
     private void sendEvent(Context context, CallType type) {
-        EventContent content = new CallEventContent(lastName, lastNumber, type);
+        EventContent content = new CallEventContent(lastName, lastNumber, type, currentTime());
         Intent intent = new Intent(context, MessageSenderService.class);
         intent.putExtra(MessageSenderService.INTENT_EXTRA_IS_MSG, true);
         intent.putExtra(
@@ -155,6 +157,10 @@ public class CallReceiver extends BroadcastReceiver {
         );
 
         context.startService(intent);
+    }
+
+    private long currentTime(){
+        return Calendar.getInstance().getTime().getTime();
     }
 
     private enum State {DIALING, RINGING, OFFHOOK, IDLE}
