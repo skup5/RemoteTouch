@@ -1,5 +1,8 @@
 <resources>
     <string name="Application.Name" translatable="false">RemoteTouch</string>
+    <string name="Application_NotificationChannel_Id" translatable="false">RemoteTouch_channel</string>
+    <string name="Application_NotificationChannel_Name" translatable="false">RemoteTouch</string>
+    <string name="Application_NotificationChannel_Description"/>
 
     <string name="Actions.Export_notification_log">Export logs</string>
     <string name="Actions.OK">OK</string>

@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -22,13 +23,18 @@ import java.net.URL;
 import cz.zelenikr.remotetouch.NavigationActivity;
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.event.EventDTO;
+import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
+import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.network.JsonSecureRestClient;
 import cz.zelenikr.remotetouch.network.SecureRestClient;
 import cz.zelenikr.remotetouch.security.exception.UnsupportedCipherException;
 
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.APP_ICON_ID;
+import static cz.zelenikr.remotetouch.helper.NotificationHelper.ONGOING_NOTIFICATION_CHANNEL_DESCRIPTION;
+import static cz.zelenikr.remotetouch.helper.NotificationHelper.ONGOING_NOTIFICATION_CHANNEL_ID;
+import static cz.zelenikr.remotetouch.helper.NotificationHelper.ONGOING_NOTIFICATION_CHANNEL_NAME;
 
 /**
  * @author Roman Zelenik
@@ -44,11 +50,11 @@ public class MessageSenderService extends Service implements SharedPreferences.O
     private static final int ONGOING_NOTIFICATION_ID = 1;
     private static final String TAG = MessageSenderService.class.getSimpleName();
     private static final int RESENT_MSG_ATTEMPTS = 3, RESENT_MSG_DELAY = 5000;
+
     private Looper serviceLooper;
     private MessageHandler serviceMessageHandler;
     private SecureRestClient restClient;
 
-    // TODO: 29.3.2018 Queue for unsent messages
 
     @Override
     public void onCreate() {
@@ -192,6 +198,16 @@ public class MessageSenderService extends Service implements SharedPreferences.O
 //                .addAction()
                 .setContentIntent(pendingIntent);
 
+        if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.O)) {
+            NotificationHelper.createNotificationChannel(
+                this,
+                getString(ONGOING_NOTIFICATION_CHANNEL_ID),
+                getString(ONGOING_NOTIFICATION_CHANNEL_NAME),
+                getString(ONGOING_NOTIFICATION_CHANNEL_DESCRIPTION)
+            );
+            builder.setChannelId(getString(ONGOING_NOTIFICATION_CHANNEL_ID));
+        }
+
         startForeground(ONGOING_NOTIFICATION_ID, builder.build());
     }
 
@@ -315,7 +331,7 @@ public class MessageSenderService extends Service implements SharedPreferences.O
             }
         }
 
-        private Message copyOf(Message msg){
+        private Message copyOf(Message msg) {
             return obtainMessage(msg.what, msg.arg1, msg.arg2, msg.obj);
         }
     }
