@@ -24,7 +24,7 @@ public class ServerCmdReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(TAG, "onReceive: ");
+        Log.i(TAG, "onReceive");
         this.context = context;
         final Serializable serializableExtra = intent.getSerializableExtra(INTENT_EXTRAS);
         if (serializableExtra == null) {
@@ -76,6 +76,7 @@ public class ServerCmdReceiver extends BroadcastReceiver {
     private void send(CommandDTO cmd) {
         Intent intent = new Intent(context, ServerCmdSenderService.class);
         intent.putExtra(ServerCmdSenderService.INTENT_EXTRAS, cmd);
-        context.startService(intent);
+//        context.startService(intent);
+        ServerCmdSenderService.enqueueWork(context, intent);
     }
 }

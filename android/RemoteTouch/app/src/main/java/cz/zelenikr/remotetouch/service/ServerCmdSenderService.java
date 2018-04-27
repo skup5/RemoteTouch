@@ -1,5 +1,6 @@
 package cz.zelenikr.remotetouch.service;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
@@ -27,6 +28,21 @@ public class ServerCmdSenderService extends JobIntentService {
     private static final String REST_PATH_FCM_REG = "/firebase/registration";
 
     private RestClient restClient;
+
+    /**
+     * Unique job ID for this service.
+     */
+    static final int JOB_ID = 1000;
+
+    /**
+     * Convenience method for enqueuing work in to this service.
+     *
+     * @param context Context this is being called from.
+     * @param work    The Intent of work to enqueue.
+     */
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, ServerCmdSenderService.class, JOB_ID, work);
+    }
 
     @Override
     public void onHandleWork(@NonNull Intent intent) {
