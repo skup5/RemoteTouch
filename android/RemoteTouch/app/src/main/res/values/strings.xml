@@ -57,12 +57,17 @@
     <string name="Preferences.PairKey.Summary">A key to pair desktop client.</string>
     <string name="Preferences.Device.Title">Device</string>
     <string name="Preferences.Device.Name.Title">Name</string>
+    <string name="Preferences.Connection.Connection.Title">Connection</string>
+    <string name="Preferences.Connection.Connection.Type.Title">Type</string>
+    <string name="Preferences.Connection.Connection.Type.Summary">Select available types of connection to use.</string>
+    <string name="Preferences.Connection.Server.Title">Server</string>
     <string name="Preferences.Connection.Server.Url.Title">Url address</string>
-    <string name="Preferences.Connection.Server.Url.Try_connect_result_ok">The server %1$s is connected.</string>
-    <string name="Preferences.Connection.Server.Url.Try_connect_result_fail">The server %1$s is unreachable.</string>
+    <string name="Preferences.Connection.Server.Url.Try_connect_result_ok">The server is connected.</string>
+    <string name="Preferences.Connection.Server.Url.Try_connect_result_fail">The server is unreachable.</string>
     <string name="Preferences.Notifications.Installed_apps.Title">Applications</string>
     <string name="Preferences.Notifications.Installed_apps.Summary">Choose apps whose notifications you are interested in.</string>
 
     <string name="InstalledApps.Loading.Label">Loading…</string>
+    <string name="NoNetworkConnection">None network connection.</string>
 
 </resources>

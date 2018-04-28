@@ -2,8 +2,6 @@ package cz.zelenikr.remotetouch.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.design.widget.Snackbar;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
@@ -14,8 +12,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.webkit.URLUtil;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import cz.zelenikr.remotetouch.R;
+import cz.zelenikr.remotetouch.data.ConnectionType;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
+import cz.zelenikr.remotetouch.helper.SettingsHelper;
 
 /**
  * Contains network and connection settings of application.
@@ -83,6 +86,11 @@ public class ConnectionSettingsFragment extends PreferenceFragmentCompat
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.Key_Connection_Server))) {
             onServerUrlPrefChanged(findPreference(key));
+        } else if (key.equals(getString(R.string.Key_Connection_Type))) {
+//            MultiSelectListPreference preference = (MultiSelectListPreference) findPreference(key);
+//            Set<ConnectionType> types = preference.getValues();
+//            Set<ConnectionType> types = SettingsHelper.getAvailableConnections(getContext());
+//            System.out.println(Arrays.toString(types.toArray()));
         }
     }
 
@@ -99,13 +107,17 @@ public class ConnectionSettingsFragment extends PreferenceFragmentCompat
     private void onTryConnect() {
         new Thread(() -> {
             String address = getServerUrlValue();
-            boolean success = ConnectionHelper.isConnected(getContext()) && ConnectionHelper.tryServer(getContext(), address);
-            int resId = success ?
-                R.string.Preferences_Connection_Server_Url_Try_connect_result_ok :
-                R.string.Preferences_Connection_Server_Url_Try_connect_result_fail;
-            String msg = getString(resId, address);
-            snackbar(msg, Snackbar.LENGTH_LONG);
-            Log.d(TAG, "onTryConnect: " + success);
+            if (ConnectionHelper.isUsedAvailableConnection(getContext())) {
+                boolean success = ConnectionHelper.tryServer(getContext(), address);
+                int resId = success ?
+                    R.string.Preferences_Connection_Server_Url_Try_connect_result_ok :
+                    R.string.Preferences_Connection_Server_Url_Try_connect_result_fail;
+                String msg = getString(resId);
+                snackbar(msg, Snackbar.LENGTH_LONG);
+                Log.d(TAG, "onTryConnect: " + success);
+            } else {
+                snackbar(getString(R.string.NoNetworkConnection), Snackbar.LENGTH_LONG);
+            }
         }).start();
     }
 

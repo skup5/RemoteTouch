@@ -9,6 +9,9 @@
     <string name="Key.Device.Name" translatable="false">pref_device_name</string>
     <string name="Key_Device_Token" translatable="false">pref_device_token</string>
     <string name="Key.Connection.Server" translatable="false">pref_connect_server</string>
+    <string name="Key.Connection.Type">pref_connect_type</string>
+    <string name="Key.Notifications.Installed_apps" translatable="false">pref_notifications_installed_apps</string>
+    <string name="Key_Notifications_Selected_apps" translatable="false">pref_notifications_selected_apps</string>
 
     <string name="Def.Alerts.Enabled" translatable="false">true</string>
     <string name="Def.Calls.Enabled" translatable="false">false</string>
@@ -16,7 +19,8 @@
     <string name="Def.Device.Name">myPhone</string>
     <string name="Def.Notifications.Enabled" translatable="false">false</string>
     <string name="Def.Server.Url" translatable="false">https://remotetouch.tk</string>
-    <string name="Key.Notifications.Installed_apps" translatable="false">pref_notifications_installed_apps</string>
-    <string name="Key_Notifications_Selected_apps" translatable="false">pref_notifications_selected_apps</string>
-
+    <array name="Def.Connection.Type" translatable="false">
+        <item>MOBILE</item>
+        <item>WIFI</item>
+    </array>
 </resources>

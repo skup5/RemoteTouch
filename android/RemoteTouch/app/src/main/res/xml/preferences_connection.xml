@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<PreferenceCategory android:title="Data">-->
-    <!--<CheckBoxPreference-->
-        <!--android:key="wifi enabled"-->
-        <!--android:title="WiFi"/>-->
-    <!--</PreferenceCategory>-->
-
-    <PreferenceCategory android:title="Server">
+    <PreferenceCategory android:title="@string/Preferences.Connection.Connection.Title">
+    <MultiSelectListPreference
+        android:entries="@array/Connection.Types"
+        android:entryValues="@array/Connection.Types.Values"
+        android:key="@string/Key.Connection.Type"
+        android:title="@string/Preferences.Connection.Connection.Type.Title"
+        android:summary="@string/Preferences.Connection.Connection.Type.Summary"
+        android:defaultValue="@array/Def.Connection.Type"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/Preferences.Connection.Server.Title">
         <EditTextPreference
             android:defaultValue="@string/Def.Server.Url"
             android:key="@string/Key.Connection.Server"

@@ -3,12 +3,14 @@ package cz.zelenikr.remotetouch.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.util.ArraySet;
 
 import java.util.Collections;
 import java.util.Set;
 
 import cz.zelenikr.remotetouch.R;
+import cz.zelenikr.remotetouch.data.ConnectionType;
 import cz.zelenikr.remotetouch.security.Hash;
 import cz.zelenikr.remotetouch.security.SymmetricKeyGenerator;
 
@@ -22,11 +24,11 @@ public final class SettingsHelper {
 
     public static final String TAG = SettingsHelper.class.getSimpleName();
 
-    public static boolean isContactsReadingEnabled(Context context) {
+    public static boolean isContactsReadingEnabled(@NonNull Context context) {
         return PermissionHelper.areContactsPermissionsGranted(context);
     }
 
-    public static boolean areNotificationsEnabled(Context context) {
+    public static boolean areNotificationsEnabled(@NonNull Context context) {
         String key = context.getString(R.string.Key_Notifications_Enabled);
         Boolean def = context.getString(R.string.Def_Notifications_Enabled).equals("true");
         return getSharedPreferences(context).getBoolean(key, def);
@@ -38,7 +40,7 @@ public final class SettingsHelper {
      * @param context
      * @return actual pair-key value
      */
-    public static String getPairKey(Context context) {
+    public static String getPairKey(@NonNull Context context) {
         String key = context.getString(R.string.Key_Device_Pair_key);
         SharedPreferences sharedPreferences = getSharedPreferences(context);
         if (sharedPreferences.contains(key)) {
@@ -54,7 +56,7 @@ public final class SettingsHelper {
      * @param context
      * @return new generated pair-key value
      */
-    public static String regeneratePairKey(Context context) {
+    public static String regeneratePairKey(@NonNull Context context) {
         SymmetricKeyGenerator<String> keyGenerator = SecurityHelper.createSymmetricKeyGeneratorInstance();
         String pairKey = keyGenerator.generate();
         setPairKey(context, pairKey);
@@ -62,7 +64,7 @@ public final class SettingsHelper {
         return pairKey;
     }
 
-    public static String getToken(Context context) {
+    public static String getToken(@NonNull Context context) {
         String key = context.getString(R.string.Key_Device_Token);
         SharedPreferences sharedPreferences = getSharedPreferences(context);
         if (sharedPreferences.contains(key)) {
@@ -72,7 +74,7 @@ public final class SettingsHelper {
         }
     }
 
-    public static String refreshToken(Context context) {
+    public static String refreshToken(@NonNull Context context) {
 //        Log.i(TAG, "refreshToken");
         Hash hash = SecurityHelper.createHashInstance();
         String hashValue = hash.hash(getDeviceName(context) + getPairKey(context));
@@ -80,13 +82,13 @@ public final class SettingsHelper {
         return hashValue;
     }
 
-    public static String getDeviceName(Context context) {
+    public static String getDeviceName(@NonNull Context context) {
         String key = context.getString(R.string.Key_Device_Name);
         String def = context.getString(R.string.Def_Device_Name);
         return getSharedPreferences(context).getString(key, def);
     }
 
-    public static String getServerUrl(Context context) {
+    public static String getServerUrl(@NonNull Context context) {
         String key = context.getString(R.string.Key_Connection_Server);
         SharedPreferences preferences = getSharedPreferences(context);
         if (preferences.contains(key)) {
@@ -98,12 +100,22 @@ public final class SettingsHelper {
         }
     }
 
-    public static Set<String> getNotificationsApps(Context context) {
+    public static Set<String> getNotificationsApps(@NonNull Context context) {
         String key = context.getString(R.string.Key_Notifications_Selected_apps);
         SharedPreferences preferences = getSharedPreferences(context);
         Set<String> apps = new ArraySet<>();
         apps.addAll(preferences.getStringSet(key, Collections.emptySet()));
         return apps;
+    }
+
+    public static Set<ConnectionType> getAvailableConnections(@NonNull Context context) {
+        String key = context.getString(R.string.Key_Connection_Type);
+        SharedPreferences preferences = getSharedPreferences(context);
+        Set<String> strTypes = new ArraySet<>();
+        strTypes.addAll(preferences.getStringSet(key, Collections.emptySet()));
+        Set<ConnectionType> types = new ArraySet<>();
+        for (String strType : strTypes) types.add(ConnectionType.valueOf(strType));
+        return types;
     }
 
     private static void setPairKey(Context context, String pairKey) {

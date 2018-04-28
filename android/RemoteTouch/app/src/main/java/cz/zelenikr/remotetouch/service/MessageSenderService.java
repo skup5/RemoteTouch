@@ -215,7 +215,7 @@ public class MessageSenderService extends Service implements SharedPreferences.O
      * @return true if device is connected to the network
      */
     private boolean isConnected() {
-        return ConnectionHelper.isConnected(this);
+        return ConnectionHelper.isUsedAvailableConnection(this);
     }
 
     private void registerOnPreferenceChangedListener() {

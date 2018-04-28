@@ -97,7 +97,7 @@ public class ServerCmdSenderService extends JobIntentService {
      * @return true if device is connected to network
      */
     private boolean isConnected() {
-        return ConnectionHelper.isConnected(this);
+        return ConnectionHelper.isUsedAvailableConnection(this);
     }
 
     /**

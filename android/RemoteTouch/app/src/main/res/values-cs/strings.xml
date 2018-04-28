@@ -52,7 +52,11 @@
     <string name="Actions.Select_all">Vybrat vše</string>
     <string name="Actions.Unselect_all">Zrušit vše</string>
     <string name="InstalledApps.Loading.Label">Načítání…</string>
-    <string name="Preferences.Connection.Server.Url.Try_connect_result_ok">Server %1$s je připojen.</string>
-    <string name="Preferences.Connection.Server.Url.Try_connect_result_fail">Server %1$s je nedostupný.</string>
+    <string name="Preferences.Connection.Server.Url.Try_connect_result_ok">Server je připojen.</string>
+    <string name="Preferences.Connection.Server.Url.Try_connect_result_fail">Server je nedostupný.</string>
     <string name="Actions.Test_url_address">Ověřit url adresu</string>
+    <string name="Preferences.Connection.Connection.Type.Title">Data</string>
+    <string name="Preferences.Connection.Server.Title">Server</string>
+    <string name="Preferences.Connection.Connection.Type.Summary">Vyberte povolené typy připojení, které se smějí používat.</string>
+    <string name="Preferences.Connection.Connection.Title">Připojení</string>
 </resources>

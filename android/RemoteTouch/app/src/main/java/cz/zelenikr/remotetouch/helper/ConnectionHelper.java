@@ -7,13 +7,15 @@ import android.support.annotation.NonNull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Set;
 
+import cz.zelenikr.remotetouch.data.ConnectionType;
 import cz.zelenikr.remotetouch.network.JsonSimpleRestClient;
 
 /**
  * @author Roman Zelenik
  */
-public class ConnectionHelper {
+public final class ConnectionHelper {
 
     /**
      * Indicates whether network connectivity exists and it is possible to establish connections
@@ -27,9 +29,22 @@ public class ConnectionHelper {
         return activeNetwork != null && activeNetwork.isConnected();
     }
 
-    public static boolean isWiFiConnected(@NonNull Context context) {
+    /**
+     * Indicates whether network connectivity exists and it is possible to establish connections
+     * and pass data. It must be used one of available connection (connection type which user enabled).
+     *
+     * @param context required to access system service
+     * @return
+     */
+    public static boolean isUsedAvailableConnection(@NonNull Context context) {
         NetworkInfo activeNetwork = getNetworkInfo(context);
-        return activeNetwork != null && activeNetwork.isConnected() && activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+        Set<ConnectionType> types = SettingsHelper.getAvailableConnections(context);
+        if (activeNetwork != null && activeNetwork.isConnected()) {
+            return (types.contains(ConnectionType.ROAMING) && activeNetwork.isRoaming())
+                || (types.contains(ConnectionType.MOBILE) && activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE && !activeNetwork.isRoaming())
+                || (types.contains(ConnectionType.WIFI) && activeNetwork.getType() == ConnectivityManager.TYPE_WIFI);
+        }
+        return false;
     }
 
     /**

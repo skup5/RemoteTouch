@@ -4,4 +4,9 @@
         <item>Všechny aplikace</item>
         <item>Vybrané aplikace</item>
     </string-array>
+    <string-array name="connection_types">
+        <item>Mobilní data</item>
+        <item>Roaming</item>
+        <item>Wi-Fi</item>
+    </string-array>
 </resources>
