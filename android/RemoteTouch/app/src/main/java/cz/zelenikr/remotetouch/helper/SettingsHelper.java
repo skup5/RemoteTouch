@@ -16,7 +16,7 @@ import cz.zelenikr.remotetouch.security.SymmetricKeyGenerator;
 
 
 /**
- * This helper class simplifies checking values from settings of this application.
+ * This helper class simplifies reading values from settings of this application.
  *
  * @author Roman Zelenik
  */
@@ -116,6 +116,16 @@ public final class SettingsHelper {
         Set<ConnectionType> types = new ArraySet<>();
         for (String strType : strTypes) types.add(ConnectionType.valueOf(strType));
         return types;
+    }
+
+    public static boolean isRemoteClientConnected(@NonNull Context context) {
+        String key = context.getString(R.string.Key_RemoteClient_Connected);
+        return getSharedPreferences(context).getBoolean(key, false);
+    }
+
+    public static void storeRemoteClientConnected(@NonNull Context context, boolean connected) {
+        String key = context.getString(R.string.Key_RemoteClient_Connected);
+        getSharedPreferences(context).edit().putBoolean(key, connected).apply();
     }
 
     private static void setPairKey(Context context, String pairKey) {

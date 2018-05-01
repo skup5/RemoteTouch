@@ -1,24 +1,17 @@
 package cz.zelenikr.remotetouch.service;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import cz.zelenikr.remotetouch.NavigationActivity;
 import cz.zelenikr.remotetouch.data.command.Command;
 import cz.zelenikr.remotetouch.data.command.CommandDTO;
+import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.receiver.ServerCmdReceiver;
 
 /**
@@ -32,13 +25,13 @@ import cz.zelenikr.remotetouch.receiver.ServerCmdReceiver;
 public class FCMService extends FirebaseMessagingService {
 
     private static final String TAG = FCMService.class.getSimpleName();
+    private static int remoteNotificationId = 0;
 
     /**
      * Called when message is received.
      *
      * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
      */
-    // [START receive_message]
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         // [START_EXCLUDE]
@@ -51,7 +44,6 @@ public class FCMService extends FirebaseMessagingService {
         // messages. For more see: https://firebase.google.com/docs/cloud-messaging/concept-options
         // [END_EXCLUDE]
 
-        // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
@@ -63,45 +55,23 @@ public class FCMService extends FirebaseMessagingService {
 
             toast("FCM data: " + remoteMessage.getData(), Toast.LENGTH_LONG);
 
-            if (/* Check if data needs to be processed by long running job */ false) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-                scheduleJob();
-            } else {
-                // Handle message within 10 seconds
-                handleNow(remoteMessage);
-            }
-
+            // Handle message within 10 seconds
+            handleDataMessage(remoteMessage);
         }
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            NotificationHelper.notify(this, remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody(), remoteNotificationId);
         }
 
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
-    }
-    // [END receive_message]
-
-    /**
-     * Schedule a job using FirebaseJobDispatcher.
-     */
-    private void scheduleJob() {
-        // [START dispatch_job]
-//    FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
-//    Job myJob = dispatcher.newJobBuilder()
-//            .setService(MyJobService.class)
-//            .setTag("my-job-tag")
-//            .build();
-//    dispatcher.schedule(myJob);
-        // [END dispatch_job]
     }
 
     /**
      * Handle time allotted to BroadcastReceivers.
      */
-    private void handleNow(RemoteMessage remoteMessage) {
-        Log.i(TAG, "handleNow");
+    private void handleDataMessage(RemoteMessage remoteMessage) {
+        Log.i(TAG, "handleDataMessage");
         String cmd = remoteMessage.getData().get("cmd");
         if (cmd != null) {
             try {
@@ -110,37 +80,9 @@ public class FCMService extends FirebaseMessagingService {
                 intent.putExtra(ServerCmdReceiver.INTENT_EXTRAS, new CommandDTO(command));
                 sendBroadcast(intent);
             } catch (IllegalArgumentException e) {
-                Log.w(TAG, "handleNow: unknown command " + cmd);
+                Log.w(TAG, "handleDataMessage: unknown command " + cmd);
             }
         }
-    }
-
-    /**
-     * Create and show a simple notification containing the received FCM message.
-     *
-     * @param messageBody FCM message body received.
-     */
-    private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, NavigationActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-            PendingIntent.FLAG_ONE_SHOT);
-
-
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Notification.Builder notificationBuilder =
-            new Notification.Builder(this)
-//                    .setSmallIcon(R.drawable.ic_stat_ic_notification)
-                .setContentTitle("FCM Message")
-                .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
     private void toast(String msg, int duration) {

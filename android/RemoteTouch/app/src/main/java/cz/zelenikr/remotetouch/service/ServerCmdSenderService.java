@@ -46,7 +46,7 @@ public class ServerCmdSenderService extends JobIntentService {
 
     @Override
     public void onHandleWork(@NonNull Intent intent) {
-        Log.i(TAG, "onReceive: ");
+        Log.i(TAG, "onHandleWork");
         final Serializable serializableExtra = intent.getSerializableExtra(INTENT_EXTRAS);
         if (serializableExtra == null) {
             Log.w(TAG, "onReceive: CommandDTO is null");

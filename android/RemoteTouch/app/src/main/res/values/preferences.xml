@@ -11,7 +11,8 @@
     <string name="Key.Connection.Server" translatable="false">pref_connect_server</string>
     <string name="Key.Connection.Type">pref_connect_type</string>
     <string name="Key.Notifications.Installed_apps" translatable="false">pref_notifications_installed_apps</string>
-    <string name="Key_Notifications_Selected_apps" translatable="false">pref_notifications_selected_apps</string>
+    <string name="Key.Notifications.Selected.apps" translatable="false">pref_notifications_selected_apps</string>
+    <string name="Key.RemoteClient.Connected" translatable="false">pref_remote_client_connected</string>
 
     <string name="Def.Alerts.Enabled" translatable="false">true</string>
     <string name="Def.Calls.Enabled" translatable="false">false</string>

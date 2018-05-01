@@ -212,10 +212,13 @@ public class MessageSenderService extends Service implements SharedPreferences.O
     }
 
     /**
-     * @return true if device is connected to the network
+     * Checks if device is connected with a remote client. Device is connected if it has access
+     * to a network and remote client is online.
+     *
+     * @return true if device is connected with a remote client
      */
     private boolean isConnected() {
-        return ConnectionHelper.isUsedAvailableConnection(this);
+        return ConnectionHelper.isUsedAvailableConnection(this) && SettingsHelper.isRemoteClientConnected(this);
     }
 
     private void registerOnPreferenceChangedListener() {
@@ -315,6 +318,7 @@ public class MessageSenderService extends Service implements SharedPreferences.O
          */
         private void handleEvent(EventDTO event) {
             Log.i(TAG, "received event " + event.getType().name() + ": " + event.getContent().toString());
+            // sends message only if some remote client is connected
             if (isConnected()) {
                 // message has not been sent
                 if (!restClient.send(event, EVENT_REST_PATH)) {
@@ -327,7 +331,7 @@ public class MessageSenderService extends Service implements SharedPreferences.O
                     }
                 }
             } else {
-                Log.i(TAG, "handleEvent: device is not connected to network");
+                Log.i(TAG, "handleEvent: device is not connected to network or remote client is offline");
             }
         }
 

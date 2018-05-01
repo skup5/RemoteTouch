@@ -8,6 +8,7 @@ import android.util.Log;
 import java.io.Serializable;
 
 import cz.zelenikr.remotetouch.data.command.CommandDTO;
+import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.service.FIIDService;
 import cz.zelenikr.remotetouch.service.ServerCmdSenderService;
 
@@ -49,6 +50,12 @@ public class ServerCmdReceiver extends BroadcastReceiver {
             case FCM_SIGN_UP:
                 onFcmSignUp(commandDTO);
                 break;
+            case CLIENT_CONNECTED:
+                onClientConnected(commandDTO);
+                break;
+            case CLIENT_DISCONNECTED:
+                onClientDisconnected(commandDTO);
+                break;
             case TEST:
                 onTest(commandDTO);
                 break;
@@ -61,6 +68,14 @@ public class ServerCmdReceiver extends BroadcastReceiver {
         String token = FIIDService.getFirebaseToken();
         cmd.setOutput(token);
         send(cmd);
+    }
+
+    private void onClientConnected(CommandDTO cmd){
+        SettingsHelper.storeRemoteClientConnected(context, true);
+    }
+
+    private void onClientDisconnected(CommandDTO cmd){
+        SettingsHelper.storeRemoteClientConnected(context, false);
     }
 
     private void onTest(CommandDTO cmd) {
