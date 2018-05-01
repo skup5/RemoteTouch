@@ -214,7 +214,6 @@ public class NotificationAccessService extends NotificationListenerService
         Notification notification = sbn.getNotification();
         long when = notification.when;
         String app = sbn.getPackageName();
-        String ticker = notification.tickerText != null ? notification.tickerText.toString() : "";
         String title = "";
         String text = "";
         String label = AndroidAppHelper.getAppLabelByPackageName(this, app);
@@ -223,14 +222,14 @@ public class NotificationAccessService extends NotificationListenerService
         if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.KITKAT)) {
             Bundle extras = notification.extras;
             title = extras.getString(Notification.EXTRA_TITLE, "");
-            text = extras.getString(Notification.EXTRA_TEXT, "");
+            text = extras.getCharSequence(Notification.EXTRA_TEXT, "").toString();
         }
 
         Intent intent = new Intent(this, MessageSenderService.class);
         intent.putExtra(MessageSenderService.INTENT_EXTRA_IS_MSG, true);
         intent.putExtra(
             MessageSenderService.INTENT_EXTRA_NAME,
-            new EventDTO(EVENT_TYPE, new NotificationEventContent(app, label, ticker, title, text, when))
+            new EventDTO(EVENT_TYPE, new NotificationEventContent(app, label, title, text, when))
         );
 
         startService(intent);

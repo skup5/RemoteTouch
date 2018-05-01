@@ -56,7 +56,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         setPreferencesFromResource(R.xml.preferences_main, rootKey);
 
         Preference preference = findPreference(getString(R.string.Key_Device_Name));
-        if (preference != null) onDeviceNamePrefChanged(preference);
+        if (preference != null) updateDeviceNamePrefSummary(preference);
     }
 
     @Override
@@ -192,8 +192,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
     }
 
     private void onDeviceNamePrefChanged(Preference preference) {
-        EditTextPreference pref = (EditTextPreference) preference;
-        preference.setSummary(pref.getText());
+        updateDeviceNamePrefSummary(preference);
         SettingsHelper.refreshToken(getContext());
         sendUpdateFCMToken();
     }
@@ -313,5 +312,10 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         } else {
             stopEventService();
         }
+    }
+
+    private void updateDeviceNamePrefSummary(Preference preference){
+        EditTextPreference pref = (EditTextPreference) preference;
+        preference.setSummary(pref.getText());
     }
 }

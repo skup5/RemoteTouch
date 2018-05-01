@@ -134,7 +134,6 @@ public class InstalledAppsFragment extends Fragment implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getContext(), position + ":" + parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
         adapter.setShowOnlySelected(position != 0);
     }
 

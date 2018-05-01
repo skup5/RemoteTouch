@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationManagerCompat;
@@ -14,9 +15,11 @@ import java.util.Set;
 import cz.zelenikr.remotetouch.R;
 
 /**
+ * This class simplifies using {@link Notification}.
+ *
  * @author Roman Zelenik
  */
-public class NotificationHelper {
+public final class NotificationHelper {
 
     public static final int
         APP_ICON_ID = android.R.drawable.sym_def_app_icon,
@@ -38,7 +41,7 @@ public class NotificationHelper {
      *                    the value may be truncated if it is too long.
      */
     @RequiresApi(26)
-    public static void createNotificationChannel(Context context, String id, String name, @Nullable String description) {
+    public static void createNotificationChannel(@NonNull Context context, @NonNull String id, @NonNull String name, @Nullable String description) {
         NotificationChannel channel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT);
         channel.setDescription(description);
         channel.enableLights(false);
@@ -50,11 +53,11 @@ public class NotificationHelper {
      * Shows immediately notification on status bar
      *
      * @param context
-     * @param title
-     * @param text
-     * @param id
+     * @param title   a content title
+     * @param text    a content text
+     * @param id      an identifier for this notification unique within your application
      */
-    public static void notify(Context context, String title, String text, int id) {
+    public static void notify(@NonNull Context context, @NonNull String title, @NonNull String text, int id) {
         Notification.Builder builder = new Notification.Builder(context);
         builder.setContentTitle(title)
             .setContentText(text)
@@ -67,35 +70,7 @@ public class NotificationHelper {
                 context.getString(ONGOING_NOTIFICATION_CHANNEL_ID),
                 context.getString(ONGOING_NOTIFICATION_CHANNEL_NAME),
                 context.getString(ONGOING_NOTIFICATION_CHANNEL_DESCRIPTION)
-                );
-            builder.setChannelId(context.getString(ONGOING_NOTIFICATION_CHANNEL_ID));
-        }
-        getManager(context).notify(id, builder.build());
-    }
-
-    /**
-     * Shows immediately persistent notification on status bar
-     *
-     * @param context
-     * @param title
-     * @param text
-     * @param id
-     */
-    public static void persistent(Context context, String title, String text, int id) {
-        Notification.Builder builder = new Notification.Builder(context);
-        builder.setContentTitle(title)
-            .setContentText(text)
-            .setSmallIcon(APP_ICON_ID)
-            .setOngoing(true)
-            .setShowWhen(true)
-            .setAutoCancel(false);
-        if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.O)) {
-            NotificationHelper.createNotificationChannel(
-                context,
-                context.getString(ONGOING_NOTIFICATION_CHANNEL_ID),
-                context.getString(ONGOING_NOTIFICATION_CHANNEL_NAME),
-                context.getString(ONGOING_NOTIFICATION_CHANNEL_DESCRIPTION)
-                );
+            );
             builder.setChannelId(context.getString(ONGOING_NOTIFICATION_CHANNEL_ID));
         }
         getManager(context).notify(id, builder.build());
@@ -105,9 +80,9 @@ public class NotificationHelper {
      * Shows immediately test notification with mostly texts
      *
      * @param context
-     * @param id
+     * @param id      an identifier for this notification unique within your application
      */
-    public static void test(Context context, int id) {
+    public static void test(@NonNull Context context, int id) {
         Notification.Builder builder = new Notification.Builder(context);
         builder.setContentTitle("Content title")
             .setContentText("Content text")
@@ -125,17 +100,20 @@ public class NotificationHelper {
                 context.getString(ONGOING_NOTIFICATION_CHANNEL_ID),
                 context.getString(ONGOING_NOTIFICATION_CHANNEL_NAME),
                 context.getString(ONGOING_NOTIFICATION_CHANNEL_DESCRIPTION)
-                );
+            );
             builder.setChannelId(context.getString(ONGOING_NOTIFICATION_CHANNEL_ID));
         }
         getManager(context).notify(id, builder.build());
     }
 
     /**
+     * If user added instance of {@link android.service.notification.NotificationListenerService} class
+     * of this application in enabled applications this method returns true.
+     *
      * @param context
-     * @return
+     * @return true service is enabled
      */
-    public static boolean isNotificationListenerEnabled(Context context) {
+    public static boolean isNotificationListenerEnabled(@NonNull Context context) {
         Set<String> enabledSet = NotificationManagerCompat.getEnabledListenerPackages(context);
     /*System.out.println("EnabledListenerPackages:");
     for (String pckg:enabledSet
