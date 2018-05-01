@@ -38,16 +38,16 @@ public final class PermissionHelper {
 
     public static boolean areCallingPermissionsGranted(Context context) {
         return arePermissionsGranted(context,
-                Manifest.permission.READ_CALL_LOG,
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.PROCESS_OUTGOING_CALLS);
+            Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.PROCESS_OUTGOING_CALLS);
     }
 
     public static void requestCallingPermissions(Activity activity) {
         // Should we show an explanation?
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_CALL_LOG) ||
-                ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_PHONE_STATE) ||
-                ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.PROCESS_OUTGOING_CALLS)) {
+            ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_PHONE_STATE) ||
+            ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.PROCESS_OUTGOING_CALLS)) {
 
             // Show an explanation to the user *asynchronously* -- don't block
             // this thread waiting for the user's response! After the user
@@ -59,12 +59,12 @@ public final class PermissionHelper {
         // No explanation needed, we can request the permission.
 
         ActivityCompat.requestPermissions(activity,
-                new String[]{
-                        Manifest.permission.READ_CALL_LOG,
-                        Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.PROCESS_OUTGOING_CALLS
-                },
-                MY_PERMISSIONS_REQUEST_CALLING);
+            new String[]{
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.PROCESS_OUTGOING_CALLS
+            },
+            MY_PERMISSIONS_REQUEST_CALLING);
 
         // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
         // app-defined int constant. The callback method gets the
@@ -115,40 +115,40 @@ public final class PermissionHelper {
 
     public static void requestSmsPermissions(Activity activity) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_SMS) ||
-                ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.RECEIVE_SMS) ||
-                ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.SEND_SMS)) {
+            ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.RECEIVE_SMS) ||
+            ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.SEND_SMS)) {
             // Show an non-blocking explanation here.
 
             Log.i(TAG, activity.getLocalClassName() + " requestSmsPermissions(): shouldShowRequestPermissionRationale");
         }
 
         ActivityCompat.requestPermissions(activity,
-                new String[]{
-                        Manifest.permission.READ_SMS,
-                        Manifest.permission.RECEIVE_SMS,
-                        Manifest.permission.SEND_SMS
-                },
-                MY_PERMISSIONS_REQUEST_SMS);
+            new String[]{
+                Manifest.permission.READ_SMS,
+                Manifest.permission.RECEIVE_SMS,
+                Manifest.permission.SEND_SMS
+            },
+            MY_PERMISSIONS_REQUEST_SMS);
 
         Log.i(TAG, activity.getLocalClassName() + " requestSmsPermissions: request permission");
     }
 
     public static void requestSmsPermissions(Fragment fragment) {
         if (fragment.shouldShowRequestPermissionRationale(Manifest.permission.READ_SMS) ||
-                fragment.shouldShowRequestPermissionRationale(Manifest.permission.RECEIVE_SMS) ||
-                fragment.shouldShowRequestPermissionRationale(Manifest.permission.SEND_SMS)) {
+            fragment.shouldShowRequestPermissionRationale(Manifest.permission.RECEIVE_SMS) ||
+            fragment.shouldShowRequestPermissionRationale(Manifest.permission.SEND_SMS)) {
             // Show an non-blocking explanation here.
 
             Log.i(TAG, fragment.getClass().getSimpleName() + " requestSmsPermissions(): shouldShowRequestPermissionRationale");
         }
 
         fragment.requestPermissions(
-                new String[]{
-                        Manifest.permission.READ_SMS,
-                        Manifest.permission.RECEIVE_SMS,
-                        Manifest.permission.SEND_SMS
-                },
-                MY_PERMISSIONS_REQUEST_SMS);
+            new String[]{
+                Manifest.permission.READ_SMS,
+                Manifest.permission.RECEIVE_SMS,
+                Manifest.permission.SEND_SMS
+            },
+            MY_PERMISSIONS_REQUEST_SMS);
 
         Log.i(TAG, fragment.getClass().getSimpleName() + " requestSmsPermissions: request permission");
     }
@@ -170,22 +170,21 @@ public final class PermissionHelper {
 
     public static void requestExternalStoragePermissions(Activity activity) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_EXTERNAL_STORAGE) ||
-                ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             // Show an non-blocking explanation here.
 
             Log.i(TAG, activity.getLocalClassName() + " requestExternalStoragePermissions: shouldShowRequestPermissionRationale");
         }
 
         ActivityCompat.requestPermissions(activity,
-                new String[]{
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                },
-                MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_ACCESS);
+            new String[]{
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            },
+            MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_ACCESS);
 
         Log.i(TAG, activity.getLocalClassName() + " requestExternalStoragePermissions: request permission");
     }
-
 
     // CONTACTS //////////////////////////////////////////////////
 
@@ -210,10 +209,24 @@ public final class PermissionHelper {
         }
 
         ActivityCompat.requestPermissions(activity,
-                new String[]{Manifest.permission.READ_CONTACTS},
-                MY_PERMISSIONS_REQUEST_CONTACTS);
+            new String[]{Manifest.permission.READ_CONTACTS},
+            MY_PERMISSIONS_REQUEST_CONTACTS);
 
         Log.i(TAG, activity.getLocalClassName() + " requestContactsPermissions: request permission");
+    }
+
+    public static void requestContactsPermissions(Fragment fragment) {
+        if (fragment.shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
+            // Show an non-blocking explanation here.
+
+            Log.i(TAG, fragment.getClass().getSimpleName() + " requestContactsPermissions(): shouldShowRequestPermissionRationale");
+        }
+
+        fragment.requestPermissions(
+            new String[]{Manifest.permission.READ_CONTACTS},
+            MY_PERMISSIONS_REQUEST_CONTACTS);
+
+        Log.i(TAG, fragment.getClass().getSimpleName() + " requestContactsPermissions: request permission");
     }
 
     /////////////////////////////////////////////////////////////////////////////

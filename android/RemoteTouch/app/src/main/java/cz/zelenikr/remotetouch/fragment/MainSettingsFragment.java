@@ -144,6 +144,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         SwitchPreferenceCompat SwitchPreferenceCompat = (SwitchPreferenceCompat) preference;
         if (SwitchPreferenceCompat.isChecked()) {
             checkCallsPermissions(SwitchPreferenceCompat);
+            checkContactsPermissions();
         }
     }
 
@@ -158,6 +159,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         SwitchPreferenceCompat SwitchPreferenceCompat = (SwitchPreferenceCompat) preference;
         if (SwitchPreferenceCompat.isChecked()) {
             checkSmsPermissions(SwitchPreferenceCompat);
+            checkContactsPermissions();
         }
     }
 
@@ -274,6 +276,30 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         return true;
     }
 
+    /**
+     * If isn't granted, shows information dialog to user.
+     *
+     * @return true if already granted, false otherwise
+     */
+    private boolean checkContactsPermissions() {
+        if (!PermissionHelper.areContactsPermissionsGranted(getContext())) {
+            new AlertDialog.Builder(getContext())
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(R.string.Application_Name)
+                .setMessage(R.string.check_contacts_permissions)
+                .setPositiveButton(
+                    R.string.Actions_OK,
+                    (dialog, which) -> PermissionHelper.requestContactsPermissions(this)
+                )
+                .setNegativeButton(R.string.Actions_No, (dialog, which) -> {
+
+                })
+                .show();
+            return false;
+        }
+        return true;
+    }
+
     private void setReceiverEnabled(@NonNull Class<? extends BroadcastReceiver> receiver, boolean enabled) {
         Log.i(TAG, "setReceiverEnabled: " + enabled);
         ComponentName component = new ComponentName(getContext(), receiver);
@@ -314,7 +340,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         }
     }
 
-    private void updateDeviceNamePrefSummary(Preference preference){
+    private void updateDeviceNamePrefSummary(Preference preference) {
         EditTextPreference pref = (EditTextPreference) preference;
         preference.setSummary(pref.getText());
     }
