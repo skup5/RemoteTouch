@@ -29,4 +29,13 @@
         </menu>
     </item>
 
+    <group
+        android:id="@+id/nav_group_about"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="@string/Navigation.About"/>
+    </group>
+
 </menu>

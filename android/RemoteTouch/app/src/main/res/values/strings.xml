@@ -1,4 +1,8 @@
 <resources>
+    <string name="About.Description">TODO description</string>
+    <string name="About.Copyright" translatable="false">%1$s, %2$d</string>
+    <string name="About.Contacts.Label">Contact</string>
+
     <string name="Application.Name" translatable="false">RemoteTouch</string>
     <string name="Application_NotificationChannel_Id" translatable="false">RemoteTouch_channel</string>
     <string name="Application_NotificationChannel_Name" translatable="false">RemoteTouch</string>
@@ -16,20 +20,15 @@
     <string name="Actions.Unselect_all">Unselect all</string>
     <string name="Actions.Test_url_address">Test url address</string>
 
+    <string name="Check.NotificationListener.Permission">The application needs allow access to notifications.</string>
+    <string name="Check.Sms.Permissions">Aby Vás mohla aplikace upozornit na novou sms, potřebuje povolit přístup k Vašim SMS zprávam.</string>
+    <string name="Check.Calling.Permissions">Aby Vás mohla aplikace upozornit na příchozí či zmeškané hovory, potřebuje povolit přístup k vašim hovorům.</string>
+    <string name="Check.Contacts.Permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
+
+    <string name="InstalledApps.Loading.Label">Loading…</string>
+
     <string name="MsgSenderService.Label" translatable="false">DataService</string>
     <string name="MsgSenderService.PersistentNotification.Text">Running…</string>
-
-    <string name="NotificationAccessService.PersistentNotification.Text">Running…</string>
-    <string name="NotificationAccessService.Label" translatable="false">NotificationAccessService</string>
-
-    <string name="check_nl_permission">The application needs allow access to notifications.</string>
-    <string name="check_sms_permissions">Aby Vás mohla aplikace upozornit na novou sms, potřebuje povolit přístup k Vašim SMS zprávam.</string>
-    <string name="check_calling_permissions">Aby Vás mohla aplikace upozornit na příchozí či zmeškané hovory, potřebuje povolit přístup k vašim hovorům.</string>
-    <string name="check_contacts_permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
-    <string name="permission">Permission</string>
-    <string name="empty">Empty</string>
-    <string name="unknown">Unknown</string>
-    <string name="NoNetworkConnection">None network connection.</string>
 
     <string name="Navigation.Advanced.Title">Advanced settings</string>
     <string name="Navigation.Drawer.Open" translatable="false">Open navigation drawer</string>
@@ -38,6 +37,10 @@
     <string name="Navigation.Notifications">Notifications</string>
     <string name="Navigation.Settings">Settings</string>
     <string name="Navigation.Connection">Connection</string>
+    <string name="Navigation.About">About</string>
+
+    <string name="NotificationAccessService.PersistentNotification.Text">Running…</string>
+    <string name="NotificationAccessService.Label" translatable="false">NotificationAccessService</string>
 
     <string name="Preferences.Title">Settings</string>
     <string name="Preferences.SMS.Enable.Title">Incoming SMS</string>
@@ -68,6 +71,10 @@
     <string name="Preferences.Notifications.Installed_apps.Title">Applications</string>
     <string name="Preferences.Notifications.Installed_apps.Summary">Choose apps whose notifications you are interested in.</string>
 
-    <string name="InstalledApps.Loading.Label">Loading…</string>
+    <string name="Permission">Permission</string>
+    <string name="Empty">Empty</string>
+    <string name="Unknown">Unknown</string>
+    <string name="NoNetworkConnection">None network connection.</string>
+    <string name="Version">Version</string>
 
 </resources>

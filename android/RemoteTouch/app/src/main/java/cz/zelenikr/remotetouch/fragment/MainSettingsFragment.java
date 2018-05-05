@@ -213,7 +213,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
             new AlertDialog.Builder(getActivity())
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(R.string.Application_Name)
-                .setMessage(R.string.check_calling_permissions)
+                .setMessage(R.string.Check_Calling_Permissions)
                 .setPositiveButton(
                     R.string.Actions_OK,
                     (dialog, which) -> PermissionHelper.requestCallingPermissions(this)
@@ -237,7 +237,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
             new AlertDialog.Builder(getContext())
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(R.string.Application_Name)
-                .setMessage(R.string.check_sms_permissions)
+                .setMessage(R.string.Check_Sms_Permissions)
                 .setPositiveButton(
                     R.string.Actions_OK,
                     (dialog, which) -> PermissionHelper.requestSmsPermissions(this)
@@ -262,7 +262,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
             new AlertDialog.Builder(getContext())
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(R.string.Application_Name)
-                .setMessage(R.string.check_nl_permission)
+                .setMessage(R.string.Check_NotificationListener_Permission)
                 .setPositiveButton(
                     R.string.Actions_OK,
                     (dialog, which) -> startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
@@ -286,7 +286,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
             new AlertDialog.Builder(getContext())
                 .setIcon(R.mipmap.ic_launcher)
                 .setTitle(R.string.Application_Name)
-                .setMessage(R.string.check_contacts_permissions)
+                .setMessage(R.string.Check_Contacts_Permissions)
                 .setPositiveButton(
                     R.string.Actions_OK,
                     (dialog, which) -> PermissionHelper.requestContactsPermissions(this)

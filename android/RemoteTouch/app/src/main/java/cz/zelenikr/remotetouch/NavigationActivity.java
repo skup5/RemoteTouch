@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,6 +19,7 @@ import android.view.View;
 import java.util.List;
 
 import cz.zelenikr.remotetouch.data.AppInfo;
+import cz.zelenikr.remotetouch.fragment.AboutFragment;
 import cz.zelenikr.remotetouch.fragment.ConnectionSettingsFragment;
 import cz.zelenikr.remotetouch.fragment.DeveloperFragment;
 import cz.zelenikr.remotetouch.fragment.InstalledAppsFragment;
@@ -27,6 +29,7 @@ import cz.zelenikr.remotetouch.fragment.OpenFragmentListener;
 
 public class NavigationActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
+    FragmentManager.OnBackStackChangedListener,
     DeveloperFragment.OnFragmentInteractionListener,
     InstalledAppsFragment.OnListItemStateChangedListener,
     OpenFragmentListener {
@@ -57,7 +60,7 @@ public class NavigationActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_settings);
 
-        getSupportFragmentManager().addOnBackStackChangedListener(this::onBackStackChanged);
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
     }
 
     @Override
@@ -80,26 +83,20 @@ public class NavigationActivity extends AppCompatActivity
 
         if (id == R.id.nav_developer) {
             fragment = new DeveloperFragment();
-//            replaceFragment(fragment);
-            addFragment(fragment);
         } else if (id == R.id.nav_settings) {
             fragment = new MainSettingsFragment();
-//            replaceFragment(fragment);
-            addFragment(fragment);
         }
         // Advanced settings
         else if (id == R.id.nav_notifications) {
-//            fragment = new InstalledAppsFragment();
             fragment = new NotificationSettingsFragment();
             notificationSettingsFragment = (NotificationSettingsFragment) fragment;
-            addFragment(fragment);
-//            replaceFragment(fragment);
         } else if (id == R.id.nav_connection) {
             fragment = new ConnectionSettingsFragment();
-            addFragment(fragment);
-//            replaceFragment(fragment);
+        } else if (id == R.id.nav_about) {
+            fragment = new AboutFragment();
         }
 
+        if (fragment != null) addFragment(fragment);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -131,7 +128,8 @@ public class NavigationActivity extends AppCompatActivity
         addFragment(fragment);
     }
 
-    private void onBackStackChanged() {
+    @Override
+    public void onBackStackChanged() {
         int id = getNavItemIdByFragment(getCurrentFragment());
         if (id > 0) {
             NavigationView navigation = findViewById(R.id.nav_view);
@@ -152,9 +150,16 @@ public class NavigationActivity extends AppCompatActivity
         if (fragment instanceof NotificationSettingsFragment) return R.id.nav_notifications;
         if (fragment instanceof InstalledAppsFragment) return R.id.nav_notifications;
         if (fragment instanceof ConnectionSettingsFragment) return R.id.nav_connection;
+        if (fragment instanceof AboutFragment) return R.id.nav_about;
         return -1;
     }
 
+    /**
+     * Adds the specific {@link Fragment} in to the {@link android.support.v4.app.FragmentManager} back stack
+     * and sets it as the current visible fragment.
+     *
+     * @param fragment the given fragment
+     */
     private void addFragment(@NonNull Fragment fragment) {
         if (!isCurrentFragment(fragment)) {
             getSupportFragmentManager()
@@ -173,6 +178,10 @@ public class NavigationActivity extends AppCompatActivity
         return getSupportFragmentManager().getBackStackEntryCount();
     }
 
+    /**
+     * @param fragment
+     * @return true if the given fragment is the current fragment displayed to the user
+     */
     private boolean isCurrentFragment(@NonNull Fragment fragment) {
         Fragment founded = getSupportFragmentManager().findFragmentByTag(getFragmentTag(fragment));
         return (founded != null) && founded.isVisible();
@@ -190,6 +199,11 @@ public class NavigationActivity extends AppCompatActivity
         return null;
     }
 
+    /**
+     * Replaces current visible {@link Fragment}.
+     *
+     * @param fragment the fragment that will be displayed
+     */
     private void replaceFragment(@NonNull Fragment fragment) {
         getSupportFragmentManager()
             .beginTransaction()

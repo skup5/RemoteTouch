@@ -6,6 +6,8 @@ android {
     defaultConfig {
         applicationId "cz.zelenikr.remotetouch"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 1
+        versionName '0.18.5.5'
     }
     buildTypes {
         release {
@@ -22,12 +24,12 @@ android {
 }
 
 dependencies {
-   implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-//    Android
+    //    Android
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
@@ -36,7 +38,7 @@ dependencies {
     implementation 'com.android.support:percent:27.1.1'
     implementation 'com.android.support:preference-v7:27.1.1'
 
-//    Google
+    //    Google
     // https://mvnrepository.com/artifact/com.google.http-client/google-http-client-android
     implementation('com.google.http-client:google-http-client-android:1.23.0') {
         exclude group: 'com.google.code.findbugs'
@@ -45,11 +47,11 @@ dependencies {
     implementation('com.google.http-client:google-http-client-gson:1.23.0') {
         exclude group: 'com.google.code.findbugs'
     }
-    implementation 'com.google.firebase:firebase-messaging:15.0.0'
+    implementation 'com.google.firebase:firebase-messaging:15.0.2'
 
-//    Other
+    //    Other
     implementation 'me.itangqi.waveloadingview:library:0.3.5'
-
+    implementation 'com.github.medyo:android-about-page:1.2.4'
     testImplementation 'junit:junit:4.12'
 }
 

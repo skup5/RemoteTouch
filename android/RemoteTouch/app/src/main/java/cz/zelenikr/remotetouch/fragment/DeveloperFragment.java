@@ -1,6 +1,5 @@
 package cz.zelenikr.remotetouch.fragment;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -210,7 +209,7 @@ public class DeveloperFragment extends Fragment {
             "read=0", null, "read, date desc");
 
         if (cursor == null) {
-            messageList.add(getString(R.string.empty));
+            messageList.add(getString(R.string.Empty));
         } else {
             String message = "";
 
@@ -237,7 +236,7 @@ public class DeveloperFragment extends Fragment {
         notificationList = loadStoredNotifications();
 
         if (notificationList.isEmpty())
-            notificationList.add(getString(R.string.empty));
+            notificationList.add(getString(R.string.Empty));
 
         fillListView(notificationList, "Whole notification log sort by date");
     }
@@ -275,7 +274,7 @@ public class DeveloperFragment extends Fragment {
 
         Cursor managedCursor = getActivity().getContentResolver().query(CALLS, null, null, null, "date desc");
         if (managedCursor == null) {
-            calls.add(getString(R.string.empty));
+            calls.add(getString(R.string.Empty));
             return calls;
         }
         int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);

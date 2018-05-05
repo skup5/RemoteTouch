@@ -10,11 +10,11 @@
 
     <string name="NotificationAccessService.PersistentNotification.Text">Běží...</string>
 
-    <string name="check_nl_permission">Aplikace potřebuje povolit přístup k notifikacím.</string>
-    <string name="check_sms_permissions">Aby Vás mohla aplikace upozornit na novou sms, potřebuje povolit přístup k Vašim SMS zprávam.</string>
-    <string name="check_calling_permissions">Aby Vás mohla aplikace upozornit na příchozí či zmeškané hovory, potřebuje povolit přístup k vašim hovorům.</string>
-    <string name="permission">Oprávnění</string>
-    <string name="empty">Prázdný</string>
+    <string name="Check.NotificationListener.Permission">Aplikace potřebuje povolit přístup k notifikacím.</string>
+    <string name="Check.Sms.Permissions">Aby Vás mohla aplikace upozornit na novou sms, potřebuje povolit přístup k Vašim SMS zprávam.</string>
+    <string name="Check.Calling.Permissions">Aby Vás mohla aplikace upozornit na příchozí či zmeškané hovory, potřebuje povolit přístup k vašim hovorům.</string>
+    <string name="Permission">Oprávnění</string>
+    <string name="Empty">Prázdný</string>
 
     <string name="Preferences.SMS.Enable.Title">Příchozí SMS</string>
     <string name="Preferences.Title">Nastavení</string>
@@ -25,7 +25,7 @@
     <string name="Preferences.Notification.Enable.Title">Nové oznámení</string>
     <string name="Preferences.Notification.Enable.Summary_off">Upozornění na nová oznámení je vypnuto.</string>
     <string name="Preferences.Notification.Enable.Summary_on">Upozornění na nová oznámení je zapnuto.</string>
-    <string name="check_contacts_permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
+    <string name="Check.Contacts.Permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
     <string name="Actions.Close">Zavřít</string>
     <string name="Actions.Add_notification">Přidat notifikaci</string>
     <string name="Preferences.SMS.Enable.Summary_on">Upozornění na příchozí sms je zapnuto.</string>
@@ -41,7 +41,7 @@
     <string name="Preferences.PairKey.Title">Párovací klíč</string>
     <string name="Actions.Generate_new_pair_key">Vygeneruj nový klíč</string>
     <string name="Navigation.Developer">Vývojář</string>
-    <string name="unknown">Neznámý</string>
+    <string name="Unknown">Neznámý</string>
     <string name="Navigation.Notifications">Oznámení</string>
     <string name="Actions.Search">Hledat</string>
     <string name="Navigation.Advanced.Title">Pokročilé nastavení</string>
@@ -59,4 +59,8 @@
     <string name="Preferences.Connection.Server.Title">Server</string>
     <string name="Preferences.Connection.Connection.Type.Summary">Vyberte povolené typy připojení, které se smějí používat.</string>
     <string name="Preferences.Connection.Connection.Title">Připojení</string>
+    <string name="About.Description">TODO popis</string>
+    <string name="About.Contacts.Label">Kontakt</string>
+    <string name="Navigation.About">O aplikaci</string>
+
 </resources>

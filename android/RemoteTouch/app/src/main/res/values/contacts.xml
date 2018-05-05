@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Contact.Author" translatable="false">Roman Zeleník</string>
+    <string name="Contact.Email" translatable="false">zelenikr@students.zcu.cz</string>
+    <string name="Contact.GitHub" translatable="false">skup5</string>
+    <string name="Contact.Website" translatable="false">http://home.zcu.cz/~zelenikr/android/remote-touch</string>
+</resources>
