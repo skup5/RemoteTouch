@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="app_list_types">
+    <string-array name="AppList.Types">
         <item>Všechny aplikace</item>
         <item>Vybrané aplikace</item>
     </string-array>
-    <string-array name="connection_types">
+    <string-array name="Connection.Types">
         <item>Mobilní data</item>
         <item>Roaming</item>
         <item>Wi-Fi</item>
