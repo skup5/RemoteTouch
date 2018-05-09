@@ -1,5 +1,7 @@
 package cz.zelenikr.remotetouch.network;
 
+import android.support.annotation.NonNull;
+
 import java.net.URL;
 
 import cz.zelenikr.remotetouch.data.message.MessageContent;
@@ -32,10 +34,19 @@ public interface RestClient {
      * Sends a specific structure message to the server.
      *
      * @param content object, which attributes are the message content
-     * @param path    a specific sub domain where {@code msg} should be sent
+     * @param path    a specific sub domain where {@code content} should be send
      * @return true if message was successfully sent, false otherwise
      */
-    boolean send(MessageContent content, String path);
+    boolean send(@NonNull MessageContent content, String path);
+
+    /**
+     * Sends a several contents in one specific structure message to the server.
+     *
+     * @param contents array of specific content objects, which will be send
+     * @param path     a specific sub domain where {@code contents} should be sent
+     * @return true if message was successfully sent, false otherwise
+     */
+    boolean sendAll(@NonNull MessageContent[] contents, String path);
 
     /**
      * Sets a server address including protocol, domain and port. <p/>

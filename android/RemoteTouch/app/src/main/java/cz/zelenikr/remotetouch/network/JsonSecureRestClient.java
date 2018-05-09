@@ -31,7 +31,7 @@ public class JsonSecureRestClient extends BaseJsonRestClient implements SecureRe
      * @param secureKey   key (like a plain text) for encrypting/decrypting messages
      */
     public JsonSecureRestClient(String clientToken, URL baseRestUrl, String secureKey, Context context) {
-        super(clientToken, baseRestUrl,context);
+        super(clientToken, baseRestUrl, context);
         this.symmetricCipher = SecurityHelper.createSymmetricCipherInstance(secureKey);
     }
 
@@ -45,10 +45,11 @@ public class JsonSecureRestClient extends BaseJsonRestClient implements SecureRe
         // Convert message content to JSON
         String contentJson = toJson(message.getContent());
         // Encrypt content JSON
-        Serializable content = symmetricCipher.encrypt(contentJson);
+        String content = symmetricCipher.encrypt(contentJson);
         if (content == null) {
             Log.e(TAG, "Error on content encrypting");
-            content = message.getContent();
+//            content = message.getContent();
+            content = "";
         }
         // Create new MessageDTO with encrypted content
         message = new MessageDTO(message.getId(), message.getType(), content);

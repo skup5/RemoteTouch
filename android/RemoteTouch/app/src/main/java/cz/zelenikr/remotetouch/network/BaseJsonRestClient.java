@@ -1,6 +1,7 @@
 package cz.zelenikr.remotetouch.network;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.api.client.http.EmptyContent;
@@ -21,7 +22,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -65,12 +65,18 @@ abstract class BaseJsonRestClient implements RestClient {
 
     @Override
     public boolean send(String msg, String path) {
+        if (msg == null) msg = "";
         return postRequest(path, makeJSONContent(new MessageDTO(clientToken, msg)));
     }
 
     @Override
-    public boolean send(MessageContent content, String path) {
+    public boolean send(@NonNull MessageContent content, String path) {
         return postRequest(path, makeJSONContent(new MessageDTO(clientToken, content)));
+    }
+
+    @Override
+    public boolean sendAll(@NonNull MessageContent[] contents, String path) {
+        return postRequest(path, makeJSONContent(new MessageDTO(clientToken, contents)));
     }
 
     @Override
@@ -147,33 +153,29 @@ abstract class BaseJsonRestClient implements RestClient {
     protected abstract void onErrorResponse(HttpResponse response);
 
     private SSLSocketFactory initSocketFactory(Context context) throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        // Load CAs from an InputStream
-// (could be from a resource or ByteArrayInputStream or ...)
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
-// From https://www.washington.edu/itconnect/security/ca/load-der.crt
-
         Certificate ca;
-        try (/*InputStream caInput = new BufferedInputStream(new FileInputStream("load-der.crt"))*/
-            InputStream caInput = context.getResources().openRawResource(R.raw.certificate)
-        ) {
+
+        // Load CAs from an InputStream
+        try (InputStream caInput = context.getResources().openRawResource(R.raw.certificate)) {
             ca = cf.generateCertificate(caInput);
-            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+            //System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-// Create a KeyStore containing our trusted CAs
+        // Create a KeyStore containing our trusted CAs
         String keyStoreType = KeyStore.getDefaultType();
         KeyStore keyStore = KeyStore.getInstance(keyStoreType);
         keyStore.load(null, null);
         keyStore.setCertificateEntry("ca", ca);
 
-// Create a TrustManager that trusts the CAs in our KeyStore
+        // Create a TrustManager that trusts the CAs in our KeyStore
         String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
         TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
         tmf.init(keyStore);
 
-// Create an SSLContext that uses our TrustManager
+        // Create an SSLContext that uses our TrustManager
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, tmf.getTrustManagers(), null);
 
