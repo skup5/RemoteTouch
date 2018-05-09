@@ -61,6 +61,9 @@
     <string name="Preferences.PairKey.Summary">A key to pair desktop client.</string>
     <string name="Preferences.Device.Title">Device</string>
     <string name="Preferences.Device.Name.Title">Name</string>
+    <string name="Preferences.Device.RemoteClient.Title">Remote desktop client (state)</string>
+    <string name="Preferences.Device.RemoteClient.Summary_on">Active</string>
+    <string name="Preferences.Device.RemoteClient.Summary_off">Not available</string>
     <string name="Preferences.Connection.Connection.Title">Connection</string>
     <string name="Preferences.Connection.Connection.Type.Title">Type</string>
     <string name="Preferences.Connection.Connection.Type.Summary">Select available types of connection to use.</string>

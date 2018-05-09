@@ -57,6 +57,8 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
 
         Preference preference = findPreference(getString(R.string.Key_Device_Name));
         if (preference != null) updateDeviceNamePrefSummary(preference);
+        preference = findPreference(getString(R.string.Key_RemoteClient_Connected));
+        if (preference != null) onRemoteClientPrefChanged(preference);
     }
 
     @Override
@@ -137,6 +139,8 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
             onPairKeyPrefChanged(findPreference(key));
         } else if (key.equals(getString(R.string.Key_Device_Name))) {
             onDeviceNamePrefChanged(findPreference(key));
+        } else if (key.equals(getString(R.string.Key_RemoteClient_Connected))) {
+            onRemoteClientPrefChanged(findPreference(key));
         }
     }
 
@@ -201,6 +205,13 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
 
     private void onPairKeyPrefChanged(Preference preference) {
         sendUpdateFCMToken();
+    }
+
+    private void onRemoteClientPrefChanged(Preference preference) {
+        int summaryRes = SettingsHelper.isRemoteClientConnected(getContext()) ?
+            R.string.Preferences_Device_RemoteClient_Summary_on :
+            R.string.Preferences_Device_RemoteClient_Summary_off;
+        preference.setSummary(summaryRes);
     }
 
     /**

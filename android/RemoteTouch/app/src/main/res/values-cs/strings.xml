@@ -62,5 +62,10 @@
     <string name="About.Description">TODO popis</string>
     <string name="About.Contacts.Label">Kontakt</string>
     <string name="Navigation.About">O aplikaci</string>
+    <string name="NoNetworkConnection">Chybí připojení k internetu.</string>
+    <string name="Version">Verze</string>
+    <string name="Preferences.Device.RemoteClient.Title">Vzdálený pc klient (stav)</string>
+    <string name="Preferences.Device.RemoteClient.Summary_on">Aktivni</string>
+    <string name="Preferences.Device.RemoteClient.Summary_off">Není k dispozici</string>
 
 </resources>

@@ -40,6 +40,10 @@
 
     <PreferenceCategory
         android:title="@string/Preferences.Device.Title">
+        <Preference
+            android:key="@string/Key.RemoteClient.Connected"
+            android:title="@string/Preferences.Device.RemoteClient.Title"/>
+
         <EditTextPreference
             android:defaultValue="@string/Def.Device.Name"
             android:icon="@drawable/ic_action_phone"

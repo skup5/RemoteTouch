@@ -7,11 +7,11 @@
     <string name="Key.Device.Pair_key" translatable="false">pref_device_pair_key</string>
     <string name="Key.Alerts.Enabled" translatable="false">pref_on</string>
     <string name="Key.Device.Name" translatable="false">pref_device_name</string>
-    <string name="Key_Device_Token" translatable="false">pref_device_token</string>
+    <string name="Key.Device.Token" translatable="false">pref_device_token</string>
     <string name="Key.Connection.Server" translatable="false">pref_connect_server</string>
     <string name="Key.Connection.Type" translatable="false">pref_connect_type</string>
     <string name="Key.Notifications.Installed_apps" translatable="false">pref_notifications_installed_apps</string>
-    <string name="Key.Notifications.Selected.apps" translatable="false">pref_notifications_selected_apps</string>
+    <string name="Key.Notifications.Selected_apps" translatable="false">pref_notifications_selected_apps</string>
     <string name="Key.RemoteClient.Connected" translatable="false">pref_remote_client_connected</string>
 
     <string name="Def.Alerts.Enabled" translatable="false">true</string>
@@ -19,7 +19,7 @@
     <string name="Def.Sms.Enabled" translatable="false">false</string>
     <string name="Def.Device.Name">myPhone</string>
     <string name="Def.Notifications.Enabled" translatable="false">false</string>
-    <string name="Def.Server.Url" translatable="false">http://10.0.0.31:8080</string>
+    <string name="Def.Server.Url" translatable="false">https://remotetouch.tk</string>
     <array name="Def.Connection.Type" translatable="false">
         <item>MOBILE</item>
         <item>WIFI</item>
