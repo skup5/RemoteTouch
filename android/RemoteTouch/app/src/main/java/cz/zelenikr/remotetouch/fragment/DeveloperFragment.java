@@ -2,11 +2,9 @@ package cz.zelenikr.remotetouch.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.CallLog;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -34,8 +32,12 @@ import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.NotificationWrapper;
 import cz.zelenikr.remotetouch.data.command.Command;
 import cz.zelenikr.remotetouch.data.command.CommandDTO;
+import cz.zelenikr.remotetouch.data.event.CallEventContent;
+import cz.zelenikr.remotetouch.data.event.SmsEventContent;
+import cz.zelenikr.remotetouch.helper.CallHelper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.PermissionHelper;
+import cz.zelenikr.remotetouch.helper.SmsHelper;
 import cz.zelenikr.remotetouch.receiver.ServerCmdReceiver;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 import cz.zelenikr.remotetouch.storage.NotificationDbHelper;
@@ -146,7 +148,6 @@ public class DeveloperFragment extends Fragment {
     //////  IMPORTED FROM MainActivity /////////////////////////////////////////////////////////////
 
     private static final Uri SMS_INBOX = Uri.parse("content://sms/inbox");
-    private static final Uri CALLS = Uri.parse("content://call_log/calls");
 
     private NotificationDataStore notificationDataStore;
 
@@ -175,7 +176,7 @@ public class DeveloperFragment extends Fragment {
         } else if (id == R.id.action_export_notification_logs) {
             onExportNotificationLogsBtClick(item.getActionView());
             return true;
-        } else if(id==R.id.action_test_br){
+        } else if (id == R.id.action_test_br) {
             onTestBroadcastReceiver();
             return true;
         }
@@ -193,7 +194,7 @@ public class DeveloperFragment extends Fragment {
             return;
         }
 
-        fillListView(getCallDetails(), "Whole call log");
+        fillListView(getCallDetails(), "Call log ordered by date (just new one)");
     }
 
     private void onSmsBtClick(View view) {
@@ -201,29 +202,7 @@ public class DeveloperFragment extends Fragment {
             return;
         }
 
-        List<String> messageList = new ArrayList<>();
-        String[] cols = new String[]{"date", "person", "address", "read", "body"};
-
-        // returns received sms ordered by date (and unread)
-        Cursor cursor = getActivity().getContentResolver().query(SMS_INBOX, cols,
-            "read=0", null, "read, date desc");
-
-        if (cursor == null) {
-            messageList.add(getString(R.string.Empty));
-        } else {
-            String message = "";
-
-            while (cursor.moveToNext()) {
-                message = cols[0].toUpperCase() + ": " + new Date(Long.valueOf(cursor.getString(0))) + "\n";
-
-                for (int i = 1; i < cols.length; i++)
-                    message += cols[i].toUpperCase() + ": " + cursor.getString(i) + "\n";
-
-                messageList.add(message);
-            }
-        }
-
-        fillListView(messageList, "Received sms ordered by date (and unread)");
+        fillListView(getSmsDetails(), "Received sms ordered by date (and unread)");
     }
 
     private void onNotificationsBtClick(View view) {
@@ -259,8 +238,8 @@ public class DeveloperFragment extends Fragment {
         snackbar(resultMessage, Toast.LENGTH_LONG);
     }
 
-    private void onTestBroadcastReceiver(){
-                Intent intent = new Intent(getContext(), ServerCmdReceiver.class);
+    private void onTestBroadcastReceiver() {
+        Intent intent = new Intent(getContext(), ServerCmdReceiver.class);
 //        Intent intent = new Intent(ServerCmdReceiver.ACTION);
 //        Intent intent = new Intent();
 //        intent.setComponent(new ComponentName(getContext(), ServerCmdReceiver.class));
@@ -270,50 +249,40 @@ public class DeveloperFragment extends Fragment {
 
     private List<String> getCallDetails() {
         List<String> calls = new ArrayList<>();
-        String callDetail;
+        List<CallEventContent> callEventContents = CallHelper.getAllNewCalls(getContext());
+        StringBuilder callDetail;
 
-        Cursor managedCursor = getActivity().getContentResolver().query(CALLS, null, null, null, "date desc");
-        if (managedCursor == null) {
-            calls.add(getString(R.string.Empty));
-            return calls;
+        for (CallEventContent call : callEventContents) {
+            callDetail = new StringBuilder()
+                .append("Number: ").append(call.getNumber()).append("\n")
+                .append("Name: ").append(call.getName()).append("\n")
+                .append("Type: ").append(call.getType()).append("\n")
+                .append("Datetime: ").append(new Date(call.getWhen()).toString()).append("\n");
+            calls.add(callDetail.toString());
         }
-        int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
-        int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
-        int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
-        int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
-        int newCall = managedCursor.getColumnIndex(CallLog.Calls.NEW);
 
-        while (managedCursor.moveToNext()) {
-            String phNumber = managedCursor.getString(number);
-            String callType = managedCursor.getString(type);
-            String callDate = managedCursor.getString(date);
-            Date callDayTime = new Date(Long.valueOf(callDate));
-            String callDuration = managedCursor.getString(duration);
-            int callIsNew = managedCursor.getInt(newCall);
-            String dir = null;
-            int dircode = Integer.parseInt(callType);
-            switch (dircode) {
-                case CallLog.Calls.OUTGOING_TYPE:
-                    dir = "OUTGOING";
-                    break;
+        if (calls.isEmpty()) calls.add(getString(R.string.Empty));
 
-                case CallLog.Calls.INCOMING_TYPE:
-                    dir = "INCOMING";
-                    break;
-
-                case CallLog.Calls.MISSED_TYPE:
-                    dir = "MISSED";
-                    break;
-            }
-            callDetail = "\nIs new:---" + (callIsNew == 1 ? "yes" : "no")
-                + "\nPhone Number:--- " + phNumber + " \nCall Type:--- "
-                + dir + " \nCall Date:--- " + callDayTime
-                + " \nCall duration in sec :--- " + callDuration;
-            calls.add(callDetail);
-        }
-        managedCursor.close();
         return calls;
+    }
 
+    private List<String> getSmsDetails() {
+        List<String> smsList = new ArrayList<>();
+        List<SmsEventContent> smsEventContents = SmsHelper.getAllNewSms(getContext());
+        StringBuilder smsDetail;
+
+        for (SmsEventContent sms : smsEventContents) {
+            smsDetail = new StringBuilder()
+                .append("Number: ").append(sms.getNumber()).append("\n")
+                .append("Name: ").append(sms.getName()).append("\n")
+                .append("Datetime: ").append(new Date(sms.getWhen()).toString()).append("\n")
+                .append("Text: ").append(sms.getContent()).append("\n");
+            smsList.add(smsDetail.toString());
+        }
+
+        if (smsList.isEmpty()) smsList.add(getString(R.string.Empty));
+
+        return smsList;
     }
 
     private List<String> loadPreferences(String className) {
