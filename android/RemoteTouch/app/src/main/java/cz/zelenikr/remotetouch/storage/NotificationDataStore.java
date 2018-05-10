@@ -5,9 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.widget.Toast;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,7 +14,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.zelenikr.remotetouch.data.NotificationWrapper;
+import cz.zelenikr.remotetouch.data.wrapper.NotificationWrapper;
 import cz.zelenikr.remotetouch.storage.NotificationContract.NotificationEntry;
 
 /**

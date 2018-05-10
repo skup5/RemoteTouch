@@ -3,13 +3,24 @@ package cz.zelenikr.remotetouch.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import cz.zelenikr.remotetouch.data.command.CommandDTO;
+import cz.zelenikr.remotetouch.data.event.CallEventContent;
+import cz.zelenikr.remotetouch.data.event.EventDTO;
+import cz.zelenikr.remotetouch.data.event.EventType;
+import cz.zelenikr.remotetouch.data.event.SmsEventContent;
+import cz.zelenikr.remotetouch.data.wrapper.SerializableParcelWrapper;
+import cz.zelenikr.remotetouch.helper.CallHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
+import cz.zelenikr.remotetouch.helper.SmsHelper;
 import cz.zelenikr.remotetouch.service.FIIDService;
+import cz.zelenikr.remotetouch.service.MessageSenderService;
 import cz.zelenikr.remotetouch.service.ServerCmdSenderService;
 
 /**
@@ -70,11 +81,13 @@ public class ServerCmdReceiver extends BroadcastReceiver {
         send(cmd);
     }
 
-    private void onClientConnected(CommandDTO cmd){
+    private void onClientConnected(CommandDTO cmd) {
         SettingsHelper.storeRemoteClientConnected(context, true);
+
+        sendPhoneState();
     }
 
-    private void onClientDisconnected(CommandDTO cmd){
+    private void onClientDisconnected(CommandDTO cmd) {
         SettingsHelper.storeRemoteClientConnected(context, false);
     }
 
@@ -84,7 +97,7 @@ public class ServerCmdReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Forwards a specific command to the commands sender.
+     * Forwards a specific command to the commands sender ({@link ServerCmdSenderService}).
      *
      * @param cmd the given command
      */
@@ -93,5 +106,43 @@ public class ServerCmdReceiver extends BroadcastReceiver {
         intent.putExtra(ServerCmdSenderService.INTENT_EXTRAS, cmd);
 //        context.startService(intent);
         ServerCmdSenderService.enqueueWork(context, intent);
+    }
+
+    /**
+     * Forwards an array of events to the events sender ({@link MessageSenderService}).
+     *
+     * @param events the given events
+     */
+    private void sendEvents(EventDTO[] events) {
+        Intent intent = new Intent(context, MessageSenderService.class);
+        intent.putExtra(MessageSenderService.INTENT_EXTRA_IS_MSG, true);
+        intent.putExtra(MessageSenderService.INTENT_EXTRA_MANY, true);
+
+        ArrayList<SerializableParcelWrapper> wrappers = new ArrayList<>(events.length);
+        for (EventDTO eventDTO : events) {
+            wrappers.add(new SerializableParcelWrapper(eventDTO));
+        }
+        intent.putParcelableArrayListExtra(MessageSenderService.INTENT_EXTRA_NAME, wrappers);
+
+        context.startService(intent);
+    }
+
+    /**
+     * Sends actual phone state (like unread sms and calls) to the remote client.
+     */
+    private void sendPhoneState() {
+        List<CallEventContent> callEventContents = CallHelper.getAllNewCalls(context);
+        List<SmsEventContent> smsEventContents = SmsHelper.getAllNewSms(context);
+        List<EventDTO> events = new ArrayList<>(callEventContents.size() + smsEventContents.size());
+
+        for (CallEventContent call : callEventContents) {
+            events.add(new EventDTO(EventType.CALL, call));
+        }
+
+        for (SmsEventContent sms : smsEventContents) {
+            events.add(new EventDTO(EventType.SMS, sms));
+        }
+
+        sendEvents(events.toArray(new EventDTO[0]));
     }
 }

@@ -22,7 +22,7 @@ import java.util.Set;
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.helper.AndroidAppHelper;
 import cz.zelenikr.remotetouch.data.event.EventType;
-import cz.zelenikr.remotetouch.data.NotificationWrapper;
+import cz.zelenikr.remotetouch.data.wrapper.NotificationWrapper;
 import cz.zelenikr.remotetouch.data.event.EventDTO;
 import cz.zelenikr.remotetouch.data.event.NotificationEventContent;
 import cz.zelenikr.remotetouch.helper.ApiHelper;

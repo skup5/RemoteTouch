@@ -6,11 +6,13 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Parcelable;
 import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
@@ -19,10 +21,13 @@ import android.util.Log;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import cz.zelenikr.remotetouch.NavigationActivity;
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.event.EventDTO;
+import cz.zelenikr.remotetouch.data.wrapper.SerializableParcelWrapper;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
 import cz.zelenikr.remotetouch.helper.NotificationHelper;
@@ -43,6 +48,7 @@ public class MessageSenderService extends Service implements SharedPreferences.O
 
     public static final String
         INTENT_EXTRA_IS_MSG = "isMsg",
+        INTENT_EXTRA_MANY = "haveManyMsgs",
         INTENT_EXTRA_NAME = "cz.zelenikr.remotetouch.MessageSender";
 
     private static final String EVENT_REST_PATH = "/event";
@@ -264,17 +270,38 @@ public class MessageSenderService extends Service implements SharedPreferences.O
             // msg has right content
             if (msg.obj instanceof Intent) {
                 final Intent intent = (Intent) msg.obj;
-                final Serializable serializableExtra = intent.getSerializableExtra(INTENT_EXTRA_NAME);
-                // data is missing
-                if (serializableExtra == null) {
-                    Log.w(TAG, "DTO is null");
-                    return;
-                }
-                // valid data type
-                if (serializableExtra instanceof EventDTO) {
-                    handleEvent((EventDTO) serializableExtra);
+                if (intent.getBooleanExtra(INTENT_EXTRA_MANY, false)) {
+
+                    List<SerializableParcelWrapper> wrappers = intent.getParcelableArrayListExtra(INTENT_EXTRA_NAME);
+
+                    // data is missing
+                    if (wrappers == null) {
+                        Log.w(TAG, "DTOs are null");
+                        return;
+                    }
+                    if (wrappers.size() == 0) {
+                        Log.w(TAG, "DTOs are empty");
+                        return;
+                    }
+
+                    // process potential events
+                    handleEvents(wrappers);
+
                 } else {
-                    Log.w(TAG, serializableExtra.getClass().getSimpleName() + " isn't available DTO instance.");
+                    final Serializable serializableExtra = intent.getSerializableExtra(INTENT_EXTRA_NAME);
+
+                    // data is missing
+                    if (serializableExtra == null) {
+                        Log.w(TAG, "DTO is null");
+                        return;
+                    }
+
+                    // valid data type
+                    if (serializableExtra instanceof EventDTO) {
+                        sendEvents((EventDTO) serializableExtra);
+                    } else {
+                        Log.w(TAG, serializableExtra.getClass().getSimpleName() + " isn't available DTO instance.");
+                    }
                 }
             }
         }
@@ -312,26 +339,46 @@ public class MessageSenderService extends Service implements SharedPreferences.O
         }
 
         /**
-         * Processes the specific {@link EventDTO} and sends it to the server.
+         * Processes potential events. All valid {@link EventDTO} objects in {@code parcelables}
+         * will be forwarded to sending.
          *
-         * @param event the given event
+         * @param parcelables array of events {@link SerializableParcelWrapper wrappers}
          */
-        private void handleEvent(EventDTO event) {
-            Log.i(TAG, "received event " + event.getType().name() + ": " + event.getContent().toString());
+        private void handleEvents(List<SerializableParcelWrapper> parcelables) {
+            List<EventDTO> events = new ArrayList<>();
+
+            for (SerializableParcelWrapper wrapper : parcelables) {
+
+                if (wrapper.getContent() == null || !(wrapper.getContent() instanceof EventDTO))
+                    continue;
+
+                events.add((EventDTO) wrapper.getContent());
+            }
+
+            if (!events.isEmpty()) sendEvents(events.toArray(new EventDTO[0]));
+        }
+
+        /**
+         * Sends all the given {@link EventDTO} objects to the server.
+         *
+         * @param events the given event(s)
+         */
+        private void sendEvents(EventDTO... events) {
+            Log.i(TAG, "received " + events.length + " event(s)");
             // sends message only if some remote client is connected
             if (isConnected()) {
                 // message has not been sent
-                if (!restClient.send(event, EVENT_REST_PATH)) {
+                if (!restClient.sendAll(events, EVENT_REST_PATH)) {
                     // msg has enough number of resent attempts
                     if (currentMsg.arg1 - 1 > 0) {
                         currentMsg.arg1--;
                         // return msg into the message queue
                         sendMessageDelayed(copyOf(currentMsg), getDelay());
-                        Log.i(TAG, "Resent EVENT after " + getDelay() / 1000 + "s");
+                        Log.i(TAG, "Resent EVENT(s) after " + getDelay() / 1000 + "s");
                     }
                 }
             } else {
-                Log.i(TAG, "handleEvent: device is not connected to network or remote client is offline");
+                Log.i(TAG, "sendEvent: device is not connected to network or remote client is offline");
             }
         }
 

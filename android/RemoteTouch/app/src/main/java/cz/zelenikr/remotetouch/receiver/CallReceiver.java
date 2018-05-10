@@ -35,6 +35,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     private static final String TAG = CallReceiver.class.getSimpleName();
     private static final EventType EVENT_TYPE = EventType.CALL;
+    private static final boolean SHOW_TOAST = false;
     private static String lastNumber = "", lastName = "";
     private static State lastState = State.IDLE;
 
@@ -45,7 +46,7 @@ public class CallReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-       onStateChanged(context, intent);
+        onStateChanged(context, intent);
     }
 
     private void onStateChanged(Context context, Intent intent) {
@@ -93,7 +94,8 @@ public class CallReceiver extends BroadcastReceiver {
      */
     private void onEndedCall(Context context) {
         Log.i(TAG, "Ended call - " + lastNumber);
-        Toast.makeText(context, "Ended call - " + lastNumber, Toast.LENGTH_SHORT).show();
+        if (SHOW_TOAST)
+            Toast.makeText(context, "Ended call - " + lastNumber, Toast.LENGTH_SHORT).show();
         sendEvent(context, CallType.ENDED);
     }
 
@@ -104,7 +106,8 @@ public class CallReceiver extends BroadcastReceiver {
      */
     private void onMissedCall(Context context) {
         Log.i(TAG, "Missed call - " + lastNumber);
-        Toast.makeText(context, "Missed call - " + lastNumber, Toast.LENGTH_SHORT).show();
+        if (SHOW_TOAST)
+            Toast.makeText(context, "Missed call - " + lastNumber, Toast.LENGTH_SHORT).show();
         sendEvent(context, CallType.MISSED);
     }
 
@@ -115,7 +118,8 @@ public class CallReceiver extends BroadcastReceiver {
      */
     private void onOngoingCall(Context context) {
         Log.i(TAG, "Ongoing call - " + lastNumber);
-        Toast.makeText(context, "Ongoing call - " + lastNumber, Toast.LENGTH_SHORT).show();
+        if (SHOW_TOAST)
+            Toast.makeText(context, "Ongoing call - " + lastNumber, Toast.LENGTH_SHORT).show();
         sendEvent(context, CallType.ONGOING);
     }
 
@@ -126,7 +130,8 @@ public class CallReceiver extends BroadcastReceiver {
      */
     private void onIncomingCall(Context context) {
         Log.i(TAG, "Incoming call - " + lastNumber);
-        Toast.makeText(context, "Incoming call - " + lastNumber, Toast.LENGTH_SHORT).show();
+        if (SHOW_TOAST)
+            Toast.makeText(context, "Incoming call - " + lastNumber, Toast.LENGTH_SHORT).show();
         sendEvent(context, CallType.INCOMING);
     }
 
@@ -137,7 +142,8 @@ public class CallReceiver extends BroadcastReceiver {
      */
     private void onOutgoingCall(Context context) {
         Log.i(TAG, "Outgoing call - " + lastNumber);
-        Toast.makeText(context, "Outgoing call - " + lastNumber, Toast.LENGTH_SHORT).show();
+        if (SHOW_TOAST)
+            Toast.makeText(context, "Outgoing call - " + lastNumber, Toast.LENGTH_SHORT).show();
         sendEvent(context, CallType.OUTGOING);
     }
 
@@ -159,7 +165,7 @@ public class CallReceiver extends BroadcastReceiver {
         context.startService(intent);
     }
 
-    private long currentTime(){
+    private long currentTime() {
         return Calendar.getInstance().getTime().getTime();
     }
 

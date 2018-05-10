@@ -29,7 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import cz.zelenikr.remotetouch.R;
-import cz.zelenikr.remotetouch.data.NotificationWrapper;
+import cz.zelenikr.remotetouch.data.wrapper.NotificationWrapper;
 import cz.zelenikr.remotetouch.data.command.Command;
 import cz.zelenikr.remotetouch.data.command.CommandDTO;
 import cz.zelenikr.remotetouch.data.event.CallEventContent;
@@ -240,10 +240,8 @@ public class DeveloperFragment extends Fragment {
 
     private void onTestBroadcastReceiver() {
         Intent intent = new Intent(getContext(), ServerCmdReceiver.class);
-//        Intent intent = new Intent(ServerCmdReceiver.ACTION);
-//        Intent intent = new Intent();
-//        intent.setComponent(new ComponentName(getContext(), ServerCmdReceiver.class));
-        intent.putExtra(ServerCmdReceiver.INTENT_EXTRAS, new CommandDTO(Command.TEST));
+//        intent.putExtra(ServerCmdReceiver.INTENT_EXTRAS, new CommandDTO(Command.TEST));
+        intent.putExtra(ServerCmdReceiver.INTENT_EXTRAS, new CommandDTO(Command.CLIENT_CONNECTED));
         getContext().sendBroadcast(intent);
     }
 
