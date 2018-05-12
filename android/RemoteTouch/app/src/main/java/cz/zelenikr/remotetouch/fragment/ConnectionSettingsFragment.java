@@ -1,5 +1,6 @@
 package cz.zelenikr.remotetouch.fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -17,8 +18,11 @@ import java.util.Set;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.ConnectionType;
+import cz.zelenikr.remotetouch.data.command.Command;
+import cz.zelenikr.remotetouch.data.command.CommandDTO;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
+import cz.zelenikr.remotetouch.receiver.ServerCmdReceiver;
 
 /**
  * Contains network and connection settings of application.
@@ -86,11 +90,6 @@ public class ConnectionSettingsFragment extends PreferenceFragmentCompat
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.Key_Connection_Server))) {
             onServerUrlPrefChanged(findPreference(key));
-        } else if (key.equals(getString(R.string.Key_Connection_Type))) {
-//            MultiSelectListPreference preference = (MultiSelectListPreference) findPreference(key);
-//            Set<ConnectionType> types = preference.getValues();
-//            Set<ConnectionType> types = SettingsHelper.getAvailableConnections(getContext());
-//            System.out.println(Arrays.toString(types.toArray()));
         }
     }
 
@@ -102,6 +101,7 @@ public class ConnectionSettingsFragment extends PreferenceFragmentCompat
     private void onServerUrlPrefChanged(Preference preference) {
         EditTextPreference etPref = (EditTextPreference) preference;
         etPref.setSummary(etPref.getText());
+        sendUpdateFCMToken();
     }
 
     private void onTryConnect() {
@@ -119,6 +119,12 @@ public class ConnectionSettingsFragment extends PreferenceFragmentCompat
                 snackbar(getString(R.string.NoNetworkConnection), Snackbar.LENGTH_LONG);
             }
         }).start();
+    }
+
+    private void sendUpdateFCMToken() {
+        Intent intent = new Intent(getContext(), ServerCmdReceiver.class);
+        intent.putExtra(ServerCmdReceiver.INTENT_EXTRAS, new CommandDTO(Command.FCM_SIGN_UP));
+        getContext().sendBroadcast(intent);
     }
 
     private boolean validateServerUrl(String newValue) {
