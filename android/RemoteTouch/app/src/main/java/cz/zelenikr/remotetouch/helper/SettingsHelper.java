@@ -28,9 +28,39 @@ public final class SettingsHelper {
         return PermissionHelper.areContactsPermissionsGranted(context);
     }
 
+    /**
+     * Returns true if user was enabled calls handling, processing and resending.
+     *
+     * @param context
+     * @return
+     */
+    public static boolean areCallsEnabled(@NonNull Context context) {
+        String key = context.getString(R.string.Key_Calls_Enabled);
+        Boolean def = context.getString(R.string.Def_Calls_Enabled).equals("true");
+        return getSharedPreferences(context).getBoolean(key, def);
+    }
+
+    /**
+     * Returns true if user was enabled notifications handling, processing and resending.
+     *
+     * @param context
+     * @return
+     */
     public static boolean areNotificationsEnabled(@NonNull Context context) {
         String key = context.getString(R.string.Key_Notifications_Enabled);
         Boolean def = context.getString(R.string.Def_Notifications_Enabled).equals("true");
+        return getSharedPreferences(context).getBoolean(key, def);
+    }
+
+    /**
+     * Returns true if user was enabled sms handling, processing and resending.
+     *
+     * @param context
+     * @return
+     */
+    public static boolean areSmsEnabled(@NonNull Context context) {
+        String key = context.getString(R.string.Key_Sms_Enabled);
+        Boolean def = context.getString(R.string.Def_Sms_Enabled).equals("true");
         return getSharedPreferences(context).getBoolean(key, def);
     }
 
@@ -100,6 +130,12 @@ public final class SettingsHelper {
         }
     }
 
+    /**
+     * Returns set of application package names that the user selected.
+     *
+     * @param context
+     * @return
+     */
     public static Set<String> getNotificationsApps(@NonNull Context context) {
         String key = context.getString(R.string.Key_Notifications_Selected_apps);
         SharedPreferences preferences = getSharedPreferences(context);

@@ -27,6 +27,7 @@ import cz.zelenikr.remotetouch.data.event.EventDTO;
 import cz.zelenikr.remotetouch.data.event.NotificationEventContent;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
+import cz.zelenikr.remotetouch.processor.SBNProcessor;
 import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 /**
@@ -40,9 +41,11 @@ public class NotificationAccessService extends NotificationListenerService
     private static final String TAG = getLocalClassName();
     private static final EventType EVENT_TYPE = EventType.NOTIFICATION;
 
-    private Set<String> appsFilterSet = new ArraySet<>();
-    private NotificationDataStore dataStore = new NotificationDataStore(this);
+    private final SBNProcessor sbnProcessor = new SBNProcessor();
+    private final NotificationDataStore dataStore = new NotificationDataStore(this);
     private final boolean makeTousts = false;
+
+    private Set<String> appsFilterSet = new ArraySet<>();
     private boolean isConnected = false;
 
     public static String getLocalClassName() {
@@ -96,7 +99,8 @@ public class NotificationAccessService extends NotificationListenerService
         }
 
         // Log to console
-        logNotification(sbn);
+        // logNotification(sbn); // Verbose
+        Log.i(TAG, "Notification posted (" + sbn.getPackageName() + ")");
 
         // Send to REST server
         sendEvent(sbn);
@@ -211,25 +215,11 @@ public class NotificationAccessService extends NotificationListenerService
     }
 
     private void sendEvent(StatusBarNotification sbn) {
-        Notification notification = sbn.getNotification();
-        long when = notification.when;
-        String app = sbn.getPackageName();
-        String title = "";
-        String text = "";
-        String label = AndroidAppHelper.getAppLabelByPackageName(this, app);
-
-        // Require API >= 19
-        if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.KITKAT)) {
-            Bundle extras = notification.extras;
-            title = extras.getString(Notification.EXTRA_TITLE, "");
-            text = extras.getCharSequence(Notification.EXTRA_TEXT, "").toString();
-        }
-
         Intent intent = new Intent(this, MessageSenderService.class);
         intent.putExtra(MessageSenderService.INTENT_EXTRA_IS_MSG, true);
         intent.putExtra(
             MessageSenderService.INTENT_EXTRA_NAME,
-            new EventDTO(EVENT_TYPE, new NotificationEventContent(app, label, title, text, when))
+            new EventDTO(EVENT_TYPE, sbnProcessor.process(this, sbn))
         );
 
         startService(intent);

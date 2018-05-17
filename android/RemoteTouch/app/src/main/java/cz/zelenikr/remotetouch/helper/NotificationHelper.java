@@ -5,14 +5,19 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationManagerCompat;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import cz.zelenikr.remotetouch.R;
+import cz.zelenikr.remotetouch.data.event.NotificationEventContent;
+import cz.zelenikr.remotetouch.processor.SBNProcessor;
 
 /**
  * This class simplifies using {@link Notification}.
@@ -122,6 +127,32 @@ public final class NotificationHelper {
     }
     System.out.println("========================");*/
         return enabledSet.contains(context.getPackageName());
+    }
+
+    /**
+     * Returns list of new (active) notifications that the user is interested in.
+     *
+     * @param context
+     * @return
+     */
+    @RequiresApi(23)
+    public static List<NotificationEventContent> getAllNewNotifications(@NonNull Context context) {
+        SBNProcessor sbnProcessor = new SBNProcessor();
+        List<NotificationEventContent> notificationList = new ArrayList<>();
+
+        // Get notifications from status bar
+        StatusBarNotification[] activeNotifications = getManager(context).getActiveNotifications();
+        // Get app list that the user is interested in
+        Set<String> filter = SettingsHelper.getNotificationsApps(context);
+
+        for (StatusBarNotification notification : activeNotifications) {
+            // Filter notifications
+            if (filter.contains(notification.getPackageName())) {
+                notificationList.add(sbnProcessor.process(context, notification));
+            }
+        }
+
+        return notificationList;
     }
 
     private static NotificationManager getManager(Context context) {

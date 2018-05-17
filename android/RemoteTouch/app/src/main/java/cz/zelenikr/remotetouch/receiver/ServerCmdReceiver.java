@@ -3,20 +3,25 @@ package cz.zelenikr.remotetouch.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import cz.zelenikr.remotetouch.data.command.CommandDTO;
 import cz.zelenikr.remotetouch.data.event.CallEventContent;
 import cz.zelenikr.remotetouch.data.event.EventDTO;
 import cz.zelenikr.remotetouch.data.event.EventType;
+import cz.zelenikr.remotetouch.data.event.NotificationEventContent;
 import cz.zelenikr.remotetouch.data.event.SmsEventContent;
 import cz.zelenikr.remotetouch.data.wrapper.SerializableParcelWrapper;
+import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.CallHelper;
+import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.helper.SmsHelper;
 import cz.zelenikr.remotetouch.service.FIIDService;
@@ -131,9 +136,19 @@ public class ServerCmdReceiver extends BroadcastReceiver {
      * Sends actual phone state (like unread sms and calls) to the remote client.
      */
     private void sendPhoneState() {
-        List<CallEventContent> callEventContents = CallHelper.getAllNewCalls(context);
-        List<SmsEventContent> smsEventContents = SmsHelper.getAllNewSms(context);
-        List<EventDTO> events = new ArrayList<>(callEventContents.size() + smsEventContents.size());
+        // Get all new events
+        List<CallEventContent> callEventContents = SettingsHelper.areCallsEnabled(context) ? CallHelper.getAllNewCalls(context) : Collections.emptyList();
+        List<SmsEventContent> smsEventContents = SettingsHelper.areSmsEnabled(context) ? SmsHelper.getAllNewSms(context) : Collections.emptyList();
+        List<NotificationEventContent> notificationEventContents;
+
+        if (ApiHelper.checkCurrentApiLevel(23))
+            notificationEventContents = SettingsHelper.areNotificationsEnabled(context) ? NotificationHelper.getAllNewNotifications(context) : Collections.emptyList();
+        else
+            notificationEventContents = Collections.emptyList();
+
+        // Process all gotten events
+
+        List<EventDTO> events = new ArrayList<>(callEventContents.size() + smsEventContents.size() + notificationEventContents.size());
 
         for (CallEventContent call : callEventContents) {
             events.add(new EventDTO(EventType.CALL, call));
@@ -143,6 +158,11 @@ public class ServerCmdReceiver extends BroadcastReceiver {
             events.add(new EventDTO(EventType.SMS, sms));
         }
 
+        for (NotificationEventContent notification : notificationEventContents) {
+            events.add(new EventDTO(EventType.NOTIFICATION, notification));
+        }
+
+        // Send processed events
         sendEvents(events.toArray(new EventDTO[0]));
     }
 }
