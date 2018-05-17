@@ -180,7 +180,7 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
 
         dialogBuilder
             .setView(dialogView)
-            .setIcon(R.drawable.ic_action_secure)
+            .setIcon(R.drawable.ic_screen_lock_portrait)
             .setTitle(preference.getTitle())
             .setMessage(preference.getSummary())
             .setPositiveButton(R.string.Actions_Close, (dialog, bt) -> {

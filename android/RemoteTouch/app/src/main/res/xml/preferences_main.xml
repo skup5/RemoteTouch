@@ -3,6 +3,7 @@
 
     <SwitchPreferenceCompat
         android:defaultValue="@string/Def.Alerts.Enabled"
+        android:icon="@drawable/ic_power_settings_new"
         android:key="@string/Key.Alerts.Enabled"
         android:summaryOff="@string/Preferences.Alerts.Enable.Summary_off"
         android:summaryOn="@string/Preferences.Alerts.Enable.Summary_on"
@@ -14,7 +15,7 @@
 
         <SwitchPreferenceCompat
             android:defaultValue="@string/Def.Sms.Enabled"
-            android:icon="@drawable/ic_action_email"
+            android:icon="@drawable/ic_textsms"
             android:key="@string/Key.Sms.Enabled"
             android:summaryOff="@string/Preferences.SMS.Enable.Summary_off"
             android:summaryOn="@string/Preferences.SMS.Enable.Summary_on"
@@ -22,7 +23,7 @@
 
         <SwitchPreferenceCompat
             android:defaultValue="@string/Def.Calls.Enabled"
-            android:icon="@drawable/ic_action_call"
+            android:icon="@drawable/ic_phone"
             android:key="@string/Key.Calls.Enabled"
             android:summaryOff="@string/Preferences.Calls.Enable.Summary_off"
             android:summaryOn="@string/Preferences.Calls.Enable.Summary_on"
@@ -30,7 +31,7 @@
 
         <SwitchPreferenceCompat
             android:defaultValue="@string/Def.Notifications.Enabled"
-            android:icon="@android:drawable/ic_popup_reminder"
+            android:icon="@drawable/ic_notifications"
             android:key="@string/Key.Notifications.Enabled"
             android:summaryOff="@string/Preferences.Notification.Enable.Summary_off"
             android:summaryOn="@string/Preferences.Notification.Enable.Summary_on"
@@ -41,17 +42,18 @@
     <PreferenceCategory
         android:title="@string/Preferences.Device.Title">
         <Preference
+            android:icon="@drawable/ic_computer"
             android:key="@string/Key.RemoteClient.Connected"
             android:title="@string/Preferences.Device.RemoteClient.Title"/>
 
         <EditTextPreference
             android:defaultValue="@string/Def.Device.Name"
-            android:icon="@drawable/ic_action_phone"
+            android:icon="@drawable/ic_phone_android"
             android:key="@string/Key.Device.Name"
             android:title="@string/Preferences.Device.Name.Title"/>
 
         <Preference
-            android:icon="@drawable/ic_action_secure"
+            android:icon="@drawable/ic_screen_lock_portrait"
             android:key="@string/Key.Device.Pair_key"
             android:summary="@string/Preferences.PairKey.Summary"
             android:title="@string/Preferences.PairKey.Title"/>

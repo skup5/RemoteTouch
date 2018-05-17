@@ -2,13 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/Preferences.Connection.Connection.Title">
-    <MultiSelectListPreference
-        android:entries="@array/Connection.Types"
-        android:entryValues="@array/Connection.Types.Values"
-        android:key="@string/Key.Connection.Type"
-        android:title="@string/Preferences.Connection.Connection.Type.Title"
-        android:summary="@string/Preferences.Connection.Connection.Type.Summary"
-        android:defaultValue="@array/Def.Connection.Type"/>
+        <MultiSelectListPreference
+            android:defaultValue="@array/Def.Connection.Type"
+            android:entries="@array/Connection.Types"
+            android:entryValues="@array/Connection.Types.Values"
+            android:icon="@drawable/ic_data_usage"
+            android:key="@string/Key.Connection.Type"
+            android:summary="@string/Preferences.Connection.Connection.Type.Summary"
+            android:title="@string/Preferences.Connection.Connection.Type.Title"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/Preferences.Connection.Server.Title">
         <EditTextPreference

@@ -10,7 +10,7 @@
     <!--android:title="Prefer WiFi"/>-->
     <!--</PreferenceScreen>-->
     <Preference
-        android:icon="@drawable/ic_action_view_as_grid"
+        android:icon="@drawable/ic_apps"
         android:key="@string/Key.Notifications.Installed_apps"
         android:summary="@string/Preferences.Notifications.Installed_apps.Summary"
         android:title="@string/Preferences.Notifications.Installed_apps.Title"/>
