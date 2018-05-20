@@ -112,7 +112,7 @@ public class NavigationActivity extends AppCompatActivity
         if (notificationSettingsFragment != null) {
             notificationSettingsFragment.onItemStateChanged(item, position);
         }
-        snackbar(item.getAppName(), Snackbar.LENGTH_SHORT);
+//        snackbar(item.getAppName(), Snackbar.LENGTH_SHORT);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class NavigationActivity extends AppCompatActivity
         if (notificationSettingsFragment != null) {
             notificationSettingsFragment.onItemsStateChanged(items);
         }
-        snackbar(items.size() + " items", Snackbar.LENGTH_SHORT);
+//        snackbar(items.size() + " items", Snackbar.LENGTH_SHORT);
     }
 
     @Override

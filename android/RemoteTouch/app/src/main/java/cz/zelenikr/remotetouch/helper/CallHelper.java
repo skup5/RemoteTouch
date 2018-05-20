@@ -2,7 +2,6 @@ package cz.zelenikr.remotetouch.helper;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.provider.CallLog;
 import android.support.annotation.NonNull;
 
@@ -17,8 +16,6 @@ import cz.zelenikr.remotetouch.data.event.CallEventContent;
  */
 public final class CallHelper {
 
-    private static final Uri CALLS = Uri.parse("content://call_log/calls");
-
     /**
      * Reads all new records from {@link CallLog} provider. If there are not any new records
      * returns empty list.
@@ -30,9 +27,9 @@ public final class CallHelper {
         final List<CallEventContent> calls = new ArrayList<>();
 
         final String[] columns = {CallLog.Calls.NUMBER, CallLog.Calls.TYPE, CallLog.Calls.DATE, CallLog.Calls.IS_READ};
-        final String select = CallLog.Calls.IS_READ + "=0";
+        final String select = CallLog.Calls.IS_READ + " = 0";
         final String sort = CallLog.Calls.DATE + " desc";
-        final Cursor managedCursor = context.getContentResolver().query(CALLS, columns, select, null, sort);
+        final Cursor managedCursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, columns, select, null, sort);
 
         if (managedCursor == null) {
             return calls;
@@ -41,6 +38,7 @@ public final class CallHelper {
         final int numberIndex = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
         final int typeIndex = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
         final int dateIndex = managedCursor.getColumnIndex(CallLog.Calls.DATE);
+        final boolean contactsAccessEnabled = SettingsHelper.isContactsReadingEnabled(context);
 
         CallType callType;
         String numberStr, callTypeStr, callDateStr, name;
@@ -56,7 +54,8 @@ public final class CallHelper {
             callDateStr = managedCursor.getString(dateIndex);
 
             // Process values
-            name = ContactHelper.findContactDisplayNameByNumber(context, numberStr, "");
+
+            name = contactsAccessEnabled ? ContactHelper.findContactDisplayNameByNumber(context, numberStr, "") : "";
             callDayTime = Long.valueOf(callDateStr);
             callTypeIndicator = Integer.parseInt(callTypeStr);
             switch (callTypeIndicator) {

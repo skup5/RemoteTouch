@@ -1,7 +1,7 @@
 <resources>
 
     <string name="Actions.Export_notification_log">Exportovat logy</string>
-    <string name="Navigation.Settings">Nastavení</string>
+    <string name="Navigation.MainSettings">Ovládání</string>
     <string name="Actions.OK">OK</string>
     <string name="Actions.Yes">Ano</string>
     <string name="Actions.No">Ne</string>

@@ -195,7 +195,7 @@ public class MessageSenderService extends Service implements SharedPreferences.O
 
         Notification.Builder builder =
             new Notification.Builder(this)
-                .setContentTitle(getString(R.string.Application_Name) + " (MessageSenderService)")
+                .setContentTitle(getString(R.string.Application_Name))
                 .setContentText(getString(R.string.MsgSenderService_PersistentNotification_Text))
                 .setSmallIcon(APP_ICON_ID)
                 .setShowWhen(true)

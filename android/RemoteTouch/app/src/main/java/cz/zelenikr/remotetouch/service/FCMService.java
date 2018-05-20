@@ -25,6 +25,8 @@ import cz.zelenikr.remotetouch.receiver.ServerCmdReceiver;
 public class FCMService extends FirebaseMessagingService {
 
     private static final String TAG = FCMService.class.getSimpleName();
+    private static final boolean SHOW_TOASTS = false;
+
     private static int remoteNotificationId = 0;
 
     /**
@@ -86,6 +88,7 @@ public class FCMService extends FirebaseMessagingService {
     }
 
     private void toast(String msg, int duration) {
-        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(FCMService.this, msg, duration).show());
+        if (SHOW_TOASTS)
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(FCMService.this, msg, duration).show());
     }
 }

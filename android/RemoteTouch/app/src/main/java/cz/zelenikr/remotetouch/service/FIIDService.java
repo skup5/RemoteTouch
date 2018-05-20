@@ -24,8 +24,11 @@ import cz.zelenikr.remotetouch.receiver.ServerCmdReceiver;
 public class FIIDService extends FirebaseInstanceIdService {
 
     private static final String TAG = FIIDService.class.getSimpleName();
+    private static final boolean SHOW_TOASTS = false;
 
-    public static String getFirebaseToken(){return FirebaseInstanceId.getInstance().getToken();}
+    public static String getFirebaseToken() {
+        return FirebaseInstanceId.getInstance().getToken();
+    }
 
     /**
      * Called if InstanceID token is updated. This may occur if the security of
@@ -61,6 +64,7 @@ public class FIIDService extends FirebaseInstanceIdService {
     }
 
     private void toast(String msg, int duration) {
-        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(FIIDService.this, msg, duration).show());
+        if (SHOW_TOASTS)
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(FIIDService.this, msg, duration).show());
     }
 }

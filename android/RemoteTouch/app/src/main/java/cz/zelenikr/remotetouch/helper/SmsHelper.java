@@ -34,7 +34,7 @@ public final class SmsHelper {
         final List<SmsEventContent> smsList = new ArrayList<>();
 
         final String[] columns = {ADDRESS_COLUMN, BODY_COLUMN, DATE_COLUMN, READ_COLUMN};
-        final String select = READ_COLUMN + "=0";
+        final String select = READ_COLUMN + " = 0";
         final String sort = DATE_COLUMN + " desc";
         final Cursor managedCursor = context.getContentResolver().query(SMS_INBOX, columns, select, null, sort);
 
@@ -45,6 +45,7 @@ public final class SmsHelper {
         final int numberIndex = managedCursor.getColumnIndex(ADDRESS_COLUMN);
         final int textIndex = managedCursor.getColumnIndex(BODY_COLUMN);
         final int dateIndex = managedCursor.getColumnIndex(DATE_COLUMN);
+        final boolean contactsAccessEnabled = SettingsHelper.isContactsReadingEnabled(context);
 
         String numberStr, text, smsDateStr, name;
         long smsDayTime;
@@ -58,7 +59,7 @@ public final class SmsHelper {
             smsDateStr = managedCursor.getString(dateIndex);
 
             // Process values
-            name = ContactHelper.findContactDisplayNameByNumber(context, numberStr, "");
+            name = contactsAccessEnabled ? ContactHelper.findContactDisplayNameByNumber(context, numberStr, "") : "";
             smsDayTime = Long.valueOf(smsDateStr);
 
             // Add into the list
