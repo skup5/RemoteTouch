@@ -10,7 +10,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -44,7 +43,6 @@ public class AboutFragment extends Fragment {
             .addGroup(getString(R.string.About_Contacts_Label))
             .addEmail(getString(R.string.Contact_Email))
             .addWebsite(getString(R.string.Contact_Website))
-            .addGitHub(getString(R.string.Contact_GitHub))
             .create();
 
         return aboutPage;

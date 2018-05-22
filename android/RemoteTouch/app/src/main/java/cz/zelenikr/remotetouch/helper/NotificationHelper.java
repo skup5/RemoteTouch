@@ -27,7 +27,7 @@ import cz.zelenikr.remotetouch.processor.SBNProcessor;
 public final class NotificationHelper {
 
     public static final int
-        APP_ICON_ID = android.R.drawable.sym_def_app_icon,
+        APP_ICON_ID = R.drawable.ic_stat_rt,
         ONGOING_NOTIFICATION_CHANNEL_ID = R.string.Application_NotificationChannel_Id,
         ONGOING_NOTIFICATION_CHANNEL_NAME = R.string.Application_NotificationChannel_Name,
         ONGOING_NOTIFICATION_CHANNEL_DESCRIPTION = R.string.Application_NotificationChannel_Description;

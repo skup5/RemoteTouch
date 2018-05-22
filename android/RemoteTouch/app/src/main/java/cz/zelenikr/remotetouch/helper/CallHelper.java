@@ -6,6 +6,7 @@ import android.provider.CallLog;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cz.zelenikr.remotetouch.data.CallType;
@@ -15,6 +16,11 @@ import cz.zelenikr.remotetouch.data.event.CallEventContent;
  * @author Roman Zelenik
  */
 public final class CallHelper {
+    /**
+     * Means how old the call in call log can be to be accepted like a new call.
+     * Value is in milliseconds.
+     */
+    private static final long OLDEST_CALL = 7 * 24 * 3600 * 1000;
 
     /**
      * Reads all new records from {@link CallLog} provider. If there are not any new records
@@ -27,7 +33,8 @@ public final class CallHelper {
         final List<CallEventContent> calls = new ArrayList<>();
 
         final String[] columns = {CallLog.Calls.NUMBER, CallLog.Calls.TYPE, CallLog.Calls.DATE, CallLog.Calls.IS_READ};
-        final String select = CallLog.Calls.IS_READ + " = 0";
+        final long minDateTime = new Date().getTime() - OLDEST_CALL;
+        final String select = CallLog.Calls.IS_READ + " = 0 and " + CallLog.Calls.DATE + " > " + minDateTime;
         final String sort = CallLog.Calls.DATE + " desc";
         final Cursor managedCursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, columns, select, null, sort);
 
