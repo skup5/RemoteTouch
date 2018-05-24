@@ -17,6 +17,7 @@ import java.util.Set;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.AppInfo;
+import cz.zelenikr.remotetouch.helper.NotificationHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 
 /**
@@ -49,13 +50,20 @@ public class NotificationSettingsFragment extends PreferenceFragmentCompat
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences_notification, rootKey);
 
-        Preference appsPref = findPreference(getString(R.string.Key_Notifications_Installed_apps));
-        appsPref.setOnPreferenceClickListener(preference -> {
+        Preference pref = findPreference(getString(R.string.Key_Notifications_Installed_apps));
+        pref.setOnPreferenceClickListener(preference -> {
             InstalledAppsFragment fragment = InstalledAppsFragment
                 .newInstance(new ArrayList<>(loadAppsPreference()));
             openFragmentListener.openFragment(fragment);
             return true;
         });
+
+        pref = findPreference(getString(R.string.Key_Notifications_Test));
+        pref.setOnPreferenceClickListener(preference -> {
+            NotificationHelper.test(getContext(), (int) System.currentTimeMillis());
+            return true;
+        });
+
     }
 
     @Override

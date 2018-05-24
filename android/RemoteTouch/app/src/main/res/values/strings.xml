@@ -21,8 +21,8 @@
     <string name="Actions.Test_url_address">Test url address</string>
 
     <string name="Check.NotificationListener.Permission">The application needs allow access to notifications.</string>
-    <string name="Check.Sms.Permissions">Aby Vás mohla aplikace upozornit na novou sms, potřebuje povolit přístup k Vašim SMS zprávam.</string>
-    <string name="Check.Calling.Permissions">Aby Vás mohla aplikace upozornit na příchozí či zmeškané hovory, potřebuje povolit přístup k vašim hovorům.</string>
+    <string name="Check.Sms.Permissions">The application needs allow access to your sms to be able to alert You about new one.</string>
+    <string name="Check.Calling.Permissions">The application needs allow access to your calls to be able to alert You about new one.</string>
     <string name="Check.Contacts.Permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
 
     <string name="InstalledApps.Loading.Label">Loading…</string>
@@ -30,7 +30,7 @@
     <string name="MsgSenderService.Label" translatable="false">DataService</string>
     <string name="MsgSenderService.PersistentNotification.Text">Running…</string>
 
-    <string name="Navigation.Advanced.Title">Advanced settings</string>
+    <string name="Navigation.Advanced.Title">Settings</string>
     <string name="Navigation.Drawer.Open" translatable="false">Open navigation drawer</string>
     <string name="Navigation.Drawer.Close" translatable="false">Close navigation drawer</string>
     <string name="Navigation.Developer">Developer</string>
@@ -41,6 +41,8 @@
 
     <string name="NotificationAccessService.PersistentNotification.Text">Running…</string>
     <string name="NotificationAccessService.Label" translatable="false">NotificationAccessService</string>
+    <string name="Notifications.Test.Title">The test notification</string>
+    <string name="Notifications.Test.Text">If you see this notification on the PC, notification alert works.</string>
 
     <string name="Preferences.Title">Settings</string>
     <string name="Preferences.SMS.Enable.Title">Incoming SMS</string>
@@ -73,6 +75,8 @@
     <string name="Preferences.Connection.Server.Url.Try_connect_result_fail">The server is unreachable.</string>
     <string name="Preferences.Notifications.Installed_apps.Title">Applications</string>
     <string name="Preferences.Notifications.Installed_apps.Summary">Choose apps whose notifications you are interested in.</string>
+    <string name="Preferences.Notifications.Test.Title">Send test notification</string>
+    <string name="Preferences.Notifications.Test.Summary">Creates new notification and will try to send it.</string>
 
     <string name="Permission">Permission</string>
     <string name="Empty">Empty</string>

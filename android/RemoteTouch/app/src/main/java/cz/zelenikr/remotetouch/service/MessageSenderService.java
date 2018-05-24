@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
@@ -201,6 +202,10 @@ public class MessageSenderService extends Service implements SharedPreferences.O
                 .setPriority(Notification.PRIORITY_HIGH)
 //                .addAction()
                 .setContentIntent(pendingIntent);
+
+        if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.LOLLIPOP)) {
+            builder.setColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, getTheme()));
+        }
 
         if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.O)) {
             NotificationHelper.createNotificationChannel(

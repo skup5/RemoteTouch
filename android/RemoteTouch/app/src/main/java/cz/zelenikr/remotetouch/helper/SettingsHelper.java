@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArraySet;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -137,9 +138,10 @@ public final class SettingsHelper {
      * @return
      */
     public static Set<String> getNotificationsApps(@NonNull Context context) {
-        String key = context.getString(R.string.Key_Notifications_Selected_apps);
         SharedPreferences preferences = getSharedPreferences(context);
-        Set<String> apps = new ArraySet<>();
+        String[] defSelection = context.getResources().getStringArray(R.array.Def_AppList_Selected_apps);
+        String key = context.getString(R.string.Key_Notifications_Selected_apps);
+        Set<String> apps = new ArraySet<>(Arrays.asList(defSelection));
         apps.addAll(preferences.getStringSet(key, Collections.emptySet()));
         return apps;
     }

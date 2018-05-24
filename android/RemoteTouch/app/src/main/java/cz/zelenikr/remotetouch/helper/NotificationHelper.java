@@ -3,13 +3,16 @@ package cz.zelenikr.remotetouch.helper;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +71,11 @@ public final class NotificationHelper {
             .setContentText(text)
             .setSmallIcon(APP_ICON_ID)
             .setShowWhen(true)
-            .setAutoCancel(true);
+            .setAutoCancel(true)
+            .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0));
+        if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.LOLLIPOP)) {
+            builder.setColor(ResourcesCompat.getColor(context.getResources(), R.color.colorPrimary, context.getTheme()));
+        }
         if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.O)) {
             NotificationHelper.createNotificationChannel(
                 context,
@@ -89,16 +96,17 @@ public final class NotificationHelper {
      */
     public static void test(@NonNull Context context, int id) {
         Notification.Builder builder = new Notification.Builder(context);
-        builder.setContentTitle("Content title")
-            .setContentText("Content text")
+        builder.setContentTitle(context.getString(R.string.Notifications_Test_Title))
+            .setContentText(context.getString(R.string.Notifications_Test_Text))
             .setDefaults(Notification.DEFAULT_ALL)
-            .setSubText("Sub text")
-            .setTicker("Ticker")
-//            .setCategory(Notification.CATEGORY_SERVICE)             // Require api level 21
-//            .setVisibility(Notification.VISIBILITY_SECRET)          // Require api level 21
+            .setTicker(context.getString(R.string.Notifications_Test_Title))
             .setSmallIcon(APP_ICON_ID)
             .setShowWhen(true)
-            .setAutoCancel(true);
+            .setAutoCancel(true)
+            .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), 0));
+        if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.LOLLIPOP)) {
+            builder.setColor(ResourcesCompat.getColor(context.getResources(), R.color.colorPrimary, context.getTheme()));
+        }
         if (ApiHelper.checkCurrentApiLevel(Build.VERSION_CODES.O)) {
             NotificationHelper.createNotificationChannel(
                 context,

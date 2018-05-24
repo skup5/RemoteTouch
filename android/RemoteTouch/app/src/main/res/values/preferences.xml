@@ -12,6 +12,7 @@
     <string name="Key.Connection.Type" translatable="false">pref_connect_type</string>
     <string name="Key.Notifications.Installed_apps" translatable="false">pref_notifications_installed_apps</string>
     <string name="Key.Notifications.Selected_apps" translatable="false">pref_notifications_selected_apps</string>
+    <string name="Key.Notifications.Test" translatable="false">pref_notifications_test</string>
     <string name="Key.RemoteClient.Connected" translatable="false">pref_remote_client_connected</string>
 
     <string name="Def.Alerts.Enabled" translatable="false">true</string>
@@ -24,4 +25,7 @@
         <item>MOBILE</item>
         <item>WIFI</item>
     </array>
+    <string-array name="Def.AppList.Selected_apps">
+        <item>cz.zelenikr.remotetouch</item>
+    </string-array>
 </resources>

@@ -44,7 +44,7 @@
     <string name="Unknown">Neznámý</string>
     <string name="Navigation.Notifications">Oznámení</string>
     <string name="Actions.Search">Hledat</string>
-    <string name="Navigation.Advanced.Title">Pokročilé nastavení</string>
+    <string name="Navigation.Advanced.Title">Nastavení</string>
     <string name="Navigation.Connection">Připojení</string>
     <string name="Preferences.Connection.Server.Url.Title">Url adresa</string>
     <string name="Preferences.Notifications.Installed_apps.Title">Aplikace</string>
@@ -65,7 +65,11 @@
     <string name="NoNetworkConnection">Chybí připojení k internetu.</string>
     <string name="Version">Verze</string>
     <string name="Preferences.Device.RemoteClient.Title">Vzdálený pc klient (stav)</string>
-    <string name="Preferences.Device.RemoteClient.Summary_on">Aktivni</string>
+    <string name="Preferences.Device.RemoteClient.Summary_on">Aktivní</string>
     <string name="Preferences.Device.RemoteClient.Summary_off">Není k dispozici</string>
+    <string name="Preferences.Notifications.Test.Summary">Vytvoří se nové oznámení a odešle se vzdálenému pc klientovi.</string>
+    <string name="Preferences.Notifications.Test.Title">Odeslat zkušební oznámení</string>
+    <string name="Notifications.Test.Title">Zkušební oznámení</string>
+    <string name="Notifications.Test.Text">Uvidíte-li toto oznámení ve svém počítači, upozornění na nová oznámení funguje.</string>
 
 </resources>

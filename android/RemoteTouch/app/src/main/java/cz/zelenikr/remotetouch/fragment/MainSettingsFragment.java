@@ -34,7 +34,7 @@ import cz.zelenikr.remotetouch.receiver.SmsReceiver;
 import cz.zelenikr.remotetouch.service.MessageSenderService;
 
 /**
- * Contains basic application settings.
+ * Contains basic application settings (and controls).
  *
  * @author Roman Zelenik
  */
