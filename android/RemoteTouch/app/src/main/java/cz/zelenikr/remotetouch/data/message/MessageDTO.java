@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 
 /**
- * Represents message for REST server.
+ * Represents REST server message.
  *
  * @author Roman Zelenik
  */
@@ -17,25 +17,16 @@ public class MessageDTO implements Serializable {
 
     private final Serializable[] content;
 
-    /* remove ??? */
-    private final MessageType type;
-
-    public MessageDTO(@NonNull String id, @NonNull MessageType type) {
-        this(id, type, "");
-    }
-
-    public MessageDTO(@NonNull String id, @NonNull Serializable... content) {
-        this(id, MessageType.NONE, content);
+    public MessageDTO(@NonNull String id) {
+        this(id, "");
     }
 
     /**
-     * @param id      Client identification token.
-     * @param type    Type of message.
-     * @param content Content of message.
+     * @param id      The client identification token.
+     * @param content Content of the message.
      */
-    public MessageDTO(@NonNull String id, @NonNull MessageType type, @NonNull Serializable... content) {
+    public MessageDTO(@NonNull String id, @NonNull Serializable... content) {
         this.content = content;
-        this.type = type;
         this.id = id;
     }
 
@@ -47,16 +38,11 @@ public class MessageDTO implements Serializable {
         return content;
     }
 
-    public MessageType getType() {
-        return type;
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("MessageDTO{");
         sb.append("id=").append(id);
         sb.append(", content='").append(Arrays.toString(content)).append('\'');
-        sb.append(", type='").append(type).append('\'');
         sb.append('}');
         return sb.toString();
     }

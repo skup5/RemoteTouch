@@ -8,7 +8,6 @@ import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpResponse;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URL;
 
 import cz.zelenikr.remotetouch.data.message.MessageDTO;
@@ -16,19 +15,23 @@ import cz.zelenikr.remotetouch.helper.SecurityHelper;
 import cz.zelenikr.remotetouch.security.SymmetricCipher;
 
 /**
- * Provides secured JSON message sending to the REST server.
+ * Provides secured (content encrypted) JSON message sending to the REST server.
  *
  * @author Roman Zelenik
  */
 public class JsonSecureRestClient extends BaseJsonRestClient implements SecureRestClient {
     private static final String TAG = JsonSecureRestClient.class.getSimpleName();
 
+    /**
+     * It's used to content encryption.
+     */
     private final SymmetricCipher<String> symmetricCipher;
 
     /**
-     * @param clientToken
-     * @param baseRestUrl
+     * @param clientToken The client identification token.
+     * @param baseRestUrl The base server url (like https://myserver.com).
      * @param secureKey   key (like a plain text) for encrypting/decrypting messages
+     * @param context
      */
     public JsonSecureRestClient(String clientToken, URL baseRestUrl, String secureKey, Context context) {
         super(clientToken, baseRestUrl, context);
@@ -52,7 +55,7 @@ public class JsonSecureRestClient extends BaseJsonRestClient implements SecureRe
             content = "";
         }
         // Create new MessageDTO with encrypted content
-        message = new MessageDTO(message.getId(), message.getType(), content);
+        message = new MessageDTO(message.getId(), content);
         String json = toJson(message);
         //System.out.println(json);
         Log.i(TAG, "New Message to " + message.getId());

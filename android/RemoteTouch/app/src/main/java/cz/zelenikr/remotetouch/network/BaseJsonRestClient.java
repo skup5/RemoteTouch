@@ -43,6 +43,11 @@ abstract class BaseJsonRestClient implements RestClient {
     protected String clientToken;
     protected URL baseRestUrl;
 
+    /**
+     * @param clientToken The client identification token.
+     * @param baseRestUrl The base server url (like https://myserver.com).
+     * @param context
+     */
     BaseJsonRestClient(String clientToken, URL baseRestUrl, Context context) {
         this.clientToken = clientToken;
         this.baseRestUrl = baseRestUrl;

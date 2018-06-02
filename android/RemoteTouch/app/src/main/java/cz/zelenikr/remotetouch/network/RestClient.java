@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import java.net.URL;
 
 import cz.zelenikr.remotetouch.data.message.MessageContent;
-import cz.zelenikr.remotetouch.data.message.MessageType;
 
 /**
  * Provides messages sending to the REST server.
