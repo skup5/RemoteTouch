@@ -23,7 +23,7 @@
     <string name="Check.NotificationListener.Permission">The application needs allow access to notifications.</string>
     <string name="Check.Sms.Permissions">The application needs allow access to your sms to be able to alert You about new one.</string>
     <string name="Check.Calling.Permissions">The application needs allow access to your calls to be able to alert You about new one.</string>
-    <string name="Check.Contacts.Permissions">Aplikace potřebuje zpřístupnit Vaše kontakty, aby mohla u hovoru nebo zprávy zobrazit víc než jen telefoní číslo.</string>
+    <string name="Check.Contacts.Permissions">The application needs allow access to your contacts to be able show more information about a call or sms.</string>
 
     <string name="InstalledApps.Loading.Label">Loading…</string>
 

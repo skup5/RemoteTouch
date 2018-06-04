@@ -1,4 +1,4 @@
-package cz.zelenikr.remotetouch.app;
+package cz.zelenikr.remotetouch.adapter;
 
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;

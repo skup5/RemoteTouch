@@ -5,8 +5,8 @@
         <item>Vybrané aplikace</item>
     </string-array>
     <string-array name="Connection.Types">
-        <item>Mobilní data</item>
-        <item>Roaming</item>
+        <item>Mobilní data (pouze v domácí sítí)</item>
+        <item>Roaming (mobílní data pouze v zahraničí</item>
         <item>Wi-Fi</item>
     </string-array>
 </resources>

@@ -16,14 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import cz.zelenikr.remotetouch.R;
-import cz.zelenikr.remotetouch.app.AppInfoRecyclerViewAdapter;
+import cz.zelenikr.remotetouch.adapter.AppInfoRecyclerViewAdapter;
 import cz.zelenikr.remotetouch.data.AppInfo;
 import cz.zelenikr.remotetouch.helper.AndroidAppHelper;
 

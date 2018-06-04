@@ -5,8 +5,8 @@
         <item>Selected applications</item>
     </string-array>
     <string-array name="Connection.Types">
-        <item>Mobile data</item>
-        <item>Roaming</item>
+        <item>Mobile data (only on a home network)</item>
+        <item>Roaming (mobile data only away from your home network)</item>
         <item>Wi-Fi</item>
     </string-array>
     <string-array name="Connection.Types.Values">
