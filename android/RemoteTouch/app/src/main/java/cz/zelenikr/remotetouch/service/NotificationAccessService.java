@@ -20,15 +20,11 @@ import java.util.Date;
 import java.util.Set;
 
 import cz.zelenikr.remotetouch.R;
-import cz.zelenikr.remotetouch.helper.AndroidAppHelper;
-import cz.zelenikr.remotetouch.data.event.EventType;
-import cz.zelenikr.remotetouch.data.wrapper.NotificationWrapper;
 import cz.zelenikr.remotetouch.data.event.EventDTO;
-import cz.zelenikr.remotetouch.data.event.NotificationEventContent;
+import cz.zelenikr.remotetouch.data.event.EventType;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.processor.SBNProcessor;
-import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 /**
  * This service is handling notifications of other applications.
@@ -42,7 +38,6 @@ public class NotificationAccessService extends NotificationListenerService
     private static final EventType EVENT_TYPE = EventType.NOTIFICATION;
 
     private final SBNProcessor sbnProcessor = new SBNProcessor();
-    private final NotificationDataStore dataStore = new NotificationDataStore(this);
     private final boolean makeTousts = false;
 
     private Set<String> appsFilterSet = new ArraySet<>();
@@ -56,7 +51,7 @@ public class NotificationAccessService extends NotificationListenerService
     public void onCreate() {
         super.onCreate();
 
-        handleStart();
+        setAppsFilterSet(loadFilterSet());
         registerOnPreferenceChangedListener();
 
         Log.i(TAG, "Was created");
@@ -66,7 +61,7 @@ public class NotificationAccessService extends NotificationListenerService
     public void onDestroy() {
         super.onDestroy();
 
-        handleDestroy();
+        unregisterOnPreferenceChangedListener();
 
         Log.i(TAG, "Was destroyed");
     }
@@ -76,14 +71,6 @@ public class NotificationAccessService extends NotificationListenerService
         super.onStartCommand(intent, flags, startId);
 
         Log.i(TAG, "Is running");
-
-    /*if (!isConnected
-            && NotificationHelper.isNotificationListenerEnabled(this)
-            && ApiHelper.checkCurrentApiLevel(24)) {
-      requestRebind(COMPONENT_NAME);
-    }*/
-
-        handleStart();
 
         // Restart service if is killed
         return START_REDELIVER_INTENT;
@@ -105,33 +92,8 @@ public class NotificationAccessService extends NotificationListenerService
         // Send to REST server
         sendEvent(sbn);
 
-        // Increment notification counter for statistics
-        incrementNotificationCounter(sbn);
-
         if (makeTousts)
             Toast.makeText(this, "Notification posted (" + sbn.getPackageName() + ")", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onNotificationRemoved(StatusBarNotification sbn) {
-        if (!isEnabled()) return;
-
-        Log.i(TAG, "Notification (" + sbn.getPackageName() + ") removed");
-
-        if (makeTousts)
-            Toast.makeText(this, "Notification removed (" + sbn.getPackageName() + ")", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onListenerConnected() {
-        Log.i(TAG, "Is connected");
-        isConnected = true;
-    }
-
-    @Override
-    public void onListenerDisconnected() {
-        Log.i(TAG, "Is disconnected");
-        isConnected = false;
     }
 
     @Override
@@ -143,25 +105,22 @@ public class NotificationAccessService extends NotificationListenerService
         }
     }
 
+    /**
+     * Returns true if the user has enabled alerting to the new notifications.
+     *
+     * @return true if alerting to the new notification is enabled
+     */
     private boolean isEnabled() {
         return SettingsHelper.areNotificationsEnabled(this);
     }
 
-    private void handleStart() {
-        setAppsFilterSet(loadFilterSet());
-        this.dataStore.open();
-    }
-
-    private void handleDestroy() {
-        this.dataStore.close();
-        unregisterOnPreferenceChangedListener();
-    }
-
+    /**
+     * Loads and returns set of selected apps, that user is interested in.
+     *
+     * @return set of application package names
+     */
     private Set<String> loadFilterSet() {
         return SettingsHelper.getNotificationsApps(this);
-//        ArraySet<String> filterSet = new ArraySet<>(1);
-//        filterSet.add(getPackageName());
-//        return filterSet;
     }
 
     private void logNotification(StatusBarNotification sbn) {
@@ -204,16 +163,12 @@ public class NotificationAccessService extends NotificationListenerService
         }
     }
 
-    private void incrementNotificationCounter(StatusBarNotification sbn) {
-//    SharedPreferences sharedPreferences = getSharedPreferences(getLocalClassName(), MODE_PRIVATE);
-//    int count = sharedPreferences.getInt(sbn.getPackageName(), 0);
-//    count++;
-//    sharedPreferences.edit().putInt(sbn.getPackageName(), count).apply();
-
-        NotificationWrapper wrapper = new NotificationWrapper(sbn.getPackageName(), sbn.getPostTime());
-        dataStore.add(wrapper);
-    }
-
+    /**
+     * Processes the specific {@link StatusBarNotification} and forwards it
+     * to the events sender ({@link MessageSenderService}).
+     *
+     * @param sbn the given new notification
+     */
     private void sendEvent(StatusBarNotification sbn) {
         Intent intent = new Intent(this, MessageSenderService.class);
         intent.putExtra(MessageSenderService.INTENT_EXTRA_IS_MSG, true);

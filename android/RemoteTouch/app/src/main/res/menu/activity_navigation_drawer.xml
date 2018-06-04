@@ -8,10 +8,6 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_power"
             android:title="@string/Navigation.MainSettings"/>
-        <item
-            android:id="@+id/nav_developer"
-            android:icon="@drawable/ic_action_not_secure"
-            android:title="@string/Navigation.Developer"/>
     </group>
 
     <item android:title="@string/Navigation.Advanced.Title">

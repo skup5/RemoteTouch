@@ -1,6 +1,5 @@
 package cz.zelenikr.remotetouch;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -21,7 +20,6 @@ import java.util.List;
 import cz.zelenikr.remotetouch.data.AppInfo;
 import cz.zelenikr.remotetouch.fragment.AboutFragment;
 import cz.zelenikr.remotetouch.fragment.ConnectionSettingsFragment;
-import cz.zelenikr.remotetouch.fragment.DeveloperFragment;
 import cz.zelenikr.remotetouch.fragment.InstalledAppsFragment;
 import cz.zelenikr.remotetouch.fragment.MainSettingsFragment;
 import cz.zelenikr.remotetouch.fragment.NotificationSettingsFragment;
@@ -30,7 +28,6 @@ import cz.zelenikr.remotetouch.fragment.OpenFragmentListener;
 public class NavigationActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
     FragmentManager.OnBackStackChangedListener,
-    DeveloperFragment.OnFragmentInteractionListener,
     InstalledAppsFragment.OnListItemStateChangedListener,
     OpenFragmentListener {
 
@@ -81,9 +78,7 @@ public class NavigationActivity extends AppCompatActivity
         int id = item.getItemId();
         Fragment fragment = null;
 
-        if (id == R.id.nav_developer) {
-            fragment = new DeveloperFragment();
-        } else if (id == R.id.nav_settings) {
+        if (id == R.id.nav_settings) {
             fragment = new MainSettingsFragment();
         }
         // Advanced settings
@@ -100,11 +95,6 @@ public class NavigationActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 
     @Override
@@ -146,7 +136,6 @@ public class NavigationActivity extends AppCompatActivity
      */
     private int getNavItemIdByFragment(Fragment fragment) {
         if (fragment instanceof MainSettingsFragment) return R.id.nav_settings;
-        if (fragment instanceof DeveloperFragment) return R.id.nav_developer;
         if (fragment instanceof NotificationSettingsFragment) return R.id.nav_notifications;
         if (fragment instanceof InstalledAppsFragment) return R.id.nav_notifications;
         if (fragment instanceof ConnectionSettingsFragment) return R.id.nav_connection;
@@ -215,6 +204,5 @@ public class NavigationActivity extends AppCompatActivity
         View view = findViewById(R.id.navigation_content);
         Snackbar.make(view, text, duration).show();
     }
-
 
 }

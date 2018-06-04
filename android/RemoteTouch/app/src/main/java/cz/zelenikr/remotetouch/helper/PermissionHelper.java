@@ -21,8 +21,7 @@ public final class PermissionHelper {
     public static final int
         MY_PERMISSIONS_REQUEST_CALLING = 1,
         MY_PERMISSIONS_REQUEST_SMS = 2,
-        MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_ACCESS = 3,
-        MY_PERMISSIONS_REQUEST_CONTACTS = 4;
+        MY_PERMISSIONS_REQUEST_CONTACTS = 3;
 
 
     // CALLING ////////////////////////////////////////////////
@@ -151,39 +150,6 @@ public final class PermissionHelper {
             MY_PERMISSIONS_REQUEST_SMS);
 
         Log.i(TAG, fragment.getClass().getSimpleName() + " requestSmsPermissions: request permission");
-    }
-
-    // EXTERNAL STORAGE //////////////////////////////////////////
-
-    public static boolean checkExternalStoragePermissions(Activity activity) {
-        if (!areExternalStoragePermissionsGranted(activity)) {
-            requestExternalStoragePermissions(activity);
-            return false;
-        }
-        Log.i(TAG, activity.getLocalClassName() + " checkExternalStoragePermissions: permissions granted");
-        return true;
-    }
-
-    public static boolean areExternalStoragePermissionsGranted(Context context) {
-        return arePermissionsGranted(context, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-    }
-
-    public static void requestExternalStoragePermissions(Activity activity) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_EXTERNAL_STORAGE) ||
-            ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Show an non-blocking explanation here.
-
-            Log.i(TAG, activity.getLocalClassName() + " requestExternalStoragePermissions: shouldShowRequestPermissionRationale");
-        }
-
-        ActivityCompat.requestPermissions(activity,
-            new String[]{
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            },
-            MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE_ACCESS);
-
-        Log.i(TAG, activity.getLocalClassName() + " requestExternalStoragePermissions: request permission");
     }
 
     // CONTACTS //////////////////////////////////////////////////

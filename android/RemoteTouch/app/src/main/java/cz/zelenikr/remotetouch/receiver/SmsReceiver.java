@@ -100,6 +100,12 @@ public class SmsReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * Forwards the specific {@link SmsEventContent} to the events sender ({@link MessageSenderService}).
+     *
+     * @param context
+     * @param content the given new sms event
+     */
     private void sendEvent(Context context, SmsEventContent content) {
         Intent intent = new Intent(context, MessageSenderService.class);
         intent.putExtra(MessageSenderService.INTENT_EXTRA_IS_MSG, true);

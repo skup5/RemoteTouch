@@ -42,7 +42,7 @@ public final class SettingsHelper {
     }
 
     /**
-     * Returns true if user was enabled notifications handling, processing and resending.
+     * Returns true if user has enabled notifications handling, processing and resending.
      *
      * @param context
      * @return

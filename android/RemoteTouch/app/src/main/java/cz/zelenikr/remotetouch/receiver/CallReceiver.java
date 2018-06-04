@@ -153,6 +153,12 @@ public class CallReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * Forwards the new call event to the events sender ({@link MessageSenderService}).
+     *
+     * @param context
+     * @param type    type of the new call event
+     */
     private void sendEvent(Context context, CallType type) {
         EventContent content = new CallEventContent(lastName, lastNumber, type, currentTime());
         Intent intent = new Intent(context, MessageSenderService.class);
@@ -165,6 +171,9 @@ public class CallReceiver extends BroadcastReceiver {
         context.startService(intent);
     }
 
+    /**
+     * @return the number of milliseconds since January 1, 1970, 00:00:00 GMT
+     */
     private long currentTime() {
         return Calendar.getInstance().getTime().getTime();
     }

@@ -133,7 +133,7 @@ public class ServerCmdReceiver extends BroadcastReceiver {
     }
 
     /**
-     * Sends actual phone state (like unread sms and calls) to the remote client.
+     * Loads and sends actual phone state (like unread sms and calls) to the remote client.
      */
     private void sendPhoneState() {
         // Get all new events

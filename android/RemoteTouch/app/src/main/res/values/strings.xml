@@ -33,7 +33,6 @@
     <string name="Navigation.Advanced.Title">Settings</string>
     <string name="Navigation.Drawer.Open" translatable="false">Open navigation drawer</string>
     <string name="Navigation.Drawer.Close" translatable="false">Close navigation drawer</string>
-    <string name="Navigation.Developer">Developer</string>
     <string name="Navigation.Notifications">Notifications</string>
     <string name="Navigation.MainSettings">Control</string>
     <string name="Navigation.Connection">Connection</string>

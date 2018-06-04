@@ -3,7 +3,7 @@
           xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           android:versionCode="1"
-          android:versionName="0.18.5.27">
+          android:versionName="0.18.6.4">
 
     <uses-sdk
         android:minSdkVersion="18"
@@ -18,7 +18,6 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
     <uses-permission android:name="android.permission.SEND_SMS"/>
 
-
     <!-- CALLING PERMISSIONS -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.READ_CALL_LOG"/>
@@ -26,10 +25,6 @@
 
     <!-- CONTACTS -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
-
-    <!-- EXTERNAL STORAGE PERMISSIONS -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <!-- required by JobIntentService -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>

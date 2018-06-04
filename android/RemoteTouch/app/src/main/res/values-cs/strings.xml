@@ -40,7 +40,6 @@
     <string name="Preferences.PairKey.Summary">Klíč pro spárování s počítačovým klientem.</string>
     <string name="Preferences.PairKey.Title">Párovací klíč</string>
     <string name="Actions.Generate_new_pair_key">Vygeneruj nový klíč</string>
-    <string name="Navigation.Developer">Vývojář</string>
     <string name="Unknown">Neznámý</string>
     <string name="Navigation.Notifications">Oznámení</string>
     <string name="Actions.Search">Hledat</string>
