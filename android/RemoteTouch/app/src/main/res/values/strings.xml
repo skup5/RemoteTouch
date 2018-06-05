@@ -18,7 +18,6 @@
     <string name="Actions.Search">Search</string>
     <string name="Actions.Select_all">Select all</string>
     <string name="Actions.Unselect_all">Unselect all</string>
-    <string name="Actions.Test_url_address">Test url address</string>
 
     <string name="Check.NotificationListener.Permission">The application needs allow access to notifications.</string>
     <string name="Check.Sms.Permissions">The application needs allow access to your sms to be able to alert You about new one.</string>
@@ -72,6 +71,8 @@
     <string name="Preferences.Connection.Server.Url.Title">Url address</string>
     <string name="Preferences.Connection.Server.Url.Try_connect_result_ok">The server is connected.</string>
     <string name="Preferences.Connection.Server.Url.Try_connect_result_fail">The server is unreachable.</string>
+    <string name="Preferences.Connection.Server.Url.Test.Title">Test url address</string>
+    <string name="Preferences.Connection.Server.Url.Test.Summary">Checks availability of the server.</string>
     <string name="Preferences.Notifications.Installed_apps.Title">Applications</string>
     <string name="Preferences.Notifications.Installed_apps.Summary">Choose apps whose notifications you are interested in.</string>
     <string name="Preferences.Notifications.Test.Title">Send test notification</string>

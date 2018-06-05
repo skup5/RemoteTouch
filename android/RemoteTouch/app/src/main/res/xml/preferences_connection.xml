@@ -17,6 +17,11 @@
             android:key="@string/Key.Connection.Server"
             android:title="@string/Preferences.Connection.Server.Url.Title"/>
 
+        <Preference
+            android:key="@string/Key.Connection.Server.Test"
+            android:persistent="false"
+            android:summary="@string/Preferences.Connection.Server.Url.Test.Summary"
+            android:title="@string/Preferences.Connection.Server.Url.Test.Title"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

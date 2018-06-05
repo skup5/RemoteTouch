@@ -10,6 +10,7 @@
     <string name="Key.Device.Token" translatable="false">pref_device_token</string>
     <string name="Key.Connection.Server" translatable="false">pref_connect_server</string>
     <string name="Key.Connection.Type" translatable="false">pref_connect_type</string>
+    <string name="Key.Connection.Server.Test" translatable="false">pref_connect_server_test</string>
     <string name="Key.Notifications.Installed_apps" translatable="false">pref_notifications_installed_apps</string>
     <string name="Key.Notifications.Selected_apps" translatable="false">pref_notifications_selected_apps</string>
     <string name="Key.Notifications.Test" translatable="false">pref_notifications_test</string>

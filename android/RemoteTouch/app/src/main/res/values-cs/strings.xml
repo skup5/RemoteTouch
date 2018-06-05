@@ -53,7 +53,8 @@
     <string name="InstalledApps.Loading.Label">Načítání…</string>
     <string name="Preferences.Connection.Server.Url.Try_connect_result_ok">Server je připojen.</string>
     <string name="Preferences.Connection.Server.Url.Try_connect_result_fail">Server je nedostupný.</string>
-    <string name="Actions.Test_url_address">Ověřit url adresu</string>
+    <string name="Preferences.Connection.Server.Url.Test.Title">Ověřit url adresu</string>
+    <string name="Preferences.Connection.Server.Url.Test.Summary">Zkontroluje dostupnost serveru.</string>
     <string name="Preferences.Connection.Connection.Type.Title">Data</string>
     <string name="Preferences.Connection.Server.Title">Server</string>
     <string name="Preferences.Connection.Connection.Type.Summary">Vyberte povolené typy připojení, které se smějí používat.</string>

@@ -2,13 +2,6 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<PreferenceScreen-->
-    <!--android:key="second_preferencescreen"-->
-    <!--android:title="WiFi settings">-->
-    <!--<CheckBoxPreference-->
-    <!--android:key="prefer wifi"-->
-    <!--android:title="Prefer WiFi"/>-->
-    <!--</PreferenceScreen>-->
     <Preference
         android:icon="@drawable/ic_apps"
         android:key="@string/Key.Notifications.Installed_apps"

@@ -13,15 +13,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.webkit.URLUtil;
 
-import java.util.Arrays;
-import java.util.Set;
-
 import cz.zelenikr.remotetouch.R;
-import cz.zelenikr.remotetouch.data.ConnectionType;
 import cz.zelenikr.remotetouch.data.command.Command;
 import cz.zelenikr.remotetouch.data.command.CommandDTO;
 import cz.zelenikr.remotetouch.helper.ConnectionHelper;
-import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.receiver.ServerCmdReceiver;
 
 /**
@@ -37,18 +32,22 @@ public class ConnectionSettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences_connection, rootKey);
 
-        Preference serverUrlPref = findPreference(getString(R.string.Key_Connection_Server));
-        if (serverUrlPref != null) {
-            serverUrlPref.setOnPreferenceChangeListener((preference, newValue) -> validateServerUrl((String) newValue));
-            onServerUrlPrefChanged(serverUrlPref);
-        }
+        Preference pref = findPreference(getString(R.string.Key_Connection_Server));
+        pref.setOnPreferenceChangeListener((preference, newValue) -> validateServerUrl((String) newValue));
+        updateServerUrlPrefSummary(pref);
+
+        pref = findPreference(getString(R.string.Key_Connection_Server_Test));
+        pref.setOnPreferenceClickListener(preference -> {
+            onTryConnect();
+            return true;
+        });
+
     }
 
     @Override
@@ -70,23 +69,6 @@ public class ConnectionSettingsFragment extends PreferenceFragmentCompat
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_connection, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_connection_try_connect:
-                onTryConnect();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.Key_Connection_Server))) {
             onServerUrlPrefChanged(findPreference(key));
@@ -99,8 +81,7 @@ public class ConnectionSettingsFragment extends PreferenceFragmentCompat
     }
 
     private void onServerUrlPrefChanged(Preference preference) {
-        EditTextPreference etPref = (EditTextPreference) preference;
-        etPref.setSummary(etPref.getText());
+        updateServerUrlPrefSummary(preference);
         sendUpdateFCMToken();
     }
 
@@ -125,6 +106,11 @@ public class ConnectionSettingsFragment extends PreferenceFragmentCompat
         Intent intent = new Intent(getContext(), ServerCmdReceiver.class);
         intent.putExtra(ServerCmdReceiver.INTENT_EXTRAS, new CommandDTO(Command.FCM_SIGN_UP));
         getContext().sendBroadcast(intent);
+    }
+
+    private void updateServerUrlPrefSummary(Preference preference) {
+        EditTextPreference etPref = (EditTextPreference) preference;
+        etPref.setSummary(etPref.getText());
     }
 
     private boolean validateServerUrl(String newValue) {
