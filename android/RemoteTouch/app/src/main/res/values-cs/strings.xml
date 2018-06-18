@@ -59,7 +59,6 @@
     <string name="Preferences.Connection.Server.Title">Server</string>
     <string name="Preferences.Connection.Connection.Type.Summary">Vyberte povolené typy připojení, které se smějí používat.</string>
     <string name="Preferences.Connection.Connection.Title">Připojení</string>
-    <string name="About.Description">TODO popis</string>
     <string name="About.Contacts.Label">Kontakt</string>
     <string name="Navigation.About">O aplikaci</string>
     <string name="NoNetworkConnection">Chybí připojení k internetu.</string>
@@ -71,5 +70,6 @@
     <string name="Preferences.Notifications.Test.Title">Odeslat zkušební oznámení</string>
     <string name="Notifications.Test.Title">Zkušební oznámení</string>
     <string name="Notifications.Test.Text">Uvidíte-li toto oznámení ve svém počítači, upozornění na nová oznámení funguje.</string>
+    <string name="About.Description">Aplikace umožňuje přeposílat zvolené události do počítače a tím na ně uživatele upozornit. Je nutné stáhnout si do počítače RemoteTouch klienta a opsat do něj zvolený název zařízení a párovací klíč.\nTato aplikace vznikla jako Diplomová práce na Západočeké univerzitě v Plzni.</string>
 
 </resources>
