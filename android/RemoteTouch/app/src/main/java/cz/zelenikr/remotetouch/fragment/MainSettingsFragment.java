@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
@@ -18,7 +19,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.command.Command;
@@ -84,6 +84,8 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
             if (preference.isEnabled()) onSmsEnabledClick(preference);
         } else if (key.equals(getString(R.string.Key_Device_Pair_key))) {
             onPairKeyClick(preference);
+        } else if (key.equals(getString(R.string.Key_RemoteClient_Connected))) {
+            onRemoteClientClick(preference);
         }
 
         return super.onPreferenceTreeClick(preference);
@@ -168,8 +170,6 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
     }
 
     private void onPairKeyClick(Preference preference) {
-        Toast.makeText(getActivity(), preference.getTitle(), Toast.LENGTH_SHORT).show();
-
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.pair_key_dialog, null);
 
@@ -195,6 +195,11 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         String newKey = SettingsHelper.regeneratePairKey(getContext());
         TextView pairKeyValue = root.findViewById(R.id.pairKeyValue);
         pairKeyValue.setText(newKey);
+    }
+
+    private void onRemoteClientClick(Preference preference) {
+        snackbar(getString(R.string.RemoteClientUpdate), Snackbar.LENGTH_LONG);
+        sendUpdateFCMToken();
     }
 
     private void onDeviceNamePrefChanged(Preference preference) {
@@ -355,4 +360,9 @@ public class MainSettingsFragment extends PreferenceFragmentCompat
         EditTextPreference pref = (EditTextPreference) preference;
         preference.setSummary(pref.getText());
     }
+
+    private void snackbar(String msg, int duration) {
+        Snackbar.make(getView(), msg, duration).show();
+    }
+
 }

@@ -3,15 +3,15 @@ package cz.zelenikr.remotetouch.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.command.CommandDTO;
 import cz.zelenikr.remotetouch.data.event.CallEventContent;
 import cz.zelenikr.remotetouch.data.event.EventDTO;
@@ -88,12 +88,13 @@ public class ServerCmdReceiver extends BroadcastReceiver {
 
     private void onClientConnected(CommandDTO cmd) {
         SettingsHelper.storeRemoteClientConnected(context, true);
-
+        Toast.makeText(context, R.string.RemoteClientOn, Toast.LENGTH_LONG).show();
         sendPhoneState();
     }
 
     private void onClientDisconnected(CommandDTO cmd) {
         SettingsHelper.storeRemoteClientConnected(context, false);
+        Toast.makeText(context, R.string.RemoteClientOff, Toast.LENGTH_LONG).show();
     }
 
     private void onTest(CommandDTO cmd) {

@@ -83,5 +83,8 @@
     <string name="Unknown">Unknown</string>
     <string name="NoNetworkConnection">None network connection.</string>
     <string name="Version">Version</string>
+    <string name="RemoteClientOn">Remote client is active.</string>
+    <string name="RemoteClientOff">Remote client is not available.</string>
+    <string name="RemoteClientUpdate">Client state updating...</string>
 
 </resources>

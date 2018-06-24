@@ -71,5 +71,8 @@
     <string name="Notifications.Test.Title">Zkušební oznámení</string>
     <string name="Notifications.Test.Text">Uvidíte-li toto oznámení ve svém počítači, upozornění na nová oznámení funguje.</string>
     <string name="About.Description">Aplikace umožňuje přeposílat zvolené události do počítače a tím na ně uživatele upozornit. Je nutné stáhnout si do počítače RemoteTouch klienta a opsat do něj zvolený název zařízení a párovací klíč.\nTato aplikace vznikla jako Diplomová práce na Západočeké univerzitě v Plzni.</string>
+    <string name="RemoteClientOn">Vzdálený klient je aktivní.</string>
+    <string name="RemoteClientOff">Vzdálený klient není dostupný.</string>
+    <string name="RemoteClientUpdate">Aktualizuji stav klienta...</string>
 
 </resources>
