@@ -32,7 +32,8 @@ public class SBNProcessor {
             text = extras.getCharSequence(Notification.EXTRA_TEXT, "").toString();
         }
 
-        return new NotificationEventContent(app,
+        return new NotificationEventContent(
+            sbn.getId(), app,
             AndroidAppHelper.getAppLabelByPackageName(context, app),
             title, text, notification.when);
     }

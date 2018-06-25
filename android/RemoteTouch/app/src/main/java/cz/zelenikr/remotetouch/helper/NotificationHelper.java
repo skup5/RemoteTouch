@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -20,7 +19,7 @@ import java.util.Set;
 
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.event.NotificationEventContent;
-import cz.zelenikr.remotetouch.processor.SBNProcessor;
+import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 /**
  * This class simplifies using {@link Notification}.
@@ -143,20 +142,21 @@ public final class NotificationHelper {
      * @param context
      * @return
      */
-    @RequiresApi(23)
     public static List<NotificationEventContent> getAllNewNotifications(@NonNull Context context) {
-        SBNProcessor sbnProcessor = new SBNProcessor();
         List<NotificationEventContent> notificationList = new ArrayList<>();
 
         // Get notifications from status bar
-        StatusBarNotification[] activeNotifications = getManager(context).getActiveNotifications();
+        NotificationDataStore dataStore = new NotificationDataStore(context);
+        dataStore.open();
+        List<NotificationEventContent> activeNotifications = dataStore.getAll();
+
         // Get app list that the user is interested in
         Set<String> filter = SettingsHelper.getNotificationsApps(context);
 
-        for (StatusBarNotification notification : activeNotifications) {
+        for (NotificationEventContent notification : activeNotifications) {
             // Filter notifications
-            if (filter.contains(notification.getPackageName())) {
-                notificationList.add(sbnProcessor.process(context, notification));
+            if (filter.contains(notification.getApp())) {
+                notificationList.add(notification);
             }
         }
 

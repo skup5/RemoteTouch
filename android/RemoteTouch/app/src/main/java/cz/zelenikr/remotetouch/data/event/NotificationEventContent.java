@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
  */
 public class NotificationEventContent implements EventContent {
 
+    private final int id;
+
     private final String app;
 
     private final String label;
@@ -20,18 +22,24 @@ public class NotificationEventContent implements EventContent {
     private final long when;
 
     /**
-     * @param app    Application's package name of the current Notification.
-     * @param label  Application's label of current Notification. Attribute of &lt;application&gt; tag in AndroidManifest file.
-     * @param title  Title of the current Notification.
-     * @param text   Text of the current Notification.
-     * @param when   A timestamp related to the current Notification, in milliseconds since the epoch.
+     * @param id    An identifier for this notification unique within the application.
+     * @param app   Application's package name of the current Notification.
+     * @param label Application's label of current Notification. Attribute of &lt;application&gt; tag in AndroidManifest file.
+     * @param title Title of the current Notification.
+     * @param text  Text of the current Notification.
+     * @param when  A timestamp related to the current Notification, in milliseconds since the epoch.
      */
-    public NotificationEventContent(@NonNull String app, @NonNull String label, @NonNull String title, @NonNull String text, long when) {
+    public NotificationEventContent(int id, @NonNull String app, @NonNull String label, @NonNull String title, @NonNull String text, long when) {
         this.app = app;
+        this.id = id;
         this.label = label;
         this.title = title;
         this.text = text;
         this.when = when;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getApp() {
@@ -57,7 +65,8 @@ public class NotificationEventContent implements EventContent {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("NotificationEventContent{");
-        sb.append("app='").append(app).append('\'');
+        sb.append("id=").append(id);
+        sb.append(", app='").append(app).append('\'');
         sb.append(", label='").append(label).append('\'');
         sb.append(", title='").append(title).append('\'');
         sb.append(", text='").append(text).append('\'');

@@ -22,9 +22,11 @@ import java.util.Set;
 import cz.zelenikr.remotetouch.R;
 import cz.zelenikr.remotetouch.data.event.EventDTO;
 import cz.zelenikr.remotetouch.data.event.EventType;
+import cz.zelenikr.remotetouch.data.event.NotificationEventContent;
 import cz.zelenikr.remotetouch.helper.ApiHelper;
 import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.processor.SBNProcessor;
+import cz.zelenikr.remotetouch.storage.NotificationDataStore;
 
 /**
  * This service is handling notifications of other applications.
@@ -37,6 +39,7 @@ public class NotificationAccessService extends NotificationListenerService
     private static final String TAG = getLocalClassName();
     private static final EventType EVENT_TYPE = EventType.NOTIFICATION;
 
+    private final NotificationDataStore dataStore = new NotificationDataStore(this);
     private final SBNProcessor sbnProcessor = new SBNProcessor();
     private final boolean makeTousts = false;
 
@@ -51,6 +54,7 @@ public class NotificationAccessService extends NotificationListenerService
     public void onCreate() {
         super.onCreate();
 
+        dataStore.open();
         setAppsFilterSet(loadFilterSet());
         registerOnPreferenceChangedListener();
 
@@ -61,6 +65,7 @@ public class NotificationAccessService extends NotificationListenerService
     public void onDestroy() {
         super.onDestroy();
 
+        dataStore.close();
         unregisterOnPreferenceChangedListener();
 
         Log.i(TAG, "Was destroyed");
@@ -78,6 +83,11 @@ public class NotificationAccessService extends NotificationListenerService
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
+        NotificationEventContent notificationEventContent = sbnProcessor.process(this, sbn);
+
+        dataStore.add(notificationEventContent);
+
+        // Continue if service should sending notifications
         if (!isEnabled()) return;
 
         // We care only about apps in filter
@@ -90,10 +100,15 @@ public class NotificationAccessService extends NotificationListenerService
         Log.i(TAG, "Notification posted (" + sbn.getPackageName() + ")");
 
         // Send to REST server
-        sendEvent(sbn);
+        sendEvent(notificationEventContent);
 
         if (makeTousts)
             Toast.makeText(this, "Notification posted (" + sbn.getPackageName() + ")", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNotificationRemoved(StatusBarNotification sbn) {
+        dataStore.remove(sbnProcessor.process(this, sbn));
     }
 
     @Override
@@ -169,12 +184,12 @@ public class NotificationAccessService extends NotificationListenerService
      *
      * @param sbn the given new notification
      */
-    private void sendEvent(StatusBarNotification sbn) {
+    private void sendEvent(NotificationEventContent notificationEventContent) {
         Intent intent = new Intent(this, MessageSenderService.class);
         intent.putExtra(MessageSenderService.INTENT_EXTRA_IS_MSG, true);
         intent.putExtra(
             MessageSenderService.INTENT_EXTRA_NAME,
-            new EventDTO(EVENT_TYPE, sbnProcessor.process(this, sbn))
+            new EventDTO(EVENT_TYPE, notificationEventContent)
         );
 
         startService(intent);

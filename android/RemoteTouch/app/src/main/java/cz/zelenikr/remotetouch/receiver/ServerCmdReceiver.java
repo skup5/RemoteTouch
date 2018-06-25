@@ -138,14 +138,12 @@ public class ServerCmdReceiver extends BroadcastReceiver {
      */
     private void sendPhoneState() {
         // Get all new events
-        List<CallEventContent> callEventContents = SettingsHelper.areCallsEnabled(context) ? CallHelper.getAllNewCalls(context) : Collections.emptyList();
-        List<SmsEventContent> smsEventContents = SettingsHelper.areSmsEnabled(context) ? SmsHelper.getAllNewSms(context) : Collections.emptyList();
-        List<NotificationEventContent> notificationEventContents;
-
-        if (ApiHelper.checkCurrentApiLevel(23))
-            notificationEventContents = SettingsHelper.areNotificationsEnabled(context) ? NotificationHelper.getAllNewNotifications(context) : Collections.emptyList();
-        else
-            notificationEventContents = Collections.emptyList();
+        List<CallEventContent> callEventContents = SettingsHelper.areCallsEnabled(context) ?
+            CallHelper.getAllNewCalls(context) : Collections.emptyList();
+        List<SmsEventContent> smsEventContents = SettingsHelper.areSmsEnabled(context) ?
+            SmsHelper.getAllNewSms(context) : Collections.emptyList();
+        List<NotificationEventContent> notificationEventContents = SettingsHelper.areNotificationsEnabled(context) ?
+            NotificationHelper.getAllNewNotifications(context) : Collections.emptyList();
 
         // Process all gotten events
 
