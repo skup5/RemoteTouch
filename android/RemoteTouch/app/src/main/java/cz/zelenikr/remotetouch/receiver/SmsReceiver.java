@@ -20,11 +20,11 @@ import cz.zelenikr.remotetouch.helper.SettingsHelper;
 import cz.zelenikr.remotetouch.service.MessageSenderService;
 
 /**
+ * Receives SMS_RECEIVED actions from the system.
+ *
  * @author Roman Zelenik
  */
 public class SmsReceiver extends BroadcastReceiver {
-
-    // public static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
 
     private static final String TAG = SmsReceiver.class.getSimpleName();
     private static final EventType EVENT_TYPE = EventType.SMS;

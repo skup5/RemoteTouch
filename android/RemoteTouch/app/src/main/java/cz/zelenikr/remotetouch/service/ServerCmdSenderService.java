@@ -18,6 +18,8 @@ import cz.zelenikr.remotetouch.network.JsonSimpleRestClient;
 import cz.zelenikr.remotetouch.network.RestClient;
 
 /**
+ * This service allows sending messages with commands to the rest server via {@link RestClient}.
+ *
  * @author Roman Zelenik
  */
 public class ServerCmdSenderService extends JobIntentService {

@@ -13,6 +13,8 @@ import cz.zelenikr.remotetouch.data.CallType;
 import cz.zelenikr.remotetouch.data.event.CallEventContent;
 
 /**
+ * This helper class allows to get list of missing calls.
+ *
  * @author Roman Zelenik
  */
 public final class CallHelper {

@@ -12,6 +12,8 @@ import java.util.List;
 import cz.zelenikr.remotetouch.data.event.SmsEventContent;
 
 /**
+ * This helper class allows to get list of unread SMS messages.
+ *
  * @author Roman Zelenik
  */
 public final class SmsHelper {

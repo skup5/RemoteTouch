@@ -41,6 +41,8 @@ import static cz.zelenikr.remotetouch.helper.NotificationHelper.ONGOING_NOTIFICA
 import static cz.zelenikr.remotetouch.helper.NotificationHelper.ONGOING_NOTIFICATION_CHANNEL_NAME;
 
 /**
+ * This service allows sending messages with user data to the rest server via {@link SecureRestClient}.
+ *
  * @author Roman Zelenik
  */
 public class MessageSenderService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {

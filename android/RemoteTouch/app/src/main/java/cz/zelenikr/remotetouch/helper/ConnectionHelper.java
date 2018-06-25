@@ -13,6 +13,8 @@ import cz.zelenikr.remotetouch.data.ConnectionType;
 import cz.zelenikr.remotetouch.network.JsonSimpleRestClient;
 
 /**
+ * This helper class allows to check device network state.
+ *
  * @author Roman Zelenik
  */
 public final class ConnectionHelper {

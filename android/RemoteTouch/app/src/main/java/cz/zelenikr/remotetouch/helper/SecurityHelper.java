@@ -12,6 +12,8 @@ import cz.zelenikr.remotetouch.security.SymmetricKeyGenerator;
 import cz.zelenikr.remotetouch.security.exception.UnsupportedCipherException;
 
 /**
+ * This helper class allows to create instances of security components.
+ *
  * @author Roman Zelenik
  */
 public final class SecurityHelper {
