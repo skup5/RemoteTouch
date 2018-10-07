@@ -40,9 +40,9 @@ public class AboutFragment extends Fragment {
             .setImage(R.mipmap.ic_launcher)
             .addItem(createVersionElement())
             .addItem(createCopyRightsElement())
-            .addGroup(getString(R.string.About_Contacts_Label))
-            .addEmail(getString(R.string.Contact_Email))
-            .addWebsite(getString(R.string.Contact_Website))
+//            .addGroup(getString(R.string.About_Contacts_Label))
+//            .addEmail(getString(R.string.Contact_Email))
+//            .addWebsite(getString(R.string.Contact_Website))
             .create();
 
         return aboutPage;
