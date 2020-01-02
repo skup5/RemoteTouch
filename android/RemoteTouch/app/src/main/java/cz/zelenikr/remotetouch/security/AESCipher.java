@@ -3,31 +3,35 @@ package cz.zelenikr.remotetouch.security;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 
+import com.google.api.client.util.Charsets;
+
 import java.nio.charset.Charset;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import cz.zelenikr.remotetouch.security.exception.UnsupportedCipherException;
 
 public final class AESCipher implements SymmetricCipher<String> {
 
+    private static final String HASH_VERSION = "MD5";
     private static final int BASE64_FLAGS = Base64.DEFAULT;
-    private static final String
-        HASH_VERSION = "SHA-1",
-        DEF_CHARSET = "UTF-8";
-    private static final Charset charset = Charset.forName(DEF_CHARSET);
+    private static final Charset charset = Charsets.UTF_8;
+    private static final String ALGORITHM = "AES";
+    private static final String CIPHER = "AES/CBC/PKCS5Padding";
 
-    private  SecretKey secretKey;
     private final Cipher cipher;
+    private final IvParameterSpec initVector;
+    private SecretKey secretKey;
 
     /**
      * Initializes new AES cipher with a specific key.
@@ -46,33 +50,34 @@ public final class AESCipher implements SymmetricCipher<String> {
     private AESCipher(SecretKey secretKey) throws UnsupportedCipherException {
         this.secretKey = secretKey;
         this.cipher = initCipher();
+        this.initVector = toInitVector("encryptionIntVec");
     }
 
     private static Cipher initCipher() throws UnsupportedCipherException {
         try {
-            return Cipher.getInstance("AES");
+            return Cipher.getInstance(CIPHER);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             e.printStackTrace();
-            throw new UnsupportedCipherException("AES");
+            throw new UnsupportedCipherException(CIPHER);
         }
     }
 
     private static SecretKey toSecretKey(String plainKey) {
-        byte[] key = plainKey.getBytes(charset);
-        key = hashKey(key);
-        return new SecretKeySpec(key, "AES");
+        final byte[] key = hashKey(plainKey.getBytes(charset));
+        return new SecretKeySpec(key, ALGORITHM);
+    }
+
+    private static IvParameterSpec toInitVector(String iv) {
+        return new IvParameterSpec(iv.getBytes(charset));
     }
 
     private static byte[] hashKey(byte[] rawKey) {
-        MessageDigest sha = null;
         try {
-            sha = MessageDigest.getInstance(HASH_VERSION);
+            return MessageDigest.getInstance(HASH_VERSION).digest(rawKey);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+            return new byte[0];
         }
-        byte[] key = sha.digest(rawKey);
-        key = Arrays.copyOf(key, 16); // use only first 128 bit
-        return key;
     }
 
     @Override
@@ -84,6 +89,8 @@ public final class AESCipher implements SymmetricCipher<String> {
         } catch (BadPaddingException e) {
             e.printStackTrace();
         } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
         return null;
@@ -99,23 +106,25 @@ public final class AESCipher implements SymmetricCipher<String> {
             e.printStackTrace();
         } catch (InvalidKeyException e) {
             e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public boolean changeKey(@NonNull String plainKey){
+    public boolean changeKey(@NonNull String plainKey) {
         this.secretKey = toSecretKey(plainKey);
         return true;
     }
 
-    private byte[] encrypt(byte[] input) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+    private byte[] encrypt(byte[] input) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, initVector);
         return cipher.doFinal(input);
     }
 
-    private byte[] decrypt(byte[] input) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+    private byte[] decrypt(byte[] input) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, initVector);
         return cipher.doFinal(input);
     }
 
